@@ -16,7 +16,7 @@ public:
     RmServer();
     RmServer(String ssid, String password);
     void Begin();
-    void SendCommand(String command);
+ //   void SendCommand(String command);
 private:
     String ssid;
     String password;

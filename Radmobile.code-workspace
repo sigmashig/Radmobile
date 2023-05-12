@@ -4,8 +4,8 @@
 			"path": "RmServer"
 		},
 		{
-			"name": "TestProject",
-			"path": "../TestProject"
+			"name": "RmClient",
+			"path": "RmClient"
 		}
 	],
 	"settings": {}
