@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "RmServer"
+		},
+		{
+			"name": "TestProject",
+			"path": "../TestProject"
+		}
+	],
+	"settings": {}
+}
