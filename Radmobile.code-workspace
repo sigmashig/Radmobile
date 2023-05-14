@@ -1,12 +1,20 @@
 {
 	"folders": [
 		{
-			"path": "RmServer"
+			"path": "RmClientServer"
 		},
 		{
-			"name": "RmClient",
-			"path": "RmClient"
+			"name": "TestWSServer",
+			"path": "../TestWSServer"
+		},
+		{
+			"name": "TestWS",
+			"path": "../../Documents/PlatformIO/Projects/TestWS"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"new": "cpp"
+		}
+	}
 }
