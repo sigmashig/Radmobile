@@ -16,6 +16,7 @@ class RmProtocolWs : public RmProtocol
         bool SendCommand(String command);
         void Loop();
         void Reconnect(){};
+        void ReceivedCommand(String command){};
 
     private:
         String host;

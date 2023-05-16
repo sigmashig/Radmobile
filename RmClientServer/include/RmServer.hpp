@@ -1,8 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <esp_event.h>
-// #include <WiFi.h>
-
+#include "RmRemoteControl.hpp"
 
 class RmServer
 {
@@ -13,9 +12,9 @@ public:
     void SendCommand(String command);
     void Reconnect();
 
-
 private:
-    void ReceivedCommand(String command);
+    static void commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    // void ReceivedCommand(String command);
     static void responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 };
 

@@ -1,7 +1,10 @@
 #include "RMServer.hpp"
 #include "RmProtocol.hpp"
+#if PROTOCOL == 1
 #include "RmProtocolWs.hpp"
+#elif PROTOCOL == 2
 #include "RmProtocolMqtt.hpp"
+#endif
 
 RmServer::RmServer()
 {
@@ -10,6 +13,8 @@ RmServer::RmServer()
 void RmServer::Begin()
 {
     Serial.println("RmServer::Begin()");
+    esp_event_handler_instance_register(RMSERVER_EVENT, RMEVENT_RESPONSE, responseEventHandler, NULL, NULL);
+    esp_event_handler_instance_register(RMRC_EVENT, RMRC_CMD, commandEventHandler, NULL, NULL);
 #if PROTOCOL == 1
     rmProtocol = new RmProtocolWs();
     rmProtocol->Begin();
@@ -17,9 +22,6 @@ void RmServer::Begin()
     rmProtocol = new RmProtocolMqtt();
     rmProtocol->Begin();
 #endif
-    esp_event_handler_instance_register(RMSERVER_EVENT, RMEVENT_RESPONSE,
-                                        responseEventHandler, NULL, NULL);
-
 }
 
 void RmServer::Loop()
@@ -42,6 +44,17 @@ void RmServer::Reconnect()
 void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("responseEventHandler");
+    // rmProtocol->Send("Hello from WS Server");
+}
+
+void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+    Serial.println("commandEventHandler");
+    CommandPkg *command = (CommandPkg *)event_data;
+    String commandString;
+    RmRemoteControl::CommandToString(*command, commandString);
+    Serial.println("Command received: " + commandString);
+    rmServer->SendCommand(commandString);
     // rmProtocol->Send("Hello from WS Server");
 }
 

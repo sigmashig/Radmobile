@@ -16,7 +16,7 @@ RmProtocolWs::RmProtocolWs(String host, uint16_t port)
 void RmProtocolWs::Begin()
 {
     Serial.println("RmProtocolWs::Begin()");
-#if MODE == SERVER
+#if MODE == 1
     Serial.println("MODE = 1");
     wsServer = new WebSocketsServer(80 /*SERVER_PORT*/);
     Serial.println("WebSocketsServer created");

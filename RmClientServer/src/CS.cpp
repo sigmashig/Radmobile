@@ -11,6 +11,11 @@
 #include "RmClient.hpp"
 #endif
 
+#include "RmRemoteControl.hpp"
+#if RC == 1
+#include "RmRcEmulator.hpp"
+#endif
+
 #ifndef WIFI_SSID
 #define WIFI_SSID "Please_define"
 #endif
@@ -20,6 +25,7 @@
 #endif
 
 bool isSetupReady = false;
+bool isWifiConnected = false;
 
 void onWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info)
 {
@@ -27,21 +33,25 @@ void onWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info)
   {
   case SYSTEM_EVENT_STA_GOT_IP:
   {
+    isWifiConnected = true;
     Serial.println("WiFi connected");
     Serial.printf(F("IP address: %s\n"), WiFi.localIP().toString().c_str());
 #if MODE == 1
     Serial.println("Starting RmServer");
     rmServer->Begin();
+    remoteControl->Begin();
 #elif MODE == 2
     Serial.println("Starting RmClient");
     rmClient->Begin();
 #endif
+    Serial.println("Setup ready\n");
     isSetupReady = true;
     break;
   }
   case SYSTEM_EVENT_STA_DISCONNECTED:
   {
     Serial.printf(F("WiFi connection error: %d\n"), info.wifi_sta_disconnected.reason);
+    if (isWifiConnected) {
 #if MODE == 1
     Serial.println("Reconnecting RmServer");
     rmServer->Reconnect();
@@ -49,6 +59,7 @@ void onWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info)
     Serial.println("Reconnecting RmClient");
     rmClient->Reconnect();
 #endif
+    }
   }
   break;
   }
@@ -74,9 +85,13 @@ void setup()
 #elif MODE == 2
   rmClient = new RmClient(String(SERVER_URL), SERVER_PORT);
 #endif
+
+#if RC == 1
+  remoteControl = new RmRcEmulator();
+#endif
   //WiFi.onEvent(onWiFiEvent);
   startWiFi(WIFI_SSID, WIFI_PWD);
-  Serial.println("WiFi started");
+  Serial.println("WiFi starting...");
 #elif COMMUNICATIONS == 2
 #endif
 }
