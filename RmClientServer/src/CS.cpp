@@ -61,13 +61,6 @@ void onWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info)
     Serial.printf(F("WiFi connection error: %d\n"), info.wifi_sta_disconnected.reason);
     if (isWifiConnected)
     {
-#if MODE == 1
-      Serial.println("Reconnecting RmServer");
-      rmServer->Reconnect();
-#elif MODE == 2
-      Serial.println("Reconnecting RmClient");
-      rmClient->Reconnect();
-#endif
     }
   }
   break;

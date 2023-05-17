@@ -1,7 +1,6 @@
 #pragma once
 #include "RmRemoteControl.hpp"
 
-#define EMULATOR_LOOP_STACK_SIZE 2000
 class RmRcEmulator : public RmRemoteControl
 {
 public:
@@ -9,8 +8,6 @@ public:
     void Begin();
 
 private:
-    StaticTask_t loopTaskBuffer;
-    StackType_t loopTaskStack[EMULATOR_LOOP_STACK_SIZE];
-    TaskHandle_t loopTaskHandle;
     static void loopTask(void *params);
+    static void loopEventHandle(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 };
