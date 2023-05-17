@@ -25,17 +25,6 @@ void RmClient::Begin()
                                         responseEventHandler, NULL, NULL);
 }
 
-void RmClient::Reconnect()
-{
-    rmProtocol->Reconnect();
-}
-
-void RmClient::Loop()
-{
-
-    rmProtocol->Loop();
-}
-
 void RmClient::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("responseEventHandler");

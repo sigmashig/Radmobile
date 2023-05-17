@@ -15,6 +15,7 @@ void RmServer::Begin()
     Serial.println("RmServer::Begin()");
     esp_event_handler_instance_register(RMSERVER_EVENT, RMEVENT_RESPONSE, responseEventHandler, NULL, NULL);
     esp_event_handler_instance_register(RMRC_EVENT, RMRC_CMD, commandEventHandler, NULL, NULL);
+
 #if PROTOCOL == 1
     rmProtocol = new RmProtocolWs();
     rmProtocol->Begin();
@@ -24,28 +25,17 @@ void RmServer::Begin()
 #endif
 }
 
-void RmServer::Loop()
-{
-#if PROTOCOL == 1
-    rmProtocol->Loop();
-#endif
-}
-
 void RmServer::SendCommand(String command)
 {
     rmProtocol->SendCommand(command);
 }
 
-void RmServer::Reconnect()
-{
-    rmProtocol->Reconnect();
-}
 
 void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("responseEventHandler");
-    // rmProtocol->Send("Hello from WS Server");
 }
+
 
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {

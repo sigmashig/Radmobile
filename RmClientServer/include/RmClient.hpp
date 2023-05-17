@@ -7,8 +7,7 @@ class RmClient
 public:
     RmClient(String host, uint16_t port);
     void Begin();
-    void Reconnect();
-    void Loop();
+    //    void Reconnect();
 
 private:
     String host;

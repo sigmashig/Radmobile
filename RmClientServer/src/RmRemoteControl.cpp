@@ -2,36 +2,29 @@
 
 ESP_EVENT_DEFINE_BASE(RMRC_EVENT);
 
-String RmRemoteControl::cmdTxt[CMD_NOCOMMAND+1] = {
-    "L1", // CMD_J1_LEFT,
-    "R1", // CMD_J1_RIGHT,
-    "F1", // CMD_J1_FORWARD,
-    "B1", // CMD_J1_BACKWARD,
-    "L2", // CMD_J2_LEFT,
-    "R2", // CMD_J2_RIGHT,
-    "F2", // CMD_J2_FORWARD,
-    "B2", // CMD_J2_BACKWARD,
-    "L3", // CMD_PAD1_LEFT,
-    "R3", // CMD_PAD1_RIGHT,
-    "F3", // CMD_PAD1_FORWARD,
-    "B3", // CMD_PAD1_BACKWARD,
-    "L4", // CMD_PAD2_LEFT,
-    "R4", // CMD_PAD2_RIGHT,
-    "F4", // CMD_PAD2_FORWARD,
-    "B4", // CMD_PAD2_BACKWARD,
-    "T1", // CMD_BUTTON1,
-    "T2", // CMD_BUTTON2,
-    "T3", // CMD_BUTTON3,
-    "T4", // CMD_BUTTON4,
-    "T5", // CMD_BUTTON5,
-    "T6", // CMD_BUTTON6,
-    "T7", // CMD_BUTTON7,
-    "T8", // CMD_BUTTON8,
-    "T9", // CMD_BUTTON9,
-    "TA", // CMD_BUTTON10,
-    "ZZ"  // CMD_NOCOMMAND
-};
-RmRemoteControl::RmRemoteControl() {}
+String RmRemoteControl::cmdTxt[CMD_NOCOMMAND + 1];
+RmRemoteControl::RmRemoteControl()
+{
+
+    cmdTxt[CMD_FORWARD] = "F1";
+    cmdTxt[CMD_BACKWARD] = "B1";
+    cmdTxt[CMD_LEFT] = "L1";
+    cmdTxt[CMD_RIGHT] = "R1";
+    cmdTxt[CMD_STOP] = "XX";
+    cmdTxt[CMD_BUTTON1] = "T1";
+    cmdTxt[CMD_BUTTON2] = "T2";
+    cmdTxt[CMD_BUTTON3] = "T3";
+    cmdTxt[CMD_BUTTON4] = "T4";
+    cmdTxt[CMD_BUTTON5] = "T5";
+    cmdTxt[CMD_BUTTON6] = "T6";
+    cmdTxt[CMD_BUTTON7] = "T7";
+    cmdTxt[CMD_BUTTON8] = "T8";
+    cmdTxt[CMD_BUTTON9] = "T9";
+    cmdTxt[CMD_BUTTON10] = "TA";
+    cmdTxt[CMD_BUTTON11] = "TB";
+    cmdTxt[CMD_BUTTON12] = "TC";
+    cmdTxt[CMD_NOCOMMAND] = "YY";
+}
 
 void RmRemoteControl::ReceivedCommand(CommandPkg command)
 {
@@ -44,7 +37,7 @@ void RmRemoteControl::CommandToString(CommandPkg command, String &commandString)
 {
     // command string format: "{L2#546}" means: command=CMD_J2_LEFT, value=546
     commandString = "{";
-    commandString += cmdTxt[command.command];   
+    commandString += cmdTxt[command.command];
     commandString += "#";
     commandString += command.value;
     commandString += "}";

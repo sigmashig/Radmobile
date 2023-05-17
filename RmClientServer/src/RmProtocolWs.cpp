@@ -59,7 +59,7 @@ bool RmProtocolWs::SendCommand(String command)
 #endif
     return res;
 }
-
+/*
 void RmProtocolWs::Loop()
 {
 #if MODE == SERVER
@@ -69,7 +69,7 @@ void RmProtocolWs::Loop()
     wsClient->loop();
 #endif
 }
-
+*/
 void RmProtocolWs::wsClientEventHandler(WStype_t type, uint8_t *payload, size_t length)
 {
     Serial.println("CLIENT Event happens");

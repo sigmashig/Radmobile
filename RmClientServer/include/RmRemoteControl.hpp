@@ -17,8 +17,7 @@ public:
     virtual void Begin() = 0;
     void ReceivedCommand(CommandPkg command);
     static void CommandToString(CommandPkg command, String &commandString);
-    static String cmdTxt[CMD_NOCOMMAND+1];
-    //   virtual void Reconnect() = 0;
+    static String cmdTxt[CMD_NOCOMMAND + 1];
 };
 
 extern RmRemoteControl *remoteControl;

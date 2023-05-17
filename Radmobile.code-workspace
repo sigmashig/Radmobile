@@ -10,11 +10,16 @@
 		{
 			"name": "TestWS",
 			"path": "../../Documents/PlatformIO/Projects/TestWS"
+		},
+		{
+			"name": "TestPS2",
+			"path": "../TestPS2"
 		}
 	],
 	"settings": {
 		"files.associations": {
-			"new": "cpp"
+			"new": "cpp",
+			"*.tcc": "cpp"
 		}
 	}
 }
