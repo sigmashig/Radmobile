@@ -2,7 +2,7 @@
 
 Configuration *config = NULL;
 ESP_EVENT_DEFINE_BASE(CONFIG_EVENT);
-Configuration::PS2ModeStick ModeStick = Configuration::PS2ModeStick::PS2_4x4;
+Configuration::PS2ModeStick Configuration::ModeStick = Configuration::PS2ModeStick::PS2_4x4;
 ulong Configuration::loopCounter;
 ulong Configuration::loop1SecCounter;
 ulong Configuration::lastLoop;

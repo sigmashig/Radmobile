@@ -32,6 +32,7 @@ void RmProtocolMqtt::Begin()
     mqttClient.onMessage(messageReceived);
     mqttClient.onConnect(_onConnect);
     connectToMqtt();
+    Serial.println("Point 1.2");
 }
 
 void RmProtocolMqtt::ReceivedCommand(String command)

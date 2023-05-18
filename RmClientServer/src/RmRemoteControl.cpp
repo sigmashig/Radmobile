@@ -30,7 +30,6 @@ void RmRemoteControl::ReceivedCommand(CommandPkg command)
 {
     Serial.println("RmRemoteControl::ReceivedCommand");
     esp_event_post(RMRC_EVENT, RMRC_CMD, &command, sizeof(command), portMAX_DELAY);
-    Serial.println("Point4");
 }
 
 void RmRemoteControl::CommandToString(CommandPkg command, String &commandString)

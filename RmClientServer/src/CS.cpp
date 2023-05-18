@@ -16,6 +16,8 @@
 #include "RmRemoteControl.hpp"
 #if RC == 1
 #include "RmRcEmulator.hpp"
+#elif RC == 2
+#include "RmRcPs2.hpp"
 #endif
 
 #ifndef WIFI_SSID
@@ -92,6 +94,10 @@ void setup()
 
 #if RC == 1
   remoteControl = new RmRcEmulator();
+#elif RC == 2
+  PS2 = new RmRcPS2();
+  remoteControl = PS2;
+
 #endif
   // WiFi.onEvent(onWiFiEvent);
   startWiFi(WIFI_SSID, WIFI_PWD);
@@ -107,5 +113,5 @@ void loop()
     config->Loop();
   }
   // vTaskDelete(NULL);
-  // vTaskDelay(1000 / portTICK_PERIOD_MS);
+  vTaskDelay(50 / portTICK_PERIOD_MS);
 }
