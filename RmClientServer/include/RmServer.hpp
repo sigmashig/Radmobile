@@ -9,9 +9,12 @@ public:
     RmServer();
     void Begin();
     void SendCommand(String command);
-    void Reconnect();
+    bool IsReady() { return isReady; };
 
 private:
+    bool isConnected = false;
+    bool isReady = false;
+    void startWiFi(String ssid, String password);
     static void commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     // void ReceivedCommand(String command);
     static void responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);

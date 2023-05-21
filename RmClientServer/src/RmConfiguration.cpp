@@ -75,3 +75,6 @@ RmConfiguration::RmConfiguration()
     loop1SecCounter = 0;
     lastLoop = 0;
 }
+
+//-------------------------------------------
+RmConfiguration *rmConfig;

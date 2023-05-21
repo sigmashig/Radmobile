@@ -10,7 +10,7 @@ public:
     void Begin();
     void ReceivedCommand(String command);
     bool SendCommand(String command);
-    //    void Reconnect();
+    void Reconnect();
 
 private:
     static AsyncMqttClient mqttClient;

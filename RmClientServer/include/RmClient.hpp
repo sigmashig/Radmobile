@@ -5,14 +5,15 @@
 class RmClient
 {
 public:
-    RmClient(String host, uint16_t port);
+    RmClient();
     void Begin();
-    //    void Reconnect();
+    bool IsReady() { return isReady; };
 
 private:
-    String host;
-    uint16_t port;
+    bool isConnected = false;
+    bool isReady = false;
 
+    void startWiFi(String ssid, String password);
     static void commandReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 };
 

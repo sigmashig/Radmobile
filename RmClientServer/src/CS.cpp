@@ -2,120 +2,40 @@
 #include <esp_event.h>
 #include "RmConfiguration.hpp"
 
-#if COMMUNICATIONS == 1
-#include <WiFi.h>
-#elif COMMUNICATIONS == 2
-#endif
-
 #if MODE == 1
 #include "RmServer.hpp"
 #elif MODE == 2
 #include "RmClient.hpp"
 #endif
 
-#include "RmCommands.hpp"
-
-#include "RmRemoteControl.hpp"
-#if RC == 1
-#include "RmRcEmulator.hpp"
-#elif RC == 2
-#include "RmRcPs2.hpp"
-#endif
-
-#ifndef WIFI_SSID
-#define WIFI_SSID "Please_define"
-#endif
-
-#ifndef WIFI_PWD
-#define WIFI_PWD "Please_define"
-#endif
-
-bool isSetupReady = false;
-bool isWifiConnected = false;
-
-void begin()
-{
-#if MODE == 1
-  Serial.println("Starting RmServer");
-  rmServer->Begin();
-  remoteControl->Begin();
-#elif MODE == 2
-  Serial.println("Starting RmClient");
-  Client->Begin();
-#endif
-  Serial.println("Setup ready\n");
-  config->Begin();
-  isSetupReady = true;
-}
-
-void onWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info)
-{
-  switch (event)
-  {
-  case SYSTEM_EVENT_STA_GOT_IP:
-  {
-    isWifiConnected = true;
-    Serial.println("WiFi connected");
-    Serial.printf(F("IP address: %s\n"), WiFi.localIP().toString().c_str());
-    begin();
-    break;
-  }
-  case SYSTEM_EVENT_STA_DISCONNECTED:
-  {
-    Serial.printf(F("WiFi connection error: %d\n"), info.wifi_sta_disconnected.reason);
-    if (isWifiConnected)
-    {
-    }
-  }
-  break;
-  }
-}
-
-void startWiFi(String ssid, String password)
-{
-
-  Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
-  WiFi.mode(WIFI_STA);
-  WiFi.onEvent(onWiFiEvent);
-  WiFi.begin(ssid.c_str(), password.c_str());
-}
+bool isReady = false;
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("--------------------");
 
-  config = new RmConfiguration();
-
-  rmCommands = new RmCommands();
-
-#if COMMUNICATIONS == 1 // WiFi
+  rmConfig = new RmConfiguration();
 #if MODE == 1
   rmServer = new RmServer();
 #elif MODE == 2
-  Client = new RmClient(String(SERVER_URL), SERVER_PORT);
-#endif
-
-#if RC == 1
-  remoteControl = new RmRcEmulator();
-#elif RC == 2
-  PS2 = new RmRcPS2();
-  remoteControl = PS2;
-
-#endif
-  // WiFi.onEvent(onWiFiEvent);
-  startWiFi(WIFI_SSID, WIFI_PWD);
-  Serial.println("WiFi starting...");
-#elif COMMUNICATIONS == 2
+  rmClient = new RmClient();
 #endif
 }
 
 void loop()
 {
-  if (isSetupReady)
+  if (!isReady)
   {
-    config->Loop();
+#if MODE == 1
+    isReady = rmServer->IsReady();
+#elif MODE == 2
+    isReady = rmClient->IsReady();
+#endif
   }
-  // vTaskDelete(NULL);
+  if (isReady)
+  {
+    rmConfig->Loop();
+  }
   vTaskDelay(50 / portTICK_PERIOD_MS);
 }

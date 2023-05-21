@@ -23,8 +23,8 @@ class RmConfiguration
 public:
     // Hardware configuration
 
-    //SERVER
-    // Joystick PS2
+    // SERVER
+    //  Joystick PS2
     static const byte PIN_PS2_DATA = 15;
     static const byte PIN_PS2_CMD = 16;
     static const byte PIN_PS2_ATT = 4;
@@ -49,4 +49,4 @@ private:
     static ulong lastLoop;
 };
 
-extern RmConfiguration *config;
+extern RmConfiguration *rmConfig;

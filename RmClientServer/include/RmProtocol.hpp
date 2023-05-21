@@ -15,7 +15,7 @@ class RmProtocol
 public:
     RmProtocol();
     virtual void Begin() = 0;
-    //    virtual void Reconnect() = 0;
+    virtual void Reconnect() = 0;
     virtual void ReceivedCommand(String command) = 0;
     virtual bool SendCommand(String command) = 0;
 };

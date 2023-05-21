@@ -1,7 +1,7 @@
 #include "RmProtocolMqtt.hpp"
 #include "RmCommands.hpp"
 #include <esp_event.h>
-#include <WiFi.h>
+//#include <WiFi.h>
 
 String RmProtocolMqtt::topic = "RadMobile/Command";
 AsyncMqttClient RmProtocolMqtt::mqttClient;
@@ -15,20 +15,12 @@ void RmProtocolMqtt::Begin()
     mqttClient.setKeepAlive(15);
 
     connectToMqtt();
-    WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
-                 { if ((uint)event == (uint)SYSTEM_EVENT_STA_GOT_IP){
-                    connectToMqtt(); } });
-    /*
-    mqttClient.onConnect([this](bool sessionPresent)
-                         {
-        Serial.println("Connected to MQTT.");
-        Serial.print("Session present: ");
-        Serial.println(sessionPresent);
-        });
-    */
-
     mqttClient.onDisconnect([this](AsyncMqttClientDisconnectReason reason)
-                            { Serial.println("Disconnected from MQTT."); });
+                            { 
+                                Serial.println("Disconnected from MQTT."); 
+                                connectToMqtt();
+                            }
+                            );
     mqttClient.onMessage(messageReceived);
     mqttClient.onConnect(_onConnect);
     connectToMqtt();
@@ -48,6 +40,12 @@ bool RmProtocolMqtt::SendCommand(String command)
     Serial.println("RmProtocolMqtt::SendCommand()");
     uint res = mqttClient.publish(topic.c_str(), 0, false, command.c_str());
     return res != 0;
+}
+
+void RmProtocolMqtt::Reconnect()
+{
+    Serial.println("RmProtocolMqtt::Reconnect()");
+    connectToMqtt();
 }
 
 bool RmProtocolMqtt::_onConnect(bool sessionPresent)

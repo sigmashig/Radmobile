@@ -50,7 +50,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
 {
     RmCommandPkg cmdPkg;
     Serial.println("RmRcPS2::cmdProcessing");
-    switch (config->ModeStick)
+    switch (rmConfig->ModeStick)
     {
     case RmConfiguration::PS2ModeStick::PS2_2x2:
     {
@@ -162,7 +162,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         break;
     }
     }
-    if (config->ModeStick != RmConfiguration::PS2ModeStick::PS2_PAD)
+    if (rmConfig->ModeStick != RmConfiguration::PS2ModeStick::PS2_PAD)
     {
         if (isFirst || psData.buttons & PSXBTN_UP != lastData.buttons & PSXBTN_UP)
         {

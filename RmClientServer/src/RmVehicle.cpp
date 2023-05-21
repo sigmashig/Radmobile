@@ -3,3 +3,7 @@
 RmVehicle::RmVehicle()
 {
 }
+
+//--------------------------------
+
+RmVehicle *rmVehicle = NULL;
