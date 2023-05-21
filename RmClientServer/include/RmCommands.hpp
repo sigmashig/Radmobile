@@ -28,3 +28,14 @@ typedef struct
     CommandType command;
     int value;
 } CommandPkg;
+
+class RmCommands
+{
+public:
+    RmCommands();
+    static void CommandToString(CommandPkg command, String &commandString);
+    static String cmdTxt[CMD_NOCOMMAND + 1];
+    static CommandPkg StringToCommand(String commandString);
+};
+
+extern RmCommands* rmCommands;

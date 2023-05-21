@@ -21,15 +21,15 @@ void RmClient::Begin()
     rmProtocol = new RmProtocolMqtt();
     rmProtocol->Begin();
 #endif
-    esp_event_handler_instance_register(RMSERVER_EVENT, RMEVENT_RESPONSE,
-                                        responseEventHandler, NULL, NULL);
+    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED,
+                                        commandReceived, NULL, NULL);
 }
 
-void RmClient::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void RmClient::commandReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("responseEventHandler");
     // rmProtocol->Send("Hello from WS Server");
 }
 
 //--------------------------------
-RmClient *rmClient=NULL;
+RmClient *rmClient = NULL;

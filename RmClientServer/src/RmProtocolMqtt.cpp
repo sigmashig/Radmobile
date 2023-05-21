@@ -1,4 +1,5 @@
 #include "RmProtocolMqtt.hpp"
+#include "RmCommands.hpp"
 #include <esp_event.h>
 #include <WiFi.h>
 
@@ -28,17 +29,18 @@ void RmProtocolMqtt::Begin()
 
     mqttClient.onDisconnect([this](AsyncMqttClientDisconnectReason reason)
                             { Serial.println("Disconnected from MQTT."); });
-    Serial.println("Point 1");
     mqttClient.onMessage(messageReceived);
     mqttClient.onConnect(_onConnect);
     connectToMqtt();
-    Serial.println("Point 1.2");
 }
 
 void RmProtocolMqtt::ReceivedCommand(String command)
 {
     Serial.println("RmProtocolMqtt::ReceivedCommand()");
     Serial.println(command);
+    CommandPkg cmd;
+    cmd = RmCommands::StringToCommand(command);
+    esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(cmd), portMAX_DELAY);
 }
 
 bool RmProtocolMqtt::SendCommand(String command)
@@ -71,6 +73,8 @@ void RmProtocolMqtt::messageReceived(char *topic, char *payload,
     if (len > 0)
     {
         Serial.printf("[%s](%u):%s\n", topic, len, payload);
+        payload[len] = '\0';
+        rmProtocol->ReceivedCommand(String(payload));
     }
     else
     {

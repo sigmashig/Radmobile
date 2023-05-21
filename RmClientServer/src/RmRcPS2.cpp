@@ -1,5 +1,5 @@
 #include "RmRcPS2.hpp"
-#include "Configuration.hpp"
+#include "RmConfiguration.hpp"
 #include <esp_event.h>
 
 RmRcPS2::RmRcPS2()
@@ -74,7 +74,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
                 cmdPkg.value = 0;
             }
             
-            ReceivedCommand(cmdPkg);
+            CmdToServer(cmdPkg);
         }
         res = stickToDirection(psData.JoyRightX);
         if (isFirst || lastData.JoyLeftY != psData.JoyRightX)
@@ -83,13 +83,13 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
             {
                 cmdPkg.command = CMD_LEFT;
                 cmdPkg.value = -res;
-                ReceivedCommand(cmdPkg);
+                CmdToServer(cmdPkg);
             }
             else if (res > 0)
             {
                 cmdPkg.command = CMD_RIGHT;
                 cmdPkg.value = res;
-                ReceivedCommand(cmdPkg);
+                CmdToServer(cmdPkg);
             }
             // No Sent STOP for left-right
         }
@@ -116,7 +116,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
                 cmdPkg.command = CMD_STOP;
                 cmdPkg.value = 0;
             }
-            ReceivedCommand(cmdPkg);
+            CmdToServer(cmdPkg);
         }
         res = stickToDirection(psData.JoyLeftX);
         if (isFirst || lastData.JoyLeftY != psData.JoyLeftX)
@@ -125,13 +125,13 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
             {
                 cmdPkg.command = CMD_LEFT;
                 cmdPkg.value = -res;
-                ReceivedCommand(cmdPkg);
+                CmdToServer(cmdPkg);
             }
             else if (res > 0)
             {
                 cmdPkg.command = CMD_RIGHT;
                 cmdPkg.value = res;
-                ReceivedCommand(cmdPkg);
+                CmdToServer(cmdPkg);
             }
             // No Sent STOP for left-right
         }
@@ -147,7 +147,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
                 psData.buttons &PSXBTN_UP ? cmdPkg.command = CMD_FORWARD : cmdPkg.command = CMD_STOP;
                 psData.buttons &PSXBTN_DOWN ? cmdPkg.command = CMD_BACKWARD : cmdPkg.command = CMD_STOP;
                 cmdPkg.value = 100;
-                ReceivedCommand(cmdPkg);
+                CmdToServer(cmdPkg);
             }
         }
         if (psData.buttons & PSXBTN_LEFT || psData.buttons & PSXBTN_RIGHT)
@@ -156,7 +156,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
             {
                 psData.buttons &PSXBTN_LEFT ? cmdPkg.command = CMD_LEFT : cmdPkg.command = CMD_RIGHT;
                 cmdPkg.value = 100;
-                ReceivedCommand(cmdPkg);
+                CmdToServer(cmdPkg);
             }
         }
         break;
@@ -168,74 +168,74 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         {
             cmdPkg.command = CMD_BUTTON1;
             cmdPkg.value = psData.buttons & PSXBTN_UP ? 100 : 0;
-            ReceivedCommand(cmdPkg);
+            CmdToServer(cmdPkg);
         }
         if (isFirst || psData.buttons & PSXBTN_DOWN != lastData.buttons & PSXBTN_DOWN)
         {
             cmdPkg.command = CMD_BUTTON2;
             cmdPkg.value = psData.buttons & PSXBTN_DOWN ? 100 : 0;
-            ReceivedCommand(cmdPkg);
+            CmdToServer(cmdPkg);
         }
         if (isFirst || psData.buttons & PSXBTN_LEFT != lastData.buttons & PSXBTN_LEFT)
         {
             cmdPkg.command = CMD_BUTTON3;
             cmdPkg.value = psData.buttons & PSXBTN_LEFT ? 100 : 0;
-            ReceivedCommand(cmdPkg);
+            CmdToServer(cmdPkg);
         }
         if (isFirst || psData.buttons & PSXBTN_RIGHT != lastData.buttons & PSXBTN_RIGHT)
         {
             cmdPkg.command = CMD_BUTTON4;
             cmdPkg.value = psData.buttons & PSXBTN_RIGHT ? 100 : 0;
-            ReceivedCommand(cmdPkg);
+            CmdToServer(cmdPkg);
         }
     }
     if (isFirst || psData.buttons & PSXBTN_L1 != lastData.buttons & PSXBTN_L1)
     {
         cmdPkg.command = CMD_BUTTON5;
         cmdPkg.value = psData.buttons & PSXBTN_L1 ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_L2 != lastData.buttons & PSXBTN_L2)
     {
         cmdPkg.command = CMD_BUTTON6;
         cmdPkg.value = psData.buttons & PSXBTN_L2 ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_TRIANGLE != lastData.buttons & PSXBTN_TRIANGLE)
     {
         cmdPkg.command = CMD_BUTTON9;
         cmdPkg.value = psData.buttons & PSXBTN_TRIANGLE ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_CROSS != lastData.buttons & PSXBTN_CROSS)
     {
         cmdPkg.command = CMD_BUTTON10;
         cmdPkg.value = psData.buttons & PSXBTN_CROSS ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_SQUARE != lastData.buttons & PSXBTN_SQUARE)
     {
         cmdPkg.command = CMD_BUTTON11;
         cmdPkg.value = psData.buttons & PSXBTN_SQUARE ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_CIRCLE != lastData.buttons & PSXBTN_CIRCLE)
     {
         cmdPkg.command = CMD_BUTTON12;
         cmdPkg.value = psData.buttons & PSXBTN_CIRCLE ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_R1 != lastData.buttons & PSXBTN_R1)
     {
         cmdPkg.command = CMD_BUTTON7;
         cmdPkg.value = psData.buttons & PSXBTN_R1 ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     if (isFirst || psData.buttons & PSXBTN_R2 != lastData.buttons & PSXBTN_R2)
     {
         cmdPkg.command = CMD_BUTTON8;
         cmdPkg.value = psData.buttons & PSXBTN_R2 ? 100 : 0;
-        ReceivedCommand(cmdPkg);
+        CmdToServer(cmdPkg);
     }
     isFirst = false;
     memcpy(&lastData, &psData, sizeof(psData));

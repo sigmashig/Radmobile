@@ -1,5 +1,5 @@
 #include "RmRcEmulator.hpp"
-#include "Configuration.hpp"
+#include "RmConfiguration.hpp"
 
 RmRcEmulator::RmRcEmulator()
 {
@@ -18,5 +18,5 @@ void RmRcEmulator::loopEventHandle(void *arg, esp_event_base_t event_base, int32
     CommandPkg command;
     command.command = (CommandType)c;
     command.value = random(0, 100);
-    remoteControl->ReceivedCommand(command);
+    remoteControl->CmdToServer(command);
 }

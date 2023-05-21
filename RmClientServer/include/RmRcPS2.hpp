@@ -8,7 +8,7 @@ class RmRcPS2 : public RmRemoteControl
 public:
     RmRcPS2();
     void Begin();
-    void SendCommand(String command);
+    //void SendCommand(String command);
 
 private:
     PSX psx;

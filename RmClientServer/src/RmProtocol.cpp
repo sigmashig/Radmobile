@@ -7,4 +7,4 @@ RmProtocol::RmProtocol()
 
 //--------------------------------
 RmProtocol *rmProtocol;
-ESP_EVENT_DEFINE_BASE(RMSERVER_EVENT);
+ESP_EVENT_DEFINE_BASE(RMPROTOCOL_EVENT);

@@ -1,4 +1,4 @@
-#include "Configuration.hpp"
+#include "RmConfiguration.hpp"
 
 Configuration *config = NULL;
 ESP_EVENT_DEFINE_BASE(CONFIG_EVENT);

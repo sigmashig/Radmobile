@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <esp_event.h>
-#include "Configuration.hpp"
+#include "RmConfiguration.hpp"
+
 
 #if COMMUNICATIONS == 1
 #include <WiFi.h>
@@ -12,6 +13,8 @@
 #elif MODE == 2
 #include "RmClient.hpp"
 #endif
+
+#include "RmCommands.hpp" 
 
 #include "RmRemoteControl.hpp"
 #if RC == 1
@@ -39,7 +42,7 @@ void begin()
   remoteControl->Begin();
 #elif MODE == 2
   Serial.println("Starting RmClient");
-  rmClient->Begin();
+  Client->Begin();
 #endif
   Serial.println("Setup ready\n");
   config->Begin();
@@ -85,11 +88,13 @@ void setup()
 
   config = new Configuration();
 
+  rmCommands = new RmCommands();
+  
 #if COMMUNICATIONS == 1 // WiFi
 #if MODE == 1
   rmServer = new RmServer();
 #elif MODE == 2
-  rmClient = new RmClient(String(SERVER_URL), SERVER_PORT);
+  Client = new RmClient(String(SERVER_URL), SERVER_PORT);
 #endif
 
 #if RC == 1

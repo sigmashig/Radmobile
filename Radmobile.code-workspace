@@ -4,16 +4,16 @@
 			"path": "RmClientServer"
 		},
 		{
-			"name": "TestWSServer",
-			"path": "../TestWSServer"
-		},
-		{
-			"name": "TestWS",
-			"path": "../../Documents/PlatformIO/Projects/TestWS"
-		},
-		{
 			"name": "TestPS2",
 			"path": "../TestPS2"
+		},
+		{
+			"name": "TestMotorQS909",
+			"path": "../TestMotorQS909"
+		},
+		{
+			"name": "TestPortExpander",
+			"path": "../../Documents/PlatformIO/Projects/TestPortExpander"
 		}
 	],
 	"settings": {

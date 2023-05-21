@@ -13,11 +13,9 @@ typedef enum
 class RmRemoteControl
 {
 public:
-    RmRemoteControl();
+    //RmRemoteControl();
     virtual void Begin() = 0;
-    void ReceivedCommand(CommandPkg command);
-    static void CommandToString(CommandPkg command, String &commandString);
-    static String cmdTxt[CMD_NOCOMMAND + 1];
+    void CmdToServer(CommandPkg command);
 };
 
 extern RmRemoteControl *remoteControl;
