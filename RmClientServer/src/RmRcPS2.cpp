@@ -1,6 +1,7 @@
 #include "RmRcPS2.hpp"
 #include "RmConfiguration.hpp"
 #include <esp_event.h>
+#include "RmTypes.hpp"
 
 RmRcPS2::RmRcPS2()
 {
@@ -52,7 +53,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
     Serial.println("RmRcPS2::cmdProcessing");
     switch (rmConfig->ps2Config.modeStick)
     {
-    case RmConfiguration::PS2Config::PS2ModeStick::PS2_2x2:
+    case PS2ModeStick::PS2_2x2:
     {
         int res;
         res = stickToDirection(psData.JoyLeftY);
@@ -95,7 +96,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         }
         break;
     }
-    case RmConfiguration::PS2Config::PS2ModeStick::PS2_4x4:
+    case PS2ModeStick::PS2_4x4:
     {
         int res;
         res = stickToDirection(psData.JoyLeftY);
@@ -137,7 +138,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         }
         break;
     }
-    case RmConfiguration::PS2Config::PS2ModeStick::PS2_PAD:
+    case PS2ModeStick::PS2_PAD:
     {
 
         if (psData.buttons & PSXBTN_UP || psData.buttons & PSXBTN_DOWN)
@@ -162,7 +163,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         break;
     }
     }
-    if (rmConfig->ps2Config.modeStick != RmConfiguration::PS2Config::PS2ModeStick::PS2_PAD)
+    if (rmConfig->ps2Config.modeStick != PS2ModeStick::PS2_PAD)
     {
         if (isFirst || psData.buttons & PSXBTN_UP != lastData.buttons & PSXBTN_UP)
         {

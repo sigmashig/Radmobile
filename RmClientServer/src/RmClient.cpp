@@ -23,6 +23,8 @@ RmClient::RmClient()
 #elif PROTOCOL == 3
 #endif
 
+    PinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
+
 #if VEHICLE == 1
     rmVehicle = new RmVehicleV1();
 #endif

@@ -14,6 +14,10 @@
 		{
 			"name": "TestPortExpander",
 			"path": "../../Documents/PlatformIO/Projects/TestPortExpander"
+		},
+		{
+			"name": "TestPWM",
+			"path": "../../Documents/PlatformIO/Projects/TestPWM"
 		}
 	],
 	"settings": {

@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <esp_event.h>
+#include "RmConfiguration.hpp"
 
 class RmClient
 {
@@ -8,6 +9,7 @@ public:
     RmClient();
     void Begin();
     bool IsReady() { return isReady; };
+    RmPinsDriver *PinsDriver;
 
 private:
     bool isConnected = false;
