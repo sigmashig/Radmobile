@@ -20,7 +20,7 @@ class RmVehicle
 public:
     RmVehicle();
     virtual void Begin() = 0;
-    virtual VehicleStatus RunCmd(CommandPkg cmd) = 0;
+    virtual VehicleStatus RunCmd(RmCommandPkg cmd) = 0;
 };
 
 extern RmVehicle *rmVehicle;

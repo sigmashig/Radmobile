@@ -21,21 +21,21 @@ typedef enum
     CMD_BUTTON11,
     CMD_BUTTON12,
     CMD_NOCOMMAND
-} CommandType;
+} RmCommandType;
 
 typedef struct
 {
-    CommandType command;
+    RmCommandType command;
     int value;
-} CommandPkg;
+} RmCommandPkg;
 
 class RmCommands
 {
 public:
     RmCommands();
-    static void CommandToString(CommandPkg command, String &commandString);
+    static void CommandToString(RmCommandPkg command, String &commandString);
     static String cmdTxt[CMD_NOCOMMAND + 1];
-    static CommandPkg StringToCommand(String commandString);
+    static RmCommandPkg StringToCommand(String commandString);
 };
 
-extern RmCommands* rmCommands;
+extern RmCommands *rmCommands;

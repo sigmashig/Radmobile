@@ -38,7 +38,7 @@ void RmProtocolMqtt::ReceivedCommand(String command)
 {
     Serial.println("RmProtocolMqtt::ReceivedCommand()");
     Serial.println(command);
-    CommandPkg cmd;
+    RmCommandPkg cmd;
     cmd = RmCommands::StringToCommand(command);
     esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(cmd), portMAX_DELAY);
 }

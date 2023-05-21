@@ -1,8 +1,6 @@
 #include "RMServer.hpp"
 #include "RmProtocol.hpp"
-#if PROTOCOL == 1
-#include "RmProtocolWs.hpp"
-#elif PROTOCOL == 2
+#if PROTOCOL == 2
 #include "RmProtocolMqtt.hpp"
 #endif
 
@@ -38,7 +36,7 @@ void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int3
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("commandEventHandler");
-    CommandPkg *command = (CommandPkg *)event_data;
+    RmCommandPkg *command = (RmCommandPkg *)event_data;
     String commandString;
     RmCommands::CommandToString(*command, commandString);
     Serial.println("Command received: " + commandString);

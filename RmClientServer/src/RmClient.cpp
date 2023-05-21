@@ -1,6 +1,5 @@
 #include "RmClient.hpp"
 #include "RmProtocol.hpp"
-#include "RmProtocolWs.hpp"
 #include "RmProtocolMqtt.hpp"
 
 RmClient::RmClient(String host, uint16_t port)
@@ -12,12 +11,7 @@ RmClient::RmClient(String host, uint16_t port)
 void RmClient::Begin()
 {
     Serial.println("RmClient::Begin()");
-#if PROTOCOL == 1
-
-    rmProtocol = new RmProtocolWs(host, port);
-    rmProtocol->Begin();
-
-#elif PROTOCOL == 2
+#if PROTOCOL == 2
     rmProtocol = new RmProtocolMqtt();
     rmProtocol->Begin();
 #endif

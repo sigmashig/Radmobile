@@ -24,7 +24,7 @@ RmCommands::RmCommands()
     cmdTxt[CMD_NOCOMMAND] = "YY";
 }
 
-void RmCommands::CommandToString(CommandPkg command, String &commandString)
+void RmCommands::CommandToString(RmCommandPkg command, String &commandString)
 {
     // command string format: "{L2#546}" means: command=CMD_J2_LEFT, value=546
     commandString = "{";
@@ -33,9 +33,9 @@ void RmCommands::CommandToString(CommandPkg command, String &commandString)
     commandString += command.value;
     commandString += "}";
 }
-CommandPkg RmCommands::StringToCommand(String commandString)
+RmCommandPkg RmCommands::StringToCommand(String commandString)
 {
-    CommandPkg command;
+    RmCommandPkg command;
     command.command = CMD_NOCOMMAND;
     if (commandString[0] == '{' && commandString[commandString.length() - 1] == '}')
     {
@@ -44,7 +44,7 @@ CommandPkg RmCommands::StringToCommand(String commandString)
         {
             if (cmdTxt[i] == cmd)
             {
-                command.command = (CommandType)i;
+                command.command = (RmCommandType)i;
                 command.value = commandString.substring(4, commandString.length() - 1).toInt();
                 break;
             }
@@ -54,4 +54,4 @@ CommandPkg RmCommands::StringToCommand(String commandString)
 }
 
 //----------------------------------------------------
-RmCommands* rmCommands;
+RmCommands *rmCommands;

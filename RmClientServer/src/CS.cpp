@@ -2,7 +2,6 @@
 #include <esp_event.h>
 #include "RmConfiguration.hpp"
 
-
 #if COMMUNICATIONS == 1
 #include <WiFi.h>
 #elif COMMUNICATIONS == 2
@@ -14,7 +13,7 @@
 #include "RmClient.hpp"
 #endif
 
-#include "RmCommands.hpp" 
+#include "RmCommands.hpp"
 
 #include "RmRemoteControl.hpp"
 #if RC == 1
@@ -86,10 +85,10 @@ void setup()
   Serial.begin(115200);
   Serial.println("--------------------");
 
-  config = new Configuration();
+  config = new RmConfiguration();
 
   rmCommands = new RmCommands();
-  
+
 #if COMMUNICATIONS == 1 // WiFi
 #if MODE == 1
   rmServer = new RmServer();

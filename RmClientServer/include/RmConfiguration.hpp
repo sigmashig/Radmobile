@@ -2,26 +2,28 @@
 #include <Arduino.h>
 #include <esp_event.h>
 
-ESP_EVENT_DECLARE_BASE(CONFIG_EVENT);
+ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
 typedef enum
 {
-    CONFIG_EVENT_LOOP,
-    CONFIG_EVENT_1_SECOND,
-    CONFIG_EVENT_3_SECONDS,
-    CONFIG_EVENT_5_SECONDS,
-    CONFIG_EVENT_10_SECONDS,
-    CONFIG_EVENT_30_SECONDS,
-    CONFIG_EVENT_1_MINUTE,
-    CONFIG_EVENT_3_MINUTES,
-    CONFIG_EVENT_5_MINUTES,
-    CONFIG_EVENT_10_MINUTES,
-    CONFIG_EVENT_30_MINUTES
-} ConfigEvent;
+    RMCONFIG_EVENT_LOOP,
+    RMCONFIG_EVENT_1_SECOND,
+    RMCONFIG_EVENT_3_SECONDS,
+    RMCONFIG_EVENT_5_SECONDS,
+    RMCONFIG_EVENT_10_SECONDS,
+    RMCONFIG_EVENT_30_SECONDS,
+    RMCONFIG_EVENT_1_MINUTE,
+    RMCONFIG_EVENT_3_MINUTES,
+    RMCONFIG_EVENT_5_MINUTES,
+    RMCONFIG_EVENT_10_MINUTES,
+    RMCONFIG_EVENT_30_MINUTES
+} RmConfigEvent;
 
-class Configuration
+class RmConfiguration
 {
 public:
     // Hardware configuration
+
+    //SERVER
     // Joystick PS2
     static const byte PIN_PS2_DATA = 15;
     static const byte PIN_PS2_CMD = 16;
@@ -35,7 +37,9 @@ public:
     } PS2ModeStick;
     static PS2ModeStick ModeStick;
 
-    Configuration();
+    // CLIENT
+
+    RmConfiguration();
     void Loop();
     void Begin();
 
@@ -45,4 +49,4 @@ private:
     static ulong lastLoop;
 };
 
-extern Configuration *config;
+extern RmConfiguration *config;
