@@ -21,6 +21,9 @@ public:
     RmVehicle();
     virtual void Begin() = 0;
     virtual VehicleStatus RunCmd(RmCommandPkg cmd) = 0;
+    bool IsReady() { return isReady; };
+protected:
+    bool isReady = false;
 };
 
 extern RmVehicle *rmVehicle;

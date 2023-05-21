@@ -2,7 +2,7 @@
 
 RmConfiguration *config = NULL;
 ESP_EVENT_DEFINE_BASE(RMCONFIG_EVENT);
-RmConfiguration::PS2ModeStick RmConfiguration::ModeStick = RmConfiguration::PS2ModeStick::PS2_4x4;
+//RmConfiguration::PS2ModeStick RmConfiguration::ModeStick = RmConfiguration::PS2ModeStick::PS2_4x4;
 ulong RmConfiguration::loopCounter;
 ulong RmConfiguration::loop1SecCounter;
 ulong RmConfiguration::lastLoop;

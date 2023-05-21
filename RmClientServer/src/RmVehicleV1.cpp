@@ -1,4 +1,5 @@
 #include "RmVehicleV1.hpp"
+#include "RmConfiguration.hpp"
 
 RmVehicleV1::RmVehicleV1()
 {

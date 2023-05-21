@@ -4,8 +4,8 @@
 
 RmRcPS2::RmRcPS2()
 {
-    psx.setupPins(RmConfiguration::PIN_PS2_DATA, RmConfiguration::PIN_PS2_CMD,
-                  RmConfiguration::PIN_PS2_ATT, RmConfiguration::PIN_PS2_CLOCK, 10);
+    psx.setupPins(rmConfig->ps2Config.pinData, rmConfig->ps2Config.pinCmd, 
+                    rmConfig->ps2Config.pinAtt, rmConfig->ps2Config.pinClock, 10);
     psx.config(PSXMODE_ANALOG);
 }
 
@@ -50,9 +50,9 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
 {
     RmCommandPkg cmdPkg;
     Serial.println("RmRcPS2::cmdProcessing");
-    switch (rmConfig->ModeStick)
+    switch (rmConfig->ps2Config.modeStick)
     {
-    case RmConfiguration::PS2ModeStick::PS2_2x2:
+    case RmConfiguration::PS2Config::PS2ModeStick::PS2_2x2:
     {
         int res;
         res = stickToDirection(psData.JoyLeftY);
@@ -95,7 +95,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         }
         break;
     }
-    case RmConfiguration::PS2ModeStick::PS2_4x4:
+    case RmConfiguration::PS2Config::PS2ModeStick::PS2_4x4:
     {
         int res;
         res = stickToDirection(psData.JoyLeftY);
@@ -137,7 +137,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         }
         break;
     }
-    case RmConfiguration::PS2ModeStick::PS2_PAD:
+    case RmConfiguration::PS2Config::PS2ModeStick::PS2_PAD:
     {
 
         if (psData.buttons & PSXBTN_UP || psData.buttons & PSXBTN_DOWN)
@@ -162,7 +162,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         break;
     }
     }
-    if (rmConfig->ModeStick != RmConfiguration::PS2ModeStick::PS2_PAD)
+    if (rmConfig->ps2Config.modeStick != RmConfiguration::PS2Config::PS2ModeStick::PS2_PAD)
     {
         if (isFirst || psData.buttons & PSXBTN_UP != lastData.buttons & PSXBTN_UP)
         {
