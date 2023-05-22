@@ -20,15 +20,44 @@ RmVehicleV1::RmVehicleV1()
     {
         rearRight = new RmEngineJY01(rmConfig->Vehicle.rearRight);
     }
+
+    relay1 = new RmRelay(rmConfig->Vehicle.r1);
+    relay2 = new RmRelay(rmConfig->Vehicle.r2);
 }
 
 void RmVehicleV1::Begin()
 {
+    frontLeft->Begin();
+    frontRight->Begin();
+    rearLeft->Begin();
+    rearRight->Begin();
+    relay1->Begin();
+    relay2->Begin();
 }
 
 void RmVehicleV1::turn(RmCommandPkg cmd)
 {
     direction = ENGINE_FORWARD;
+    power = cmd.value;
+    if (cmd.command == CMD_LEFT)
+    {
+        frontLeft->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
+        frontRight->Run(direction, ACTION_RUN, power);
+        rearLeft->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
+        rearRight->Run(direction, ACTION_RUN, power);
+    }
+    else if (cmd.command == CMD_RIGHT)
+    {
+        frontLeft->Run(direction, ACTION_RUN, power);
+        frontRight->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
+        rearLeft->Run(direction, ACTION_RUN, power);
+        rearRight->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
+    }
+}
+
+void RmVehicleV1::go(RmCommandPkg cmd)
+{
+    direction = cmd.command == CMD_FORWARD ? ENGINE_FORWARD : ENGINE_BACKWARD;
     power = cmd.value;
     frontLeft->Run(direction, ACTION_RUN, power);
     frontRight->Run(direction, ACTION_RUN, power);
@@ -51,9 +80,30 @@ void RmVehicleV1::processButton(RmCommandPkg cmd)
     switch (cmd.command)
     {
     case CMD_BUTTON1:
-        break;
+    {
+        if (cmd.value == 0)
+        {
+            relay1->Off();
+        }
+        else
+        {
+            relay1->On();
+        }
+    }
+    break;
+
     case CMD_BUTTON2:
-        break;
+    {
+        if (cmd.value == 0)
+        {
+            relay2->Off();
+        }
+        else
+        {
+            relay2->On();
+        }
+    }
+    break;
     case CMD_BUTTON3:
         break;
     case CMD_BUTTON4:
@@ -80,6 +130,17 @@ void RmVehicleV1::processButton(RmCommandPkg cmd)
 VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
 {
     VehicleStatus status = VEHICLE_OK;
+    if (!isStarted)
+    {
+        if (cmd.command == CMD_START)
+        {
+            isStarted = true;
+        }
+        else
+        { // skip command
+            return VEHICLE_NOT_STARTED;
+        }
+    }
     switch (cmd.command)
     {
     case CMD_FORWARD:
@@ -87,11 +148,7 @@ VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
         // No break here
     case CMD_BACKWARD:
         direction = ENGINE_BACKWARD;
-        power = cmd.value;
-        frontLeft->Run(direction, ACTION_RUN, power);
-        frontRight->Run(direction, ACTION_RUN, power);
-        rearLeft->Run(direction, ACTION_RUN, power);
-        rearRight->Run(direction, ACTION_RUN, power);
+        go(cmd);
         break;
     case CMD_LEFT:
     case CMD_RIGHT:
@@ -101,22 +158,25 @@ VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
         direction = ENGINE_NODIRECTION;
         power = 0;
         stop();
+        isStarted = false;
         break;
-        case CMD_BUTTON1:
-        case CMD_BUTTON2:
-        case CMD_BUTTON3:
-        case CMD_BUTTON4:
-        case CMD_BUTTON5:
-        case CMD_BUTTON6:
-        case CMD_BUTTON7:
-        case CMD_BUTTON8:
-        case CMD_BUTTON9:
-        case CMD_BUTTON10:
-        case CMD_BUTTON11:
-        case CMD_BUTTON12:
-            processButton(cmd);
-            break;
-
+    case CMD_BUTTON1:
+    case CMD_BUTTON2:
+    case CMD_BUTTON3:
+    case CMD_BUTTON4:
+    case CMD_BUTTON5:
+    case CMD_BUTTON6:
+    case CMD_BUTTON7:
+    case CMD_BUTTON8:
+    case CMD_BUTTON9:
+    case CMD_BUTTON10:
+    case CMD_BUTTON11:
+    case CMD_BUTTON12:
+        processButton(cmd);
+        break;
+    default:
+        status = VEHICLE_BAD_COMMAND;
+        break;
     }
     return status;
 }

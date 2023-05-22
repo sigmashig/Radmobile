@@ -23,7 +23,8 @@
 	"settings": {
 		"files.associations": {
 			"new": "cpp",
-			"*.tcc": "cpp"
+			"*.tcc": "cpp",
+			"cmath": "cpp"
 		}
 	}
 }

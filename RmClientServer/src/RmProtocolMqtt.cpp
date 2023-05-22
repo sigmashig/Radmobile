@@ -14,7 +14,6 @@ void RmProtocolMqtt::Begin()
     mqttClient.setCleanSession(true);
     mqttClient.setKeepAlive(15);
 
-    connectToMqtt();
     mqttClient.onDisconnect([this](AsyncMqttClientDisconnectReason reason)
                             { 
                                 Serial.println("Disconnected from MQTT."); 
@@ -59,7 +58,7 @@ bool RmProtocolMqtt::_onConnect(bool sessionPresent)
 
 void RmProtocolMqtt::connectToMqtt()
 {
-    Serial.println("Connecting to MQTT...");
+    Serial.println("MAIN Connecting to MQTT...");
     mqttClient.connect();
 }
 
@@ -70,8 +69,8 @@ void RmProtocolMqtt::messageReceived(char *topic, char *payload,
     Serial.println("RmProtocolMqtt::MessageReceived()");
     if (len > 0)
     {
-        Serial.printf("[%s](%u):%s\n", topic, len, payload);
         payload[len] = '\0';
+        Serial.printf("[%s](%u):%s\n", topic, len, payload);
         rmProtocol->ReceivedCommand(String(payload));
     }
     else

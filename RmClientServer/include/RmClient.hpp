@@ -9,7 +9,6 @@ public:
     RmClient();
     void Begin();
     bool IsReady() { return isReady; };
-    RmPinsDriver *PinsDriver;
 
 private:
     bool isConnected = false;

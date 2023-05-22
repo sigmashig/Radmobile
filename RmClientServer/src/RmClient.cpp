@@ -14,27 +14,25 @@
 RmClient::RmClient()
 {
     rmCommands = new RmCommands();
+    rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
 #if PROTOCOL == 1
 #elif PROTOCOL == 2
     rmProtocol = new RmProtocolMqtt();
-    WiFi.mode(WIFI_STA);
     startWiFi(WIFI_SSID, WIFI_PWD);
 #elif PROTOCOL == 3
 #endif
-
-    PinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
-
-#if VEHICLE == 1
-    rmVehicle = new RmVehicleV1();
-#endif
+    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED,
+                                        commandReceived, NULL, NULL);
 }
 
 void RmClient::Begin()
 {
-    Serial.println("RmClient::Begin()");
+    rmPinsDriver->Begin();
     rmProtocol->Begin();
-    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED,
-                                        commandReceived, NULL, NULL);
+#if VEHICLE == 1
+    rmVehicle = new RmVehicleV1();
+#endif
+    rmVehicle->Begin();
 }
 
 void RmClient::startWiFi(String ssid, String password)

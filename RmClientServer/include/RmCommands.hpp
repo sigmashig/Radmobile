@@ -3,6 +3,7 @@
 
 typedef enum
 {
+    CMD_START,
     CMD_FORWARD,
     CMD_BACKWARD,
     CMD_LEFT,

@@ -13,6 +13,7 @@ typedef enum
 typedef enum
 {
     VEHICLE_OK,
+    VEHICLE_NOT_STARTED,
     VEHICLE_BAD_COMMAND
 } VehicleStatus;
 

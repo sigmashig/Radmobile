@@ -3,7 +3,7 @@
 String RmCommands::cmdTxt[CMD_NOCOMMAND + 1];
 RmCommands::RmCommands()
 {
-
+    cmdTxt[CMD_START] = "00";
     cmdTxt[CMD_FORWARD] = "F1";
     cmdTxt[CMD_BACKWARD] = "B1";
     cmdTxt[CMD_LEFT] = "L1";

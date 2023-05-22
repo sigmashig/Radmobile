@@ -18,43 +18,17 @@ public:
         PIN_INPUT,
         PIN_OUTPUT
     } PinMode;
-    /*
-    typedef enum
-    {
-        PINDRV_NO,
-        PINDRV_GPIO,
-        PINDRV_PCF
-    } PinDriver;
-    typedef union
-    {
-        struct
-        {
-            byte controllerId;
-            byte port;
-        } PIN_I2C;
-        struct
-        {
-            byte pin;
-        } PIN_GPIO;
-    } PinConfig;
-    typedef struct
-    {
-        PinDriver pinDriver;
-        PinType pinType;
-        PinMode pinMode;
-        PinConfig pinConfig;
-    } PinDefinition;
-*/
     RmPinsDriver(PcfSettings *pcfSettings, int numbPcf);
     void Begin();
     void SetPinMode(PinDefinition pinDefinition, PinMode pinMode);
-    void SetPinType(PinDefinition pinDefinition, PinType pinType);
-
+    void RegisterPin(PinDefinition pinDefinition);
     void Write(PinDefinition pinDefinition, uint value);
     uint Read(PinDefinition pinDefinition);
 
 private:
     int numbPcfs;
     PCF8575 **pcfs;
-
+    uint normalizeValue(uint value, PinDefinition pinDefinition);
 };
+
+extern RmPinsDriver *rmPinsDriver;

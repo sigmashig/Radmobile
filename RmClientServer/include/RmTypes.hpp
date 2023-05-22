@@ -88,13 +88,24 @@ typedef struct
         } controllerJY01;
     } connection ;
 } EngineConfig;
+typedef enum {
+    RELAY_PULSE,
+    RELAY_TRIGGER
+} RelayType;
 
+typedef struct {
+    RelayType type;
+    PinDefinition pin;
+    bool onLevel;
+} RelayConfig;
 typedef struct
 {
     EngineConfig frontLeft;
     EngineConfig frontRight;
     EngineConfig rearLeft;
     EngineConfig rearRight;
+    RelayConfig r1;
+    RelayConfig r2;
 } VehicleConfig;
 
 typedef struct

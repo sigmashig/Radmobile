@@ -5,18 +5,17 @@
 
 RmEngineJY01::RmEngineJY01(EngineConfig config) : RmEngine(config)
 {
+    rmPinsDriver->RegisterPin(config.connection.controllerJY01.vr);
+    rmPinsDriver->SetPinMode(config.connection.controllerJY01.vr, RmPinsDriver::PinMode::PIN_OUTPUT);
 
-    rmClient->PinsDriver->SetPinMode(config.connection.controllerJY01.vr, RmPinsDriver::PinMode::PIN_OUTPUT);
-    rmClient->PinsDriver->SetPinType(config.connection.controllerJY01.vr, PinType::PIN_PWM);
+    rmPinsDriver->RegisterPin(config.connection.controllerJY01.brake);
+    rmPinsDriver->SetPinMode(config.connection.controllerJY01.brake, RmPinsDriver::PinMode::PIN_OUTPUT);
 
-    rmClient->PinsDriver->SetPinMode(config.connection.controllerJY01.brake, RmPinsDriver::PinMode::PIN_OUTPUT);
-    rmClient->PinsDriver->SetPinType(config.connection.controllerJY01.brake, PinType::PIN_DIGITAL);
+    rmPinsDriver->RegisterPin(config.connection.controllerJY01.zf);
+    rmPinsDriver->SetPinMode(config.connection.controllerJY01.zf, RmPinsDriver::PinMode::PIN_OUTPUT);
 
-    rmClient->PinsDriver->SetPinMode(config.connection.controllerJY01.zf, RmPinsDriver::PinMode::PIN_OUTPUT);
-    rmClient->PinsDriver->SetPinType(config.connection.controllerJY01.zf, PinType::PIN_DIGITAL);
-
-    rmClient->PinsDriver->SetPinMode(config.connection.controllerJY01.signal, RmPinsDriver::PinMode::PIN_INPUT);
-    rmClient->PinsDriver->SetPinType(config.connection.controllerJY01.signal, PinType::PIN_DIGITAL);
+    rmPinsDriver->RegisterPin(config.connection.controllerJY01.signal);
+    rmPinsDriver->SetPinMode(config.connection.controllerJY01.signal, RmPinsDriver::PinMode::PIN_INPUT);
 
     // esp_event_handler_register(RM_PINS_DRIVER_EVENT, RM_PINS_DRIVER_ISR, pcfEventHandler, NULL);
 }
@@ -30,29 +29,29 @@ void RmEngineJY01::Run(EngineDirection direction, EngineAction action, int power
 {
     if (action == EngineAction::ACTION_STOP)
     {
-        rmClient->PinsDriver->Write(config.connection.controllerJY01.vr, 0);
-        rmClient->PinsDriver->Write(config.connection.controllerJY01.brake, 1);
+        rmPinsDriver->Write(config.connection.controllerJY01.vr, 0);
+        rmPinsDriver->Write(config.connection.controllerJY01.brake, 1);
         return;
     }
     else
     {
         if (direction == EngineDirection::ENGINE_FORWARD)
         {
-            rmClient->PinsDriver->Write(config.connection.controllerJY01.zf, 1);
+            rmPinsDriver->Write(config.connection.controllerJY01.zf, 1);
         }
         else
         {
-            rmClient->PinsDriver->Write(config.connection.controllerJY01.zf, 0);
+            rmPinsDriver->Write(config.connection.controllerJY01.zf, 0);
         }
         if (action == EngineAction::ACTION_RUN)
         {
-            rmClient->PinsDriver->Write(config.connection.controllerJY01.brake, 0);
-            rmClient->PinsDriver->Write(config.connection.controllerJY01.vr, power);
+            rmPinsDriver->Write(config.connection.controllerJY01.brake, 0);
+            rmPinsDriver->Write(config.connection.controllerJY01.vr, power);
         }
         else
         {
-            rmClient->PinsDriver->Write(config.connection.controllerJY01.vr, 0);
-            rmClient->PinsDriver->Write(config.connection.controllerJY01.brake, 1);
+            rmPinsDriver->Write(config.connection.controllerJY01.vr, 0);
+            rmPinsDriver->Write(config.connection.controllerJY01.brake, 1);
         }
     }
 }
