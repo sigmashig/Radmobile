@@ -2,8 +2,6 @@
 #include <Arduino.h>
 #include <esp_event.h>
 #include "RmPinsDriver.hpp"
-#include "RmPinsDriverPcf.hpp"
-#include "RmPinsDriverGpio.hpp"
 #include "RmTypes.hpp"
 
 ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
@@ -42,10 +40,17 @@ public:
 
 #if VEHICLE == 1
     VehicleConfig Vehicle = {
-        .frontLeft = {.controllerType = EngineConfig::JY01, .connection = {.ControllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.PIN_GPIO = {.pin = 2}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x01}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x02}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x03}}}}}},
-        .frontRight = {.controllerType = EngineConfig::JY01, .connection = {.ControllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.PIN_GPIO = {.pin = 4}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x05}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x06}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x07}}}}}},
-        .rearLeft = {.controllerType = EngineConfig::JY01, .connection = {.ControllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.PIN_GPIO = {.pin = 16}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x09}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x0A}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x0B}}}}}},
-        .rearRight = {.controllerType = EngineConfig::JY01, .connection = {.ControllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.PIN_GPIO = {.pin = 25}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x0D}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x0E}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.PIN_I2C = {.controllerId = 0, .port = 0x0F}}}}}}};
+        .frontLeft = {
+            .controllerType = EngineControllerType::JY01,
+            .connection = {
+                .controllerJY01 = {
+                    .vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinAddress = {.PIN_GPIO = {.pin = 2}}}},
+                    .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x01}}}},
+                    .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x02}}}},
+                    .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x03}}}}}}},
+        .frontRight = {.controllerType = EngineControllerType::JY01, .connection = {.controllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinAddress = {.PIN_GPIO = {.pin = 4}}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x05}}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x06}}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x07}}}}}}},
+        .rearLeft = {.controllerType = EngineControllerType::JY01, .connection = {.controllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinAddress = {.PIN_GPIO = {.pin = 16}}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x09}}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0A}}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0B}}}}}}},
+        .rearRight = {.controllerType = EngineControllerType::JY01, .connection = {.controllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinAddress = {.PIN_GPIO = {.pin = 25}}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = { .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0D}}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress ={.PIN_I2C = {.controllerId = 0, .port = 0x0E}}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0F}}}}}}}};
 #endif
     // Functionality
     RmConfiguration();

@@ -69,13 +69,14 @@ typedef enum
     ACTION_STOP,
     ACTION_RUN
 } EngineAction;
+typedef enum
+{
+    JY01
+} EngineControllerType;
 
 typedef struct
 {
-    typedef enum
-    {
-        JY01
-    } EngineControllerType;
+    EngineControllerType controllerType;
     union
     {
         struct
@@ -85,8 +86,7 @@ typedef struct
             PinDefinition signal;
             PinDefinition brake;
         } controllerJY01;
-    } connection;
-    EngineControllerType controllerType;
+    } connection ;
 } EngineConfig;
 
 typedef struct

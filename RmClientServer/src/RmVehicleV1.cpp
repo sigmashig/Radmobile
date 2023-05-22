@@ -4,19 +4,19 @@
 
 RmVehicleV1::RmVehicleV1()
 {
-    if (rmConfig->Vehicle.frontLeft.controllerType == EngineConfig::EngineControllerType::JY01)
+    if (rmConfig->Vehicle.frontLeft.controllerType == EngineControllerType::JY01)
     {
         frontLeft = new RmEngineJY01(rmConfig->Vehicle.frontLeft);
     }
-    if (rmConfig->Vehicle.frontRight.controllerType == EngineConfig::EngineControllerType::JY01)
+    if (rmConfig->Vehicle.frontRight.controllerType == EngineControllerType::JY01)
     {
         frontRight = new RmEngineJY01(rmConfig->Vehicle.frontRight);
     }
-    if (rmConfig->Vehicle.rearLeft.controllerType == EngineConfig::EngineControllerType::JY01)
+    if (rmConfig->Vehicle.rearLeft.controllerType == EngineControllerType::JY01)
     {
         rearLeft = new RmEngineJY01(rmConfig->Vehicle.rearLeft);
     }
-    if (rmConfig->Vehicle.rearRight.controllerType == EngineConfig::EngineControllerType::JY01)
+    if (rmConfig->Vehicle.rearRight.controllerType == EngineControllerType::JY01)
     {
         rearRight = new RmEngineJY01(rmConfig->Vehicle.rearRight);
     }

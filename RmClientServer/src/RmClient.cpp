@@ -17,7 +17,6 @@ RmClient::RmClient()
 #if PROTOCOL == 1
 #elif PROTOCOL == 2
     rmProtocol = new RmProtocolMqtt();
-    startWiFi(WIFI_SSID, WIFI_PWD);
     WiFi.mode(WIFI_STA);
     startWiFi(WIFI_SSID, WIFI_PWD);
 #elif PROTOCOL == 3
