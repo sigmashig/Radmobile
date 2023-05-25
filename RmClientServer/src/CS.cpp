@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <esp_event.h>
 #include "RmConfiguration.hpp"
+#include <RadioLib.h>
 
 #if MODE == 1
 #include "RmServer.hpp"

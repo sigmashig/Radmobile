@@ -40,7 +40,7 @@ void RmClient::Begin()
 
 void RmClient::startWiFi(String ssid, String password)
 {
-
+#if PROTOCOL==2
     Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
     WiFi.mode(WIFI_STA);
 
@@ -66,6 +66,7 @@ void RmClient::startWiFi(String ssid, String password)
                         break;
                     } });
     WiFi.begin(ssid.c_str(), password.c_str());
+    #endif
 }
 
 void RmClient::commandReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)

@@ -2,7 +2,7 @@
 
 RmSession::RmSession()
 {
-    sessionId = random(0, 63);
+    sessionId = ' ' + random(0, 63);
 }
 
 //---------------------------------------------

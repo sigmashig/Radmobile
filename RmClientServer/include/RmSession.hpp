@@ -4,11 +4,11 @@
 class RmSession
 {
 public:
-    int GetSessionId() { return sessionId; };
+    char GetSessionId() { return sessionId; };
     RmSession();
 
 private:
-    int sessionId;
+    char sessionId;
 };
 
 extern RmSession *rmSession;

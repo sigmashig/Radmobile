@@ -24,8 +24,9 @@ RmCommands::RmCommands()
     cmdTxt[CMD_NOCOMMAND] = "YY";
 }
 
-void RmCommands::CommandToString(RmCommandPkg command, String &commandString)
+String RmCommands::CommandToString(RmCommandPkg command)
 {
+    String commandString;
     // command string format: "{L2#546}" means: command=CMD_J2_LEFT, value=546
     commandString = "{";
     commandString += cmdTxt[command.command];

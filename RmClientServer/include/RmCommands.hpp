@@ -34,7 +34,7 @@ class RmCommands
 {
 public:
     RmCommands();
-    static void CommandToString(RmCommandPkg command, String &commandString);
+    static String CommandToString(RmCommandPkg command);
     static String cmdTxt[CMD_NOCOMMAND + 1];
     static RmCommandPkg StringToCommand(String commandString);
 };

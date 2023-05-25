@@ -4,10 +4,6 @@
 			"path": "RmClientServer"
 		},
 		{
-			"name": "TestPS2",
-			"path": "../TestPS2"
-		},
-		{
 			"name": "TestMotorQS909",
 			"path": "../TestMotorQS909"
 		},
@@ -26,6 +22,10 @@
 		{
 			"name": "TestLora",
 			"path": "../TestLora"
+		},
+		{
+			"name": "TestLora_NoRL",
+			"path": "../../Documents/PlatformIO/Projects/TestLora_NoRL"
 		}
 	],
 	"settings": {

@@ -5,6 +5,8 @@
 #if PROTOCOL == 2
 #include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
+#elif PROTOCOL == LORA
+#include "RmProtocolLora.hpp"
 #endif
 #if RC == 1
 #include "RmRcEmulator.hpp"
@@ -14,7 +16,7 @@
 
 void RmServer::startWiFi(String ssid, String password)
 {
-
+#if PROTOCOL == 2
     Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
     WiFi.mode(WIFI_STA);
 
@@ -38,10 +40,9 @@ void RmServer::startWiFi(String ssid, String password)
                             }
                         }
                         break;
-                    }
-                }
-            );
+                    } });
     WiFi.begin(ssid.c_str(), password.c_str());
+#endif
 }
 
 RmServer::RmServer()
@@ -56,7 +57,8 @@ RmServer::RmServer()
     startWiFi(WIFI_SSID, WIFI_PWD);
     WiFi.mode(WIFI_STA);
     startWiFi(WIFI_SSID, WIFI_PWD);
-#elif PROTOCOL == 3
+#elif PROTOCOL == LORA
+    rmProtocol = new RmProtocolLora();
 #endif
 
 #if RC == 1
@@ -93,7 +95,7 @@ void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32
     Serial.println("commandEventHandler");
     RmCommandPkg *command = (RmCommandPkg *)event_data;
     String commandString;
-    RmCommands::CommandToString(*command, commandString);
+    commandString = RmCommands::CommandToString(*command);
     Serial.println("Command received: " + commandString);
     rmServer->SendCommand(commandString);
     // rmProtocol->Send("Hello from WS Server");

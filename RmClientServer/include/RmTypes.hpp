@@ -18,7 +18,8 @@ typedef enum
 typedef struct
 {
     PinType pinType;
-    struct {
+    struct
+    {
         uint frequency;
         uint resolution;
         uint channel;
@@ -86,14 +87,16 @@ typedef struct
             PinDefinition signal;
             PinDefinition brake;
         } controllerJY01;
-    } connection ;
+    } connection;
 } EngineConfig;
-typedef enum {
+typedef enum
+{
     RELAY_PULSE,
     RELAY_TRIGGER
 } RelayType;
 
-typedef struct {
+typedef struct
+{
     RelayType type;
     PinDefinition pin;
     bool onLevel;
@@ -114,3 +117,40 @@ typedef struct
     byte address;
     byte irqPin;
 } PcfSettings;
+
+typedef enum
+{
+    LORA_NO_LORA,
+    LORA_SX1278
+} LoraType;
+
+typedef struct{
+    LoraType type;
+    union
+    {
+        struct
+        {
+            // SX1278 has the following connections:
+            // NSS pin:   10
+            // DIO0 pin:  2
+            // NRST pin:  9
+            // DIO1 pin:  3
+            byte nss;
+            byte dio0;
+            byte nrst;
+            byte dio1;
+        } LoraSx1278;
+        struct
+        {
+            // SX1262 has the following connections:
+            // NSS pin:   10
+            // DIO1 pin:  2
+            // NRST pin:  3
+            // BUSY pin:  9
+            byte nss;
+            byte dio1;
+            byte nrst;
+            byte busy;
+        } LoraSx1268;
+    } connection;
+} LoraConfig;

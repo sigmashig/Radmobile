@@ -32,9 +32,23 @@ public:
         .pinAtt = 4,
         .pinClock = 2,
         .modeStick = PS2ModeStick::PS2_2x2};
+    LoraConfig srvLoraConfig = {
+        .type = LORA_SX1278,
+        .connection = {.LoraSx1278 = {
+                           .nss = 32,
+                           .dio0 = 33,
+                           .nrst = 27,
+                           .dio1 = 3}}};
+    //-----------------------------------------------------------------------
+    // CLIENT
+    LoraConfig clientLoraConfig = {
+        .type = LORA_SX1278,
+        .connection = {.LoraSx1278 = {
+                           .nss = 18,
+                           .dio0 = 26,
+                           .nrst = 23,
+                           .dio1 = 33}}};
 
-//-----------------------------------------------------------------------
-// CLIENT
 #define NUMB_OF_CLIENT_PCF 1
     PcfSettings clientPcfs[NUMB_OF_CLIENT_PCF] = {{.id = 0, .address = 0x24, .irqPin = 34}};
     const uint pwmFreq = 5000;
