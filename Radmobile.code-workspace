@@ -18,6 +18,14 @@
 		{
 			"name": "TestPWM",
 			"path": "../../Documents/PlatformIO/Projects/TestPWM"
+		},
+		{
+			"name": "TestMiniMotor",
+			"path": "../../Documents/PlatformIO/Projects/TestMiniMotor"
+		},
+		{
+			"name": "TestLora",
+			"path": "../TestLora"
 		}
 	],
 	"settings": {

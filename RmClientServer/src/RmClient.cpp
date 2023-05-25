@@ -1,6 +1,7 @@
 #include "RmClient.hpp"
 #include "RmConfiguration.hpp"
 #include "RmCommands.hpp"
+#include "RmSession.hpp"
 #include "RmProtocol.hpp"
 #if PROTOCOL == 2
 #include <WiFi.h>
@@ -14,6 +15,8 @@
 RmClient::RmClient()
 {
     rmCommands = new RmCommands();
+    // TODO: session should be transferred from server to client
+    rmSession = new RmSession();
     rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
 #if PROTOCOL == 1
 #elif PROTOCOL == 2

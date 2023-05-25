@@ -4,6 +4,7 @@
 
 RmVehicleV1::RmVehicleV1()
 {
+    #if VEHICLE == 1
     if (rmConfig->Vehicle.frontLeft.controllerType == EngineControllerType::JY01)
     {
         frontLeft = new RmEngineJY01(rmConfig->Vehicle.frontLeft);
@@ -23,6 +24,7 @@ RmVehicleV1::RmVehicleV1()
 
     relay1 = new RmRelay(rmConfig->Vehicle.r1);
     relay2 = new RmRelay(rmConfig->Vehicle.r2);
+    #endif
 }
 
 void RmVehicleV1::Begin()

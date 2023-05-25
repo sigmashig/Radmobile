@@ -1,5 +1,7 @@
 #include "RMServer.hpp"
 #include "RmProtocol.hpp"
+#include "RmSession.hpp"
+
 #if PROTOCOL == 2
 #include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
@@ -45,6 +47,9 @@ void RmServer::startWiFi(String ssid, String password)
 RmServer::RmServer()
 {
     rmCommands = new RmCommands();
+    // TODO: session should be transferred from server to client
+    rmSession = new RmSession();
+
 #if PROTOCOL == 1
 #elif PROTOCOL == 2
     rmProtocol = new RmProtocolMqtt();
