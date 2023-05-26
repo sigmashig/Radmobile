@@ -71,6 +71,18 @@ public:
         .rearRight = {.controllerType = EngineControllerType::JY01, .connection = {.controllerJY01 = {.vr = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 3}, .pinAddress = {.PIN_GPIO = {.pin = 25}}}}, .zf = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0D}}}}, .signal = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0E}}}}, .brake = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x0F}}}}}}},
         .r1 = {.type = RELAY_PULSE, .pin = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x08}}}}, .onLevel = LOW},
         .r2 = {.type = RELAY_TRIGGER, .pin = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x09}}}}, .onLevel = LOW}};
+#elif VEHICLE == 2
+    VehicleConfig Vehicle = {
+        .frontLeft = {
+            .controllerType = EngineControllerType::L298N,
+            .connection = {
+                .controllerL298N = {
+                    .in1 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x8}}}},
+                    .in2 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0x9}}}},
+                    .en = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 0}, .pinAddress = {.PIN_GPIO = {.pin = 24}}}}}}},
+        .frontRight = {.controllerType = EngineControllerType::L298N, .connection = {.controllerL298N = {.in1 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xA}}}}, .in2 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xB}}}}, .en = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 0}, .pinAddress = {.PIN_GPIO = {.pin = 25}}}}}}},
+        .rearLeft = {.controllerType = EngineControllerType::L298N, .connection = {.controllerL298N = {.in1 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xE}}}}, .in2 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xF}}}}, .en = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 0}, .pinAddress = {.PIN_GPIO = {.pin = 2}}}}}}},
+        .rearRight = {.controllerType = EngineControllerType::L298N, .connection = {.controllerL298N = {.in1 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xC}}}}, .in2 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xD}}}}, .en = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 0}, .pinAddress = {.PIN_GPIO = {.pin = 13}}}}}}}};
 #endif
     // Functionality
     RmConfiguration();

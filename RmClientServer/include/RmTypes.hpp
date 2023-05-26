@@ -72,7 +72,8 @@ typedef enum
 } EngineAction;
 typedef enum
 {
-    JY01
+    JY01,
+    L298N
 } EngineControllerType;
 
 typedef struct
@@ -87,6 +88,12 @@ typedef struct
             PinDefinition signal;
             PinDefinition brake;
         } controllerJY01;
+        struct
+        {
+            PinDefinition in1;
+            PinDefinition in2;
+            PinDefinition en;
+        } controllerL298N;
     } connection;
 } EngineConfig;
 typedef enum
@@ -124,7 +131,8 @@ typedef enum
     LORA_SX1278
 } LoraType;
 
-typedef struct{
+typedef struct
+{
     LoraType type;
     union
     {
