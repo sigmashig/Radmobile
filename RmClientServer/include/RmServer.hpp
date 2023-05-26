@@ -12,8 +12,9 @@ public:
     bool IsReady() { return isReady; };
 
 private:
-    bool isConnected = false;
+    bool alreadyConnected = false;
     bool isReady = false;
+    bool isBeginRequired = false;
     void startWiFi(String ssid, String password);
     static void commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     // void ReceivedCommand(String command);

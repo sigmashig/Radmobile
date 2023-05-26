@@ -2,21 +2,21 @@
 #include "RmProtocol.hpp"
 #include "RmSession.hpp"
 
-#if PROTOCOL == MQTT
+#if PROTOCOL == 1
 #include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
-#elif PROTOCOL == LORA
+#elif PROTOCOL == 2
 #include "RmProtocolLora.hpp"
 #endif
-#if RC == EMULATOR
+#if RC == 1
 #include "RmRcEmulator.hpp"
-#elif RC == PS2
+#elif RC == 2
 #include "RmRcPS2.hpp"
 #endif
 
 void RmServer::startWiFi(String ssid, String password)
 {
-#if PROTOCOL == MQTT
+#if PROTOCOL == 1
     Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
     WiFi.mode(WIFI_STA);
 
@@ -34,7 +34,7 @@ void RmServer::startWiFi(String ssid, String password)
                         case SYSTEM_EVENT_STA_DISCONNECTED:
                         {
                             Serial.printf(F("WiFi connection error: %d\n"), info.wifi_sta_disconnected.reason);
-                            if (isConnected)
+                            if (alreadyConnected)
                             {
                                 rmProtocol->Reconnect();
                             }
@@ -52,34 +52,39 @@ RmServer::RmServer()
     // TODO: session should be transferred from server to client
     rmSession = new RmSession();
     Serial.println("Point 1");
-#if RC == EMULATOR
+#if RC == 1
     remoteControl = new RmRcEmulator();
-#elif RC == PS2
+#elif RC == 2
     PS2 = new RmRcPS2();
     remoteControl = PS2;
 #endif
     Serial.println("Point 2");
 
-#if PROTOCOL == MQTT
+#if PROTOCOL == 1
+    isBeginRequired = false;
     rmProtocol = new RmProtocolMqtt();
-    startWiFi(WIFI_SSID, WIFI_PWD);
     WiFi.mode(WIFI_STA);
     startWiFi(WIFI_SSID, WIFI_PWD);
-#elif PROTOCOL == LORA
+#elif PROTOCOL == 2
     rmProtocol = new RmProtocolLora();
+    isBeginRequired = true;
 #endif
     Serial.println("RmServer::RmServer() end");
-    Begin();
+    if (isBeginRequired)
+    {
+        Begin();
+    }
 }
 
 void RmServer::Begin()
 {
-    isConnected = true;
+    alreadyConnected = true;
     Serial.println("RmServer::Begin()");
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, responseEventHandler, NULL, NULL);
     esp_event_handler_instance_register(RMRC_EVENT, RMRC_CMD, commandEventHandler, NULL, NULL);
 
     rmProtocol->Begin();
+    remoteControl->Begin();
     isReady = true;
 }
 

@@ -19,10 +19,10 @@ void RmRcPS2::Begin()
 void RmRcPS2::loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     PSX::PSXDATA psData;
-    Serial.println("RmRcPS2::loopEventHandler");
+    //Serial.println("RmRcPS2::loopEventHandler");
     if (PS2->psx.read(psData) == PSXERROR_SUCCESS)
     {
-        Serial.println("PS2 joystick is connected");
+        //Serial.println("PS2 joystick is connected");
         PS2->cmdProcessing(psData);
     }
     else
@@ -50,7 +50,7 @@ int RmRcPS2::stickToDirection(byte x)
 void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
 {
     RmCommandPkg cmdPkg;
-    Serial.println("RmRcPS2::cmdProcessing");
+    //Serial.println("RmRcPS2::cmdProcessing");
     switch (rmConfig->ps2Config.modeStick)
     {
     case PS2ModeStick::PS2_2x2:

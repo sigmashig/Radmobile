@@ -13,11 +13,10 @@ public:
     bool SendCommand(String command);
 
 private:
-    
     static void packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 
-#if LORA == SX1278
-    static SX1278 *radio;
+//#if LORA == SX1278
+    static LORA *radio;
 
-#endif
+//#endif
 };

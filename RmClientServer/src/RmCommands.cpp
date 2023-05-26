@@ -33,21 +33,44 @@ String RmCommands::CommandToString(RmCommandPkg command)
     commandString += "#";
     commandString += command.value;
     commandString += "}";
+    return commandString;
 }
 RmCommandPkg RmCommands::StringToCommand(String commandString)
 {
     RmCommandPkg command;
     command.command = CMD_NOCOMMAND;
-    if (commandString[0] == '{' && commandString[commandString.length() - 1] == '}')
+    if (commandString[0] == '{' && commandString[commandString.length() - 1] == '}' && commandString[cmdTxt[CMD_NOCOMMAND].length() + 1] == '#')
     {
         String cmd = commandString.substring(1, 3);
         for (int i = 0; i <= CMD_NOCOMMAND; i++)
         {
             if (cmdTxt[i] == cmd)
             {
-                command.command = (RmCommandType)i;
-                command.value = commandString.substring(4, commandString.length() - 1).toInt();
-                break;
+                String strValue = commandString.substring(4, commandString.length() - 1);
+                if (strValue.length() > 0 && strValue.length() <= 3)
+                {
+                    bool val = 0;
+                    for (int j = 0; j < strValue.length(); j++)
+                    {
+                        if (strValue[j] >= '0' && strValue[j] <= '9')
+                        {
+                            val = val * 10 + (strValue[j] - '0');
+                        }
+                        else
+                        {
+                            // bad value,
+                            return command;
+                        }
+                    }
+                    if (val > 100)
+                    { // bad value
+                        return command;
+                    }
+
+                    command.command = (RmCommandType)i;
+                    command.value = val;
+                    break;
+                }
             }
         }
     }

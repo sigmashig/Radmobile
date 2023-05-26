@@ -3,14 +3,12 @@
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
 
-#if LORA == SX1278
-SX1278 *RmProtocolLora::radio;
-#endif
+LORA *RmProtocolLora::radio;
 
 RmProtocolLora::RmProtocolLora()
 {
     LoraConfig *cfg;
-#if MODE == SERVER
+#if MODE == 1
     cfg = &rmConfig->srvLoraConfig;
 #else
     cfg = &rmConfig->clientLoraConfig;
@@ -21,7 +19,7 @@ RmProtocolLora::RmProtocolLora()
                                   cfg->connection.LoraSx1278.nrst,
                                   cfg->connection.LoraSx1278.dio1));
 #endif
-    esp_event_handler_register(RMPROTOCOL_EVENT, RMEVENT_LORA_RECEIVED, packageReceived, NULL);
+    esp_event_handler_register(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, packageReceived, NULL);
 }
 
 void RmProtocolLora::Begin()
@@ -37,16 +35,9 @@ void RmProtocolLora::Begin()
         Serial.println(state);
     }
     radio->setDio0Action([]()
-                         { 
-                            uint status = radio->getIRQFlags();
-                            if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
-                            {
-                                esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_RECEIVED, NULL, 0, NULL);
-                            }
-                            else if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
-                            {
-                                esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_SENT, NULL, 0, NULL);} },
+                         { esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, NULL, 0, NULL); },
                          RISING);
+    radio->startReceive();
 }
 
 void RmProtocolLora::Reconnect()
@@ -67,6 +58,7 @@ bool RmProtocolLora::SendCommand(String command)
     String pkg = String(rmSession->GetSessionId());
     pkg += command;
     Serial.printf("Sending: %s(%u)\n", pkg.c_str(), pkg.length());
+
     int state = radio->startTransmit(pkg.c_str(), pkg.length());
     return false;
 }
@@ -74,14 +66,29 @@ bool RmProtocolLora::SendCommand(String command)
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("RmProtocolLora::packageReceived()");
-    String str;
-    RmProtocolLora::radio->readData(str);
-    Serial.printf("Received: %s(%u)\n", str.c_str(), str.length());
-    if (str[0] != rmSession->GetSessionId())
-    {
-        Serial.printf("Received for other device, ignoring.");
-        return;
+    uint status = radio->getIRQFlags();
+    if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
+    { // received a packet
+        String str;
+        RmProtocolLora::radio->readData(str);
+        Serial.printf("Received: %s(%u)\n", str.c_str(), str.length());
+        if (str[0] != rmSession->GetSessionId())
+        {
+            Serial.printf("Received for other device, ignoring.");
+            return;
+        }
+        RmCommandPkg cmd = RmCommands::StringToCommand(str.substring(1));
+        if (cmd.command != RmCommandType::CMD_NOCOMMAND)
+        {
+            esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(&cmd), portMAX_DELAY);
+        }
     }
-    RmCommandPkg cmd = RmCommands::StringToCommand(str.substring(1));
-    esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(&cmd), portMAX_DELAY);
+    else if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
+    { // transfer completed
+        radio->startReceive();
+    }
+    else
+    { // something else happened
+        Serial.printf("Something else happened, status: %u\n", status);
+    }
 }

@@ -9,8 +9,7 @@ typedef enum
 {
     RMEVENT_NONE,
     RMEVENT_CMD_RECEIVED,
-    RMEVENT_LORA_RECEIVED,
-    RMEVENT_LORA_SENT
+    RMEVENT_LORA_SOMETHING_HAPPENS
 } RmProtocolEvent;
 
 class RmProtocol

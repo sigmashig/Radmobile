@@ -4,7 +4,6 @@
 
 RmVehicleV1::RmVehicleV1()
 {
-    #if VEHICLE == V1
     if (rmConfig->Vehicle.frontLeft.controllerType == EngineControllerType::JY01)
     {
         frontLeft = new RmEngineJY01(rmConfig->Vehicle.frontLeft);
@@ -24,17 +23,18 @@ RmVehicleV1::RmVehicleV1()
 
     relay1 = new RmRelay(rmConfig->Vehicle.r1);
     relay2 = new RmRelay(rmConfig->Vehicle.r2);
-    #endif
 }
 
 void RmVehicleV1::Begin()
 {
+    Serial.println("RmVehicleV1::Begin()");
     frontLeft->Begin();
     frontRight->Begin();
     rearLeft->Begin();
     rearRight->Begin();
     relay1->Begin();
     relay2->Begin();
+    Serial.println("RmVehicleV1::Begin() - Done");
 }
 
 void RmVehicleV1::turn(RmCommandPkg cmd)
