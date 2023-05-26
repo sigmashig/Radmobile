@@ -3,9 +3,9 @@
 #include "RmConfiguration.hpp"
 #include <RadioLib.h>
 
-#if MODE == 1
+#if MODE == SERVER
 #include "RmServer.hpp"
-#elif MODE == 2
+#elif MODE == CLIENT
 #include "RmClient.hpp"
 #endif
 
@@ -17,9 +17,9 @@ void setup()
   Serial.println("--------------------");
 
   rmConfig = new RmConfiguration();
-#if MODE == 1
+#if MODE == SERVER
   rmServer = new RmServer();
-#elif MODE == 2
+#elif MODE == CLIENT
   rmClient = new RmClient();
 #endif
 }
@@ -28,9 +28,9 @@ void loop()
 {
   if (!isReady)
   {
-#if MODE == 1
+#if MODE == SERVER
     isReady = rmServer->IsReady();
-#elif MODE == 2
+#elif MODE == CLIENT
     isReady = rmClient->IsReady();
 #endif
   }

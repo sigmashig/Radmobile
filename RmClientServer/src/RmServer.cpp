@@ -2,21 +2,21 @@
 #include "RmProtocol.hpp"
 #include "RmSession.hpp"
 
-#if PROTOCOL == 2
+#if PROTOCOL == MQTT
 #include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
 #elif PROTOCOL == LORA
 #include "RmProtocolLora.hpp"
 #endif
-#if RC == 1
+#if RC == EMULATOR
 #include "RmRcEmulator.hpp"
-#elif RC == 2
+#elif RC == PS2
 #include "RmRcPS2.hpp"
 #endif
 
 void RmServer::startWiFi(String ssid, String password)
 {
-#if PROTOCOL == 2
+#if PROTOCOL == MQTT
     Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
     WiFi.mode(WIFI_STA);
 
@@ -47,12 +47,20 @@ void RmServer::startWiFi(String ssid, String password)
 
 RmServer::RmServer()
 {
+    Serial.println("RmServer::RmServer()");
     rmCommands = new RmCommands();
     // TODO: session should be transferred from server to client
     rmSession = new RmSession();
+    Serial.println("Point 1");
+#if RC == EMULATOR
+    remoteControl = new RmRcEmulator();
+#elif RC == PS2
+    PS2 = new RmRcPS2();
+    remoteControl = PS2;
+#endif
+    Serial.println("Point 2");
 
-#if PROTOCOL == 1
-#elif PROTOCOL == 2
+#if PROTOCOL == MQTT
     rmProtocol = new RmProtocolMqtt();
     startWiFi(WIFI_SSID, WIFI_PWD);
     WiFi.mode(WIFI_STA);
@@ -60,13 +68,8 @@ RmServer::RmServer()
 #elif PROTOCOL == LORA
     rmProtocol = new RmProtocolLora();
 #endif
-
-#if RC == 1
-    remoteControl = new RmRcEmulator();
-#elif RC == 2
-    PS2 = new RmRcPS2();
-    remoteControl = PS2;
-#endif
+    Serial.println("RmServer::RmServer() end");
+    Begin();
 }
 
 void RmServer::Begin()

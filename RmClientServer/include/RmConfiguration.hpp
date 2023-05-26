@@ -53,7 +53,7 @@ public:
     PcfSettings clientPcfs[NUMB_OF_CLIENT_PCF] = {{.id = 0, .address = 0x24, .irqPin = 34}};
     const uint pwmFreq = 5000;
     const uint pwmResolution = 7;
-#if VEHICLE == 1
+#if VEHICLE == V1
 
     VehicleConfig Vehicle = {
         .frontLeft = {

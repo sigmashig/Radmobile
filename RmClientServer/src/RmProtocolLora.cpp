@@ -10,7 +10,7 @@ SX1278 *RmProtocolLora::radio;
 RmProtocolLora::RmProtocolLora()
 {
     LoraConfig *cfg;
-#if MODE == 1
+#if MODE == SERVER
     cfg = &rmConfig->srvLoraConfig;
 #else
     cfg = &rmConfig->clientLoraConfig;
@@ -45,8 +45,8 @@ void RmProtocolLora::Begin()
                             }
                             else if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
                             {
-                                esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_SENT, NULL, 0, NULL);} 
-                            }, RISING);
+                                esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_SENT, NULL, 0, NULL);} },
+                         RISING);
 }
 
 void RmProtocolLora::Reconnect()

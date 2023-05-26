@@ -26,6 +26,10 @@
 		{
 			"name": "TestLora_NoRL",
 			"path": "../../Documents/PlatformIO/Projects/TestLora_NoRL"
+		},
+		{
+			"name": "TestPS2",
+			"path": "../TestPS2"
 		}
 	],
 	"settings": {

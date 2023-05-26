@@ -4,7 +4,7 @@
 
 RmVehicleV1::RmVehicleV1()
 {
-    #if VEHICLE == 1
+    #if VEHICLE == V1
     if (rmConfig->Vehicle.frontLeft.controllerType == EngineControllerType::JY01)
     {
         frontLeft = new RmEngineJY01(rmConfig->Vehicle.frontLeft);

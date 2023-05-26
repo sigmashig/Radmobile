@@ -3,12 +3,14 @@
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
 #include "RmProtocol.hpp"
-#if PROTOCOL == 2
+#if PROTOCOL == MQTT
 #include <WiFi.h>
 #include "RmProtocolMqtt.hpp"
+#elif PROTOCOL == LORA
+#include "RmProtocolLora.hpp"
 #endif
 #include "RmVehicle.hpp"
-#if VEHICLE == 1
+#if VEHICLE == V1
 #include "RmVehicleV1.hpp"
 #endif
 
@@ -18,11 +20,13 @@ RmClient::RmClient()
     // TODO: session should be transferred from server to client
     rmSession = new RmSession();
     rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
-#if PROTOCOL == 1
-#elif PROTOCOL == 2
+#if PROTOCOL == MQTT
     rmProtocol = new RmProtocolMqtt();
     startWiFi(WIFI_SSID, WIFI_PWD);
-#elif PROTOCOL == 3
+#elif PROTOCOL == LORA
+    rmProtocol = new RmProtocolLora();
+    Begin();
+
 #endif
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED,
                                         commandReceived, NULL, NULL);
@@ -32,7 +36,7 @@ void RmClient::Begin()
 {
     rmPinsDriver->Begin();
     rmProtocol->Begin();
-#if VEHICLE == 1
+#if VEHICLE == V1
     rmVehicle = new RmVehicleV1();
 #endif
     rmVehicle->Begin();
@@ -40,7 +44,7 @@ void RmClient::Begin()
 
 void RmClient::startWiFi(String ssid, String password)
 {
-#if PROTOCOL==2
+#if PROTOCOL==MQTT
     Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
     WiFi.mode(WIFI_STA);
 
