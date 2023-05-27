@@ -11,8 +11,40 @@
 
 bool isReady = false;
 
-static void loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data){
-  Serial.printf("MAIN loopEventHandler:%d\n", event_id);
+ESP_EVENT_DECLARE_BASE(RMPROTOCOL_EVENT);
+#if MODE == 1
+ESP_EVENT_DECLARE_BASE(RMRC_EVENT);
+#elif MODE == 2
+ESP_EVENT_DECLARE_BASE(RMPINS_DRIVER_EVENT);
+ESP_EVENT_DECLARE_BASE(RMVEHICLE_EVENT);
+#endif
+
+static void totalEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+  //Serial.printf("MAIN loopEventHandler:%d\n", event_id);
+  if (event_base == RMPROTOCOL_EVENT)
+  {
+    Serial.println("MAIN RMPROTOCOL_EVENT");
+  }
+ #if MODE==1 
+  else if (event_base == RMRC_EVENT)
+  {
+    Serial.println("MAIN RMRC_EVENT");
+  }
+#elif MODE==2
+  else if (event_base == RMPINS_DRIVER_EVENT)
+  {
+    Serial.println("MAIN RM_PINS_DRIVER_EVENT");
+  }
+  else if (event_base == RMVEHICLE_EVENT)
+  {
+    Serial.println("MAIN RMVEHICLE_EVENT");
+  }
+  #endif
+  else
+  {
+    //Serial.printf("MAIN event_base:%d\n", event_base);
+  }
 }
 
 void setup()
@@ -26,7 +58,7 @@ void setup()
 #elif MODE == 2
   rmClient = new RmClient();
 #endif
-  //esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, loopEventHandler, NULL);
+  //esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
 }
 
 void loop()
@@ -41,7 +73,7 @@ void loop()
   }
   if (isReady)
   {
-    //Serial.println("MAIN loop");
+    // Serial.println("MAIN loop");
     rmConfig->Loop();
   }
   vTaskDelay(50 / portTICK_PERIOD_MS);

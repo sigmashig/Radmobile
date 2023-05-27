@@ -4,22 +4,6 @@
 			"path": "RmClientServer"
 		},
 		{
-			"name": "TestMotorQS909",
-			"path": "../TestMotorQS909"
-		},
-		{
-			"name": "TestPortExpander",
-			"path": "../../Documents/PlatformIO/Projects/TestPortExpander"
-		},
-		{
-			"name": "TestPWM",
-			"path": "../../Documents/PlatformIO/Projects/TestPWM"
-		},
-		{
-			"name": "TestMiniMotor",
-			"path": "../../Documents/PlatformIO/Projects/TestMiniMotor"
-		},
-		{
 			"name": "TestLora",
 			"path": "../TestLora"
 		},

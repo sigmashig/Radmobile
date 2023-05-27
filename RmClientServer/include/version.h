@@ -1,10 +1,10 @@
 
 #ifndef BUILD_NUMBER
-  #define BUILD_NUMBER "1836"
+  #define BUILD_NUMBER "1874"
 #endif
 #ifndef VERSION
-  #define VERSION "v0.1.1836 - 2023-05-26 19:16:45.691107"
+  #define VERSION "v0.1.1874 - 2023-05-27 14:12:26.717370"
 #endif
 #ifndef VERSION_SHORT
-  #define VERSION_SHORT "v0.1.1836"
+  #define VERSION_SHORT "v0.1.1874"
 #endif

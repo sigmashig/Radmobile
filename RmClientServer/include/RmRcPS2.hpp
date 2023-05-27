@@ -3,6 +3,9 @@
 #include <PSX.h>
 #include <RmRemoteControl.hpp>
 
+#define PSXBTN_ACT_RIGHT    0x0400
+#define PSXBTN_ACT_LEFT     0x0200
+
 class RmRcPS2 : public RmRemoteControl
 {
 public:
@@ -13,7 +16,7 @@ public:
 private:
     PSX psx;
     PSX::PSXDATA lastData;
-    bool isFirst = true;
+    //bool isFirst = true;
 
     static void loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     int stickToDirection(byte x);

@@ -4,7 +4,7 @@
 #include <PCF8575.h>
 #include <esp_event.h>
 
-ESP_EVENT_DECLARE_BASE(RM_PINS_DRIVER_EVENT);
+ESP_EVENT_DECLARE_BASE(RMPINS_DRIVER_EVENT);
 typedef enum
 {
     RM_PINS_DRIVER_ISR

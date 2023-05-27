@@ -21,6 +21,8 @@ typedef enum
     CMD_BUTTON10,
     CMD_BUTTON11,
     CMD_BUTTON12,
+    CMD_ACTR,
+    CMD_ACTL,
     CMD_NOCOMMAND
 } RmCommandType;
 

@@ -12,6 +12,8 @@
 #include "RmVehicle.hpp"
 #if VEHICLE == 1
 #include "RmVehicleV1.hpp"
+#elif VEHICLE == 2
+#include "RmVehicleV2.hpp"
 #endif
 
 RmClient::RmClient()
@@ -32,6 +34,8 @@ RmClient::RmClient()
 #endif
 #if VEHICLE == 1
     rmVehicle = new RmVehicleV1();
+#elif VEHICLE == 2
+    rmVehicle = new RmVehicleV2();
 #endif
     if (isBeginRequired)
     {

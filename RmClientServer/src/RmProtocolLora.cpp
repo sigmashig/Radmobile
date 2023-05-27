@@ -65,7 +65,7 @@ bool RmProtocolLora::SendCommand(String command)
 
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    Serial.println("RmProtocolLora::packageReceived()");
+    //Serial.println("RmProtocolLora::packageReceived()");
     uint status = radio->getIRQFlags();
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
     { // received a packet
@@ -89,6 +89,6 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
     }
     else
     { // something else happened
-        Serial.printf("Something else happened, status: %u\n", status);
+        //Serial.printf("Something else happened, status: %u\n", status);
     }
 }

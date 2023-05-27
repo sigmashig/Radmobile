@@ -22,6 +22,8 @@ RmCommands::RmCommands()
     cmdTxt[CMD_BUTTON11] = "TB";
     cmdTxt[CMD_BUTTON12] = "TC";
     cmdTxt[CMD_NOCOMMAND] = "YY";
+    cmdTxt[CMD_ACTR] = "AR";
+    cmdTxt[CMD_ACTL] = "AL";
 }
 
 String RmCommands::CommandToString(RmCommandPkg command)
