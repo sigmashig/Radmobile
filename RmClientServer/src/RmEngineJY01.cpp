@@ -22,10 +22,10 @@ RmEngineJY01::RmEngineJY01(EngineConfig config) : RmEngine(config)
 
 void RmEngineJY01::Begin()
 {
-    Run(EngineDirection::ENGINE_NODIRECTION, EngineAction::ACTION_STOP, 0);
+    Run(Direction::DIRECTION_NODIRECTION, EngineAction::ACTION_STOP, 0);
 }
 
-void RmEngineJY01::Run(EngineDirection direction, EngineAction action, int power)
+void RmEngineJY01::Run(Direction direction, EngineAction action, int power)
 {
     if (action == EngineAction::ACTION_STOP)
     {
@@ -35,7 +35,7 @@ void RmEngineJY01::Run(EngineDirection direction, EngineAction action, int power
     }
     else
     {
-        if (direction == EngineDirection::ENGINE_FORWARD)
+        if (direction == Direction::DIRECTION_FORWARD)
         {
             rmPinsDriver->Write(config.connection.controllerJY01.zf, 1);
         }

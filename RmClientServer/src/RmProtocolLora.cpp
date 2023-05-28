@@ -44,13 +44,12 @@ void RmProtocolLora::Reconnect()
 {
 }
 
-void RmProtocolLora::ReceivedCommand(String command)
+void RmProtocolLora::ReceivedState(String state)
 {
     Serial.println("RmProtocolLora::ReceivedCommand()");
-    Serial.println(command);
-    RmCommandPkg cmd;
-    cmd = RmCommands::StringToCommand(command);
-    esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(cmd), portMAX_DELAY);
+    Serial.println(state);
+    CommandState st = RmCommands::StringToState(state);
+    esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &st, sizeof(st), portMAX_DELAY);
 }
 
 bool RmProtocolLora::SendCommand(String command)
@@ -65,7 +64,7 @@ bool RmProtocolLora::SendCommand(String command)
 
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    //Serial.println("RmProtocolLora::packageReceived()");
+    // Serial.println("RmProtocolLora::packageReceived()");
     uint status = radio->getIRQFlags();
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
     { // received a packet
@@ -77,20 +76,20 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
             Serial.printf("Received for other device, ignoring.");
             return;
         }
-        RmCommandPkg cmd = RmCommands::StringToCommand(str.substring(1));
-        if (cmd.command != RmCommandType::CMD_NOCOMMAND)
+        CommandState state = RmCommands::StringToState(str.substring(1));
+        if (state.isValid)
         {
-            Serial.printf("Received command: %s\n", RmCommands::CommandToString(cmd).c_str());
-            esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(cmd), portMAX_DELAY);
+            Serial.println("Valid!");
+            esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &state, sizeof(state), portMAX_DELAY);
         }
     }
     else if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
     { // transfer completed
-//        radio->startReceive();
+      //        radio->startReceive();
     }
     else
     { // something else happened
-        //Serial.printf("Something else happened, status: %u\n", status);
+      // Serial.printf("Something else happened, status: %u\n", status);
     }
     radio->startReceive();
 }

@@ -16,7 +16,7 @@ private:
     bool isBeginRequired = false;
 
     void startWiFi(String ssid, String password);
-    static void commandReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    static void stateReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 };
 
 extern RmClient *rmClient;

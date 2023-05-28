@@ -137,9 +137,10 @@ void RmVehicleV1::processButton(RmCommandPkg cmd)
     }
 }
 
-VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
+VehicleStatus RmVehicleV1::ApplyState(CommandState& state)
 {
     VehicleStatus status = VEHICLE_OK;
+    /*
     if (!isStarted)
     {
         if (cmd.command == CMD_START)
@@ -154,10 +155,10 @@ VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
     switch (cmd.command)
     {
     case CMD_FORWARD:
-        direction = ENGINE_FORWARD;
+        direction = DIRECTION_FORWARD;
         // No break here
     case CMD_BACKWARD:
-        direction = ENGINE_BACKWARD;
+        direction = DIRECTION_BACKWARD;
         go(cmd);
         break;
     case CMD_LEFT:
@@ -165,7 +166,7 @@ VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
         turn(cmd);
         break;
     case CMD_STOP:
-        direction = ENGINE_NODIRECTION;
+        direction = DIRECTION_NODIRECTION;
         //power = 0;
         stop();
         isStarted = false;
@@ -185,8 +186,9 @@ VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
         processButton(cmd);
         break;
     default:
-        status = VEHICLE_BAD_COMMAND;
+        status = VEHICLE_BAD_STATE;
         break;
     }
+    */
     return status;
 }

@@ -1,6 +1,6 @@
 #include "RmProtocolMqtt.hpp"
-#include "RmCommands.hpp"
 #include <esp_event.h>
+#include "RmCommands.hpp"
 // #include <WiFi.h>
 
 String RmProtocolMqtt::topic = "RadMobile/Command";
@@ -25,16 +25,15 @@ void RmProtocolMqtt::Begin()
     connectToMqtt();
 }
 
-void RmProtocolMqtt::ReceivedCommand(String command)
+void RmProtocolMqtt::ReceivedState(String stateString)
 {
     Serial.println("RmProtocolMqtt::ReceivedCommand()");
-    Serial.println(command);
-    RmCommandPkg cmd;
-    cmd = RmCommands::StringToCommand(command);
-    if (cmd.command != CMD_NOCOMMAND)
+    CommandState state;
+    state = RmCommands::StringToState(stateString);
+    if (state.isValid)
     {
-        esp_event_post(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, &cmd, sizeof(cmd), portMAX_DELAY);
-    }
+        esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &state, sizeof(state), portMAX_DELAY);
+    }   
 }
 
 bool RmProtocolMqtt::SendCommand(String command)
@@ -74,7 +73,7 @@ void RmProtocolMqtt::messageReceived(char *topic, char *payload,
     {
         payload[len] = '\0';
         // Serial.printf("[%s](%u):%s\n", topic, len, payload);
-        rmProtocol->ReceivedCommand(String(payload));
+        rmProtocol->ReceivedState(String(payload));
     }
     else
     {

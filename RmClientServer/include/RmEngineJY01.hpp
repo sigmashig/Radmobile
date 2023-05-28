@@ -8,7 +8,7 @@ class RmEngineJY01 : public RmEngine
 public:
     RmEngineJY01(EngineConfig config);
     void Begin();
-    void Run(EngineDirection direction, EngineAction action, int power);
+    void Run(Direction direction, EngineAction action, int power);
     void GetSpeed();
 
 private:

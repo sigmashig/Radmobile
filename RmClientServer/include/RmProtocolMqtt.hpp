@@ -8,7 +8,7 @@ class RmProtocolMqtt : public RmProtocol
 {
 public:
     void Begin();
-    void ReceivedCommand(String command);
+    void ReceivedState(String command);
     bool SendCommand(String command);
     void Reconnect();
 

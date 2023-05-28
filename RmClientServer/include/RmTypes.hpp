@@ -61,12 +61,14 @@ typedef struct
 
 typedef enum
 {
-    ENGINE_FORWARD,
-    ENGINE_BACKWARD,
-    ENGINE_LEFT,
-    ENGINE_RIGHT,
-    ENGINE_NODIRECTION
-} EngineDirection;
+    DIRECTION_FORWARD,
+    DIRECTION_BACKWARD,
+    DIRECTION_LEFT,
+    DIRECTION_RIGHT,
+    DIRECTION_NODIRECTION,
+    DIRECTION_START,
+    DIRECTION_STOP
+} Direction;
 typedef enum
 {
     ACTION_STOP,
@@ -164,3 +166,71 @@ typedef struct
         } LoraSx1268;
     } connection;
 } LoraConfig;
+
+typedef enum
+{
+    CMD_START,
+    CMD_STOP,
+    CMD_FORWARD,
+    CMD_BACKWARD,
+    CMD_PAUSE,
+    CMD_LEFT,
+    CMD_RIGHT,
+    CMD_BUTTON1,
+    CMD_BUTTON2,
+    CMD_BUTTON3,
+    CMD_BUTTON4,
+    CMD_BUTTON5,
+    CMD_BUTTON6,
+    CMD_BUTTON7,
+    CMD_BUTTON8,
+    CMD_BUTTON9,
+    CMD_BUTTON10,
+    CMD_BUTTON11,
+    CMD_BUTTON12,
+    CMD_BUTTON13,
+    CMD_BUTTON14,
+    CMD_BUTTON15,
+    CMD_BUTTON16,
+    CMD_NOCOMMAND
+} RmCommandType;
+
+typedef struct
+{
+    RmCommandType command;
+    int value;
+} RmCommandPkg;
+
+typedef union
+{
+    struct
+    {
+        unsigned b1 : 1;
+        unsigned b2 : 1;
+        unsigned b3 : 1;
+        unsigned b4 : 1;
+        unsigned b5 : 1;
+        unsigned b6 : 1;
+        unsigned b7 : 1;
+        unsigned b8 : 1;
+        unsigned b9 : 1;
+        unsigned b10 : 1;
+        unsigned b11 : 1;
+        unsigned b12 : 1;
+        unsigned b13 : 1;
+        unsigned b14 : 1;
+        unsigned b15 : 1;
+        unsigned b16 : 1;
+    } button;
+    uint16_t buttonPacked;
+} ButtonsSet;
+
+typedef struct
+{
+    bool isValid = true;
+    Direction straight;
+    int powerStraight;
+    Direction turn;
+    int powerTurn;
+    ButtonsSet buttons;
+} CommandState;

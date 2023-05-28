@@ -8,7 +8,7 @@ class RmEngineYellow : public RmEngine
 public:
     RmEngineYellow(EngineConfig config);
     void Begin();
-    void Run(EngineDirection direction, EngineAction action, int power);
+    void Run(Direction direction, EngineAction action, int power);
     void GetSpeed();
 
 private:

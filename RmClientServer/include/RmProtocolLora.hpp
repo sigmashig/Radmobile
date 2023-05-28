@@ -9,7 +9,7 @@ public:
     RmProtocolLora();
     void Begin();
     void Reconnect();
-    void ReceivedCommand(String command);
+    void ReceivedState(String state);
     bool SendCommand(String command);
 
 private:

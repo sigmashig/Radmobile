@@ -9,7 +9,7 @@ class RmVehicleV2 : public RmVehicle
 public:
     RmVehicleV2();
     void Begin();
-    VehicleStatus RunCmd(RmCommandPkg cmd);
+    VehicleStatus ApplyState(CommandState& state);
 
 private:
     bool isStarted = false;
@@ -18,10 +18,10 @@ private:
     RmEngine *rearLeft;
     RmEngine *rearRight;
 
-    EngineDirection directionFL = ENGINE_NODIRECTION;
-    EngineDirection directionFR = ENGINE_NODIRECTION;
-    EngineDirection directionRL = ENGINE_NODIRECTION;
-    EngineDirection directionRR = ENGINE_NODIRECTION;
+    Direction directionFL = DIRECTION_NODIRECTION;
+    Direction directionFR = DIRECTION_NODIRECTION;
+    Direction directionRL = DIRECTION_NODIRECTION;
+    Direction directionRR = DIRECTION_NODIRECTION;
 
     int powerFL = 0;
     int powerFR = 0;
@@ -32,7 +32,7 @@ private:
     RmRelay *relay2;
 
     //void turn(RmCommandPkg cmd);
-    void go(RmCommandPkg cmd);
-    void stop();
-    void processButton(RmCommandPkg cmd);
+    void go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn);
+    void buttons(ButtonsSet buttons);
+
 };

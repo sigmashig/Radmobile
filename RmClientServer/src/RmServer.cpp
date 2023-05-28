@@ -1,5 +1,6 @@
 #include "RMServer.hpp"
 #include "RmProtocol.hpp"
+#include "RmCommands.hpp"
 #include "RmSession.hpp"
 
 #if PROTOCOL == 1
@@ -48,8 +49,9 @@ void RmServer::startWiFi(String ssid, String password)
 RmServer::RmServer()
 {
     Serial.println("RmServer::RmServer()");
-    rmCommands = new RmCommands();
     // TODO: session should be transferred from server to client
+    rmCommands = new RmCommands();
+
     rmSession = new RmSession();
     Serial.println("Point 1");
 #if RC == 1
@@ -80,8 +82,8 @@ void RmServer::Begin()
 {
     alreadyConnected = true;
     Serial.println("RmServer::Begin()");
-    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED, responseEventHandler, NULL, NULL);
-    esp_event_handler_instance_register(RMRC_EVENT, RMRC_CMD, commandEventHandler, NULL, NULL);
+    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, responseEventHandler, NULL, NULL);
+    esp_event_handler_instance_register(RMRC_EVENT, RMRC_NEWSTATE, commandEventHandler, NULL, NULL);
 
     rmProtocol->Begin();
     remoteControl->Begin();
@@ -101,11 +103,11 @@ void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int3
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("commandEventHandler");
-    RmCommandPkg *command = (RmCommandPkg *)event_data;
-    String commandString;
-    commandString = RmCommands::CommandToString(*command);
-    Serial.println("Command received: " + commandString);
-    rmServer->SendCommand(commandString);
+    CommandState *commandState = (CommandState *)event_data;
+    String stateString;
+    stateString = RmRemoteControl::StateAsString(*commandState);
+    Serial.println("State Ready: " + stateString);
+    rmServer->SendCommand(stateString);
     // rmProtocol->Send("Hello from WS Server");
 }
 

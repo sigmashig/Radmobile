@@ -9,7 +9,7 @@ class RmVehicleV1 : public RmVehicle
 public:
     RmVehicleV1();
     void Begin();
-    VehicleStatus RunCmd(RmCommandPkg cmd);
+    VehicleStatus ApplyState(CommandState& state);
 
 private:
     bool isStarted = false;

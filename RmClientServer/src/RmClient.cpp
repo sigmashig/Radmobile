@@ -18,12 +18,12 @@
 
 RmClient::RmClient()
 {
-    rmCommands = new RmCommands();
     // TODO: session should be transferred from server to client
+    rmCommands = new RmCommands();
     rmSession = new RmSession();
     rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
-    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_CMD_RECEIVED,
-                                        commandReceived, NULL, NULL);
+    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED,
+                                        stateReceived, NULL, NULL);
 #if PROTOCOL == 1
     isBeginRequired = false;
     rmProtocol = new RmProtocolMqtt();
@@ -52,7 +52,6 @@ void RmClient::Begin()
     Serial.println("Point 2");
     rmVehicle->Begin();
     Serial.println("Point 3");
-    
 }
 
 void RmClient::startWiFi(String ssid, String password)
@@ -86,11 +85,11 @@ void RmClient::startWiFi(String ssid, String password)
 #endif
 }
 
-void RmClient::commandReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void RmClient::stateReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Serial.println("responseEventHandler");
-    RmCommandPkg *cmdPkg = (RmCommandPkg *)event_data;
-    rmVehicle->RunCmd(*cmdPkg);
+    CommandState *state = (CommandState *)event_data;
+    rmVehicle->ApplyState(*state);
 }
 
 //--------------------------------

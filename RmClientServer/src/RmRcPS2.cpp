@@ -293,13 +293,13 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
     }
     if ((psData.buttons & PSXBTN_ACT_RIGHT) != (lastData.buttons & PSXBTN_ACT_RIGHT))
     {
-        cmdPkg.command = CMD_ACTR;
+        cmdPkg.command = CMD_BUTTON15;
         cmdPkg.value = psData.buttons & PSXBTN_ACT_RIGHT ? 100 : 0;
         CmdToServer(cmdPkg);
     }
     if ((psData.buttons & PSXBTN_ACT_LEFT) != (lastData.buttons & PSXBTN_ACT_LEFT))
     {
-        cmdPkg.command = CMD_ACTL;
+        cmdPkg.command = CMD_BUTTON16;
         cmdPkg.value = psData.buttons & PSXBTN_ACT_LEFT ? 100 : 0;
         CmdToServer(cmdPkg);
     }

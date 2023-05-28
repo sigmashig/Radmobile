@@ -14,23 +14,23 @@ RmEngineYellow::RmEngineYellow(EngineConfig config) : RmEngine(config)
     rmPinsDriver->RegisterPin(config.connection.controllerL298N.en);
     rmPinsDriver->SetPinMode(config.connection.controllerL298N.en, RmPinsDriver::PinMode::PIN_OUTPUT);
     power = 0;
-    direction = EngineDirection::ENGINE_NODIRECTION;
+    direction = Direction::DIRECTION_NODIRECTION;
     // esp_event_handler_register(RM_PINS_DRIVER_EVENT, RM_PINS_DRIVER_ISR, pcfEventHandler, NULL);
 }
 
 void RmEngineYellow::Begin()
 {
-    Run(EngineDirection::ENGINE_NODIRECTION, EngineAction::ACTION_STOP, 0);
+    Run(Direction::DIRECTION_NODIRECTION, EngineAction::ACTION_STOP, 0);
 }
 
-void RmEngineYellow::Run(EngineDirection direction, EngineAction action, int power)
+void RmEngineYellow::Run(Direction direction, EngineAction action, int power)
 {
     this->power = power;
     this->direction = direction;
     if (action == EngineAction::ACTION_STOP)
     {
         this->power = 0;
-        direction = EngineDirection::ENGINE_NODIRECTION;
+        direction = Direction::DIRECTION_NODIRECTION;
         rmPinsDriver->Write(config.connection.controllerL298N.en, 0);
         rmPinsDriver->Write(config.connection.controllerL298N.in1, 0);
         rmPinsDriver->Write(config.connection.controllerL298N.in2, 0);
@@ -38,7 +38,7 @@ void RmEngineYellow::Run(EngineDirection direction, EngineAction action, int pow
     }
     else
     {
-        if (direction == EngineDirection::ENGINE_FORWARD)
+        if (direction == Direction::DIRECTION_FORWARD)
         {
             rmPinsDriver->Write(config.connection.controllerL298N.in1, 1);
             rmPinsDriver->Write(config.connection.controllerL298N.in2, 0);
