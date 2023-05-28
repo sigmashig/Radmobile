@@ -27,8 +27,11 @@ public:
 
 protected:
     bool isReady = false;
-    int power = 0;
+    int directionPower = 0;
+    int turnPower = 0;
+    // int power = 0;
     EngineDirection direction = ENGINE_NODIRECTION;
+    EngineDirection turn = ENGINE_NODIRECTION;
 };
 
 extern RmVehicle *rmVehicle;

@@ -39,42 +39,48 @@ void RmVehicleV1::Begin()
 
 void RmVehicleV1::turn(RmCommandPkg cmd)
 {
+    /*
     direction = ENGINE_FORWARD;
-    power = cmd.value;
+    //power = cmd.value;
     if (cmd.command == CMD_LEFT)
     {
         frontLeft->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-        frontRight->Run(direction, ACTION_RUN, power);
+        //frontRight->Run(direction, ACTION_RUN, power);
         rearLeft->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-        rearRight->Run(direction, ACTION_RUN, power);
+       // rearRight->Run(direction, ACTION_RUN, power);
     }
     else if (cmd.command == CMD_RIGHT)
     {
-        frontLeft->Run(direction, ACTION_RUN, power);
+        //frontLeft->Run(direction, ACTION_RUN, power);
         frontRight->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-        rearLeft->Run(direction, ACTION_RUN, power);
+        //rearLeft->Run(direction, ACTION_RUN, power);
         rearRight->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
     }
+    */
 }
 
 void RmVehicleV1::go(RmCommandPkg cmd)
 {
+    /*
     direction = cmd.command == CMD_FORWARD ? ENGINE_FORWARD : ENGINE_BACKWARD;
     power = cmd.value;
     frontLeft->Run(direction, ACTION_RUN, power);
     frontRight->Run(direction, ACTION_RUN, power);
     rearLeft->Run(direction, ACTION_RUN, power);
     rearRight->Run(direction, ACTION_RUN, power);
+    */
 }
 
 void RmVehicleV1::stop()
 {
+    /*
     direction = ENGINE_NODIRECTION;
     power = 0;
     frontLeft->Run(direction, ACTION_STOP, 0);
     frontRight->Run(direction, ACTION_STOP, 0);
     rearLeft->Run(direction, ACTION_STOP, 0);
     rearRight->Run(direction, ACTION_STOP, 0);
+    */
 }
 
 void RmVehicleV1::processButton(RmCommandPkg cmd)
@@ -106,6 +112,7 @@ void RmVehicleV1::processButton(RmCommandPkg cmd)
         }
     }
     break;
+    /*
     case CMD_BUTTON3:
         break;
     case CMD_BUTTON4:
@@ -126,6 +133,7 @@ void RmVehicleV1::processButton(RmCommandPkg cmd)
         break;
     case CMD_BUTTON12:
         break;
+        */
     }
 }
 
@@ -158,7 +166,7 @@ VehicleStatus RmVehicleV1::RunCmd(RmCommandPkg cmd)
         break;
     case CMD_STOP:
         direction = ENGINE_NODIRECTION;
-        power = 0;
+        //power = 0;
         stop();
         isStarted = false;
         break;

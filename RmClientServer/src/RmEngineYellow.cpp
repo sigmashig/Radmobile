@@ -13,7 +13,8 @@ RmEngineYellow::RmEngineYellow(EngineConfig config) : RmEngine(config)
 
     rmPinsDriver->RegisterPin(config.connection.controllerL298N.en);
     rmPinsDriver->SetPinMode(config.connection.controllerL298N.en, RmPinsDriver::PinMode::PIN_OUTPUT);
-
+    power = 0;
+    direction = EngineDirection::ENGINE_NODIRECTION;
     // esp_event_handler_register(RM_PINS_DRIVER_EVENT, RM_PINS_DRIVER_ISR, pcfEventHandler, NULL);
 }
 
@@ -24,8 +25,12 @@ void RmEngineYellow::Begin()
 
 void RmEngineYellow::Run(EngineDirection direction, EngineAction action, int power)
 {
+    this->power = power;
+    this->direction = direction;
     if (action == EngineAction::ACTION_STOP)
     {
+        this->power = 0;
+        direction = EngineDirection::ENGINE_NODIRECTION;
         rmPinsDriver->Write(config.connection.controllerL298N.en, 0);
         rmPinsDriver->Write(config.connection.controllerL298N.in1, 0);
         rmPinsDriver->Write(config.connection.controllerL298N.in2, 0);

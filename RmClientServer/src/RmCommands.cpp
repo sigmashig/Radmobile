@@ -9,6 +9,7 @@ RmCommands::RmCommands()
     cmdTxt[CMD_LEFT] = "L1";
     cmdTxt[CMD_RIGHT] = "R1";
     cmdTxt[CMD_STOP] = "XX";
+    cmdTxt[CMD_PAUSE] = "PP";
     cmdTxt[CMD_BUTTON1] = "T1";
     cmdTxt[CMD_BUTTON2] = "T2";
     cmdTxt[CMD_BUTTON3] = "T3";
@@ -51,7 +52,7 @@ RmCommandPkg RmCommands::StringToCommand(String commandString)
                 String strValue = commandString.substring(4, commandString.length() - 1);
                 if (strValue.length() > 0 && strValue.length() <= 3)
                 {
-                    bool val = 0;
+                    byte val = 0;
                     for (int j = 0; j < strValue.length(); j++)
                     {
                         if (strValue[j] >= '0' && strValue[j] <= '9')

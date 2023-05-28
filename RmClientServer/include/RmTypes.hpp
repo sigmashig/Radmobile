@@ -61,9 +61,11 @@ typedef struct
 
 typedef enum
 {
-    ENGINE_NODIRECTION,
     ENGINE_FORWARD,
-    ENGINE_BACKWARD
+    ENGINE_BACKWARD,
+    ENGINE_LEFT,
+    ENGINE_RIGHT,
+    ENGINE_NODIRECTION
 } EngineDirection;
 typedef enum
 {

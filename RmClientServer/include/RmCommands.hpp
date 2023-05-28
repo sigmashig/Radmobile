@@ -9,6 +9,7 @@ typedef enum
     CMD_LEFT,
     CMD_RIGHT,
     CMD_STOP,
+    CMD_PAUSE,
     CMD_BUTTON1,
     CMD_BUTTON2,
     CMD_BUTTON3,

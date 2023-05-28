@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <esp_event.h>
+#include <esp_wifi.h>
 #include "RmConfiguration.hpp"
+
 #include <RadioLib.h>
 
 #if MODE == 1
@@ -58,6 +60,10 @@ void setup()
 #elif MODE == 2
   rmClient = new RmClient();
 #endif
+  byte mac[6];
+  esp_wifi_get_mac(WIFI_IF_STA, mac);
+  Serial.printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  Serial.printf("Efuse:%u\n",ESP.getEfuseMac());
   //esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
 }
 
