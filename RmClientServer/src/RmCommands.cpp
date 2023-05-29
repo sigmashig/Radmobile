@@ -74,7 +74,7 @@ String RmCommands::StateAsString(CommandState &state)
     stateString += '#';
     for (int i = 0; i < 16; i++)
     {
-        if ((state.buttons.buttonPacked & (1 << i)) == 0)
+        if ((state.buttons.buttonPacked & (1 << i)) != 0)
         {
             stateString += cmdTxt[CMD_BUTTON1 + i];
         }
@@ -92,6 +92,7 @@ CommandState RmCommands::StringToState(String stateString)
     {
         if (stateString[1] == cmdTxt[CMD_START])
         {
+            Serial.println("String2State: START");
             state.straight = DIRECTION_START;
             state.isValid = true;
         }
@@ -119,15 +120,12 @@ CommandState RmCommands::StringToState(String stateString)
         {
             if (isDigit(stateString[2]) && isDigit(stateString[3]))
             {
-                state.powerStraight = (stateString[3] - '0') * 10 + (stateString[4] - '0');
-                if (state.powerStraight == 0)
-                {
-                    state.straight = DIRECTION_NODIRECTION;
-                }
+                state.powerStraight = (stateString[2] - '0') * 10 + (stateString[3] - '0');
                 state.isValid = true;
             }
             else
             {
+                Serial.println("String2State: ERROR 2-3 not digits");
                 state.isValid = false;
             }
             if (state.isValid)
@@ -154,8 +152,14 @@ CommandState RmCommands::StringToState(String stateString)
                         state.turn = DIRECTION_RIGHT;
                         state.isValid = true;
                     }
+                    else if (stateString[5] == cmdTxt[CMD_PAUSE])
+                    {
+                        state.turn = DIRECTION_NODIRECTION;
+                        state.isValid = true;
+                    }
                     else
                     {
+                        Serial.println("String2State: ERROR 5 unknown turn");
                         state.isValid = false;
                     }
                     if (state.isValid)
@@ -163,14 +167,11 @@ CommandState RmCommands::StringToState(String stateString)
                         if (isDigit(stateString[6]) && isDigit(stateString[7]))
                         {
                             state.powerTurn = (stateString[6] - '0') * 10 + (stateString[7] - '0');
-                            if (state.powerTurn == 0)
-                            {
-                                state.turn = DIRECTION_NODIRECTION;
-                            }
                             state.isValid = true;
                         }
                         else
                         {
+                            Serial.println("String2State: ERROR 6-7 not digits");
                             state.isValid = false;
                         }
                         if (state.isValid)
@@ -178,12 +179,13 @@ CommandState RmCommands::StringToState(String stateString)
                             if (stateString[8] == '#')
                             {
                                 state.buttons.buttonPacked = 0;
-                                for (int i = 9; i < stateString.length() - 1; i++)
+                                for (int i = 9; i < stateString.length() - 2; i++)
                                 {
                                     for (int j = 0; j < 16; j++)
                                     {
                                         if (stateString[i] == cmdTxt[CMD_BUTTON1 + j])
                                         {
+                                            Serial.printf("String2State: Button %d\n", j);
                                             state.buttons.buttonPacked |= (1 << j);
                                         }
                                     }
@@ -192,14 +194,27 @@ CommandState RmCommands::StringToState(String stateString)
                             }
                             else
                             {
+                                Serial.println("String2State: ERROR 8 not #");
                                 state.isValid = false;
                             }
                         }
                     }
                 }
+                else
+                {
+                    Serial.println("String2State: ERROR 4 not #");
+                    state.isValid = false;
+                }
             }
         }
     }
+    else
+    {
+        Serial.println("String2State: ERROR 0-last not ()");
+        state.isValid = false;
+    }
+    Serial.printf("Point 6: %d\n", state.straight);
+
     return state;
 }
 

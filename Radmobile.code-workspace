@@ -16,7 +16,10 @@
 		"files.associations": {
 			"new": "cpp",
 			"*.tcc": "cpp",
-			"cmath": "cpp"
+			"cmath": "cpp",
+			"memory_resource": "cpp",
+			"numeric": "cpp",
+			"limits": "cpp"
 		}
 	}
 }

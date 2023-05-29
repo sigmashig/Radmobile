@@ -102,10 +102,9 @@ void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int3
 
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    Serial.println("commandEventHandler");
     CommandState *commandState = (CommandState *)event_data;
     String stateString;
-    stateString = RmRemoteControl::StateAsString(*commandState);
+    stateString = RmCommands::StateAsString(*commandState);
     Serial.println("State Ready: " + stateString);
     rmServer->SendCommand(stateString);
     // rmProtocol->Send("Hello from WS Server");

@@ -51,7 +51,7 @@ uint RmPinsDriver::normalizeValue(uint value, PinDefinition pinDefinition)
     uint res;
     if (pinDefinition.pinConfig.pinType == PIN_PWM)
     {
-        res = map(value > 99 ? 99 : value, 0, 99, 0, pow(2, pinDefinition.pinConfig.pwmSettings.resolution) - 1);
+        res = map((value > 99 ? 99 : value), 0, 99, 0, (1<< pinDefinition.pinConfig.pwmSettings.resolution) - 1);
         //Serial.printf("Norm: %d ->%d\n", value,  res);
     }
     else if (pinDefinition.pinConfig.pinType == PIN_DIGITAL)

@@ -4,6 +4,8 @@
 #include "RmSession.hpp"
 
 LORA *RmProtocolLora::radio;
+bool RmProtocolLora::isChannelFree = true;
+String RmProtocolLora::pkgForTransmit = "";
 
 RmProtocolLora::RmProtocolLora()
 {
@@ -22,6 +24,11 @@ RmProtocolLora::RmProtocolLora()
     esp_event_handler_register(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, packageReceived, NULL);
 }
 
+ICACHE_RAM_ATTR void RmProtocolLora::loraISR()
+{
+    esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, NULL, 0, NULL);
+}
+
 void RmProtocolLora::Begin()
 {
     int state = radio->begin();
@@ -34,9 +41,7 @@ void RmProtocolLora::Begin()
         Serial.print(F("LORA initialization failed, code "));
         Serial.println(state);
     }
-    radio->setDio0Action([]()
-                         { esp_event_isr_post(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, NULL, 0, NULL); },
-                         RISING);
+    radio->setDio0Action(loraISR, RISING);
     radio->startReceive();
 }
 
@@ -46,26 +51,50 @@ void RmProtocolLora::Reconnect()
 
 void RmProtocolLora::ReceivedState(String state)
 {
-    Serial.println("RmProtocolLora::ReceivedCommand()");
+    Serial.println("RmProtocolLora::ReceivedCommand: " + state);
     Serial.println(state);
     CommandState st = RmCommands::StringToState(state);
-    esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &st, sizeof(st), portMAX_DELAY);
+    if (st.isValid)
+    {
+        Serial.println("Valid command!");
+        Serial.printf("State to processing: %d, %d, %d, %d, 0x%04x\n", st.straight, st.powerStraight, st.turn, st.powerTurn, st.buttons.buttonPacked);
+        esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &st, sizeof(st), portMAX_DELAY);
+    }
+    else
+    {
+        Serial.println("Invalid command!");
+    }
 }
 
 bool RmProtocolLora::SendCommand(String command)
 {
-    String pkg = String(rmSession->GetSessionId());
-    pkg += command;
-    Serial.printf("Sending: %s(%u)\n", pkg.c_str(), pkg.length());
+    pkgForTransmit = String(rmSession->GetSessionId());
+    pkgForTransmit += command;
+    if (isChannelFree)
+    {
+        Serial.printf("Sending MAIN: %s(%u)\n", pkgForTransmit.c_str(), pkgForTransmit.length());
+        isChannelFree = false;
+        int state = radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
 
-    int state = radio->startTransmit(pkg.c_str(), pkg.length());
-    return false;
+        if (state != RADIOLIB_ERR_NONE)
+        {
+            Serial.print(F("LORA transmission failed, code "));
+            Serial.println(state);
+            return false;
+        }
+    }
+    else
+    {
+        Serial.printf("Queued: %s(%u)\n", pkgForTransmit.c_str(), pkgForTransmit.length());
+    }
+    return true;
 }
 
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     // Serial.println("RmProtocolLora::packageReceived()");
     uint status = radio->getIRQFlags();
+    Serial.printf("Something happened, status: %u\n", status);
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
     { // received a packet
         String str;
@@ -76,20 +105,28 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
             Serial.printf("Received for other device, ignoring.");
             return;
         }
-        CommandState state = RmCommands::StringToState(str.substring(1));
-        if (state.isValid)
-        {
-            Serial.println("Valid!");
-            esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &state, sizeof(state), portMAX_DELAY);
-        }
+        rmProtocol->ReceivedState(str.substring(1));
     }
-    else if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
+    if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
     { // transfer completed
-      //        radio->startReceive();
+        radio->finishTransmit();
+        pkgForTransmit = "";
+        Serial.println("Transfer completed.");
+        // radio->startReceive();
+    }
+    if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_VALID_HEADER)
+    {
+        Serial.println("Valid header.");
+    }
+    if (pkgForTransmit.length() > 0)
+    {
+        Serial.println("Sending...");
+        isChannelFree = false;
+        radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
     }
     else
-    { // something else happened
-      // Serial.printf("Something else happened, status: %u\n", status);
+    {
+        radio->startReceive();
+        isChannelFree = true;
     }
-    radio->startReceive();
 }

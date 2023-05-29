@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "RmTypes.hpp"
 
+#define MAX_COMMAND_VALUE 99
 class RmCommands
 {
 public:

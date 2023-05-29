@@ -25,8 +25,11 @@ void RmEngineYellow::Begin()
 
 void RmEngineYellow::Run(Direction direction, EngineAction action, int power)
 {
+    if ((direction != DIRECTION_FORWARD && direction != DIRECTION_BACKWARD) || action != ACTION_RUN)
+    {
+        action = EngineAction::ACTION_STOP;
+    }
     this->power = power;
-    this->direction = direction;
     if (action == EngineAction::ACTION_STOP)
     {
         this->power = 0;
@@ -51,12 +54,6 @@ void RmEngineYellow::Run(Direction direction, EngineAction action, int power)
         if (action == EngineAction::ACTION_RUN)
         {
             rmPinsDriver->Write(config.connection.controllerL298N.en, power);
-        }
-        else
-        {
-            rmPinsDriver->Write(config.connection.controllerL298N.in1, 0);
-            rmPinsDriver->Write(config.connection.controllerL298N.in2, 0);
-            rmPinsDriver->Write(config.connection.controllerL298N.en, 0);
         }
     }
 }
