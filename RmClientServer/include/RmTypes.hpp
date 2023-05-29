@@ -23,6 +23,7 @@ typedef struct
         uint frequency;
         uint resolution;
         uint channel;
+        uint minvalue;
     } pwmSettings;
     union
     {

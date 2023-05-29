@@ -103,7 +103,10 @@ VehicleStatus RmVehicleV2::ApplyState(CommandState &state)
 void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn)
 {
     Serial.printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn);
-
+    if (dirStraight != DIRECTION_FORWARD && dirStraight != DIRECTION_BACKWARD)
+    {
+        dirStraight = DIRECTION_FORWARD;
+    }
     directionFL = dirStraight;
     directionFR = dirStraight;
     directionRL = dirStraight;
