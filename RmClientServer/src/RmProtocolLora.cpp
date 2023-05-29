@@ -6,6 +6,9 @@
 LORA *RmProtocolLora::radio;
 bool RmProtocolLora::isChannelFree = true;
 String RmProtocolLora::pkgForTransmit = "";
+String RmProtocolLora::lastPkg = "";
+TimerHandle_t RmProtocolLora::sendTimer;
+StaticTimer_t RmProtocolLora::sendTimerBuffer;
 
 RmProtocolLora::RmProtocolLora()
 {
@@ -22,6 +25,27 @@ RmProtocolLora::RmProtocolLora()
                                   cfg->connection.LoraSx1278.dio1));
 #endif
     esp_event_handler_register(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, packageReceived, NULL);
+    sendTimer = xTimerCreateStatic(
+        "sendTimer", pdMS_TO_TICKS(1000), pdTRUE, NULL, [](TimerHandle_t xTimer)
+        {
+        if (isChannelFree) {
+            if (pkgForTransmit != "")
+            {
+                Serial.println("RmProtocolLora::sendTimer: PACKAGE" + pkgForTransmit);
+                radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
+                pkgForTransmit = "";
+                isChannelFree = false;
+            } else 
+            {
+                if (lastPkg != "") 
+                {    
+                    Serial.println("RmProtocolLora::sendTimer: LAST" + pkgForTransmit);
+                    radio->startTransmit(lastPkg.c_str(), lastPkg.length());
+                    isChannelFree = false;
+                }
+            }
+        } },
+        &sendTimerBuffer);
 }
 
 ICACHE_RAM_ATTR void RmProtocolLora::loraISR()
@@ -70,6 +94,7 @@ bool RmProtocolLora::SendCommand(String command)
 {
     pkgForTransmit = String(rmSession->GetSessionId());
     pkgForTransmit += command;
+    lastPkg = pkgForTransmit;
     if (isChannelFree)
     {
         Serial.printf("Sending MAIN: %s(%u)\n", pkgForTransmit.c_str(), pkgForTransmit.length());
@@ -110,6 +135,7 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
     { // transfer completed
         radio->finishTransmit();
+        xTimerReset(sendTimer, 0);
         pkgForTransmit = "";
         Serial.println("Transfer completed.");
         // radio->startReceive();

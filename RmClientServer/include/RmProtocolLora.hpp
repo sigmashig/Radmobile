@@ -18,4 +18,7 @@ private:
     static bool isChannelFree;
     static String pkgForTransmit;
     static void loraISR();
+    static TimerHandle_t sendTimer;
+    static StaticTimer_t sendTimerBuffer;
+    static String lastPkg;
 };
