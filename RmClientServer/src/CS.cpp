@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <esp_event.h>
 #include <esp_wifi.h>
-#include <RmLoger.hpp>
+#include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
 
 #include <RadioLib.h>
@@ -27,26 +27,26 @@ static void totalEventHandler(void *arg, esp_event_base_t event_base, int32_t ev
   // Serial.printf("MAIN loopEventHandler:%d\n", event_id);
   if (event_base == RMPROTOCOL_EVENT)
   {
-    rmLoger->Debug("MAIN RMPROTOCOL_EVENT");
+    Log->Debug("MAIN RMPROTOCOL_EVENT");
   }
 #if MODE == 1
   else if (event_base == RMRC_EVENT)
   {
-    rmLoger->Debug("MAIN RMRC_EVENT");
+    Log->Debug("MAIN RMRC_EVENT");
   }
 #elif MODE == 2
   else if (event_base == RMPINS_DRIVER_EVENT)
   {
-    rmLoger->Debug("MAIN RM_PINS_DRIVER_EVENT");
+    Log->Debug("MAIN RM_PINS_DRIVER_EVENT");
   }
   else if (event_base == RMVEHICLE_EVENT)
   {
-    rmLoger->Debug("MAIN RMVEHICLE_EVENT");
+    Log->Debug("MAIN RMVEHICLE_EVENT");
   }
 #endif
   else
   {
-    rmLoger->append("MAIN event_base:").append(event_base).Debug();
+    Log->Append("MAIN event_base:").Append(event_base).Debug();
   }
 }
 
@@ -54,7 +54,7 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("--------------------");
-  rmLoger = new RmLoger(512, NULL);
+  Log = new SigmaLoger(512);
   esp_event_loop_create_default();
   rmConfig = new RmConfiguration();
 #if MODE == 1
@@ -63,7 +63,7 @@ void setup()
   rmClient = new RmClient();
 #endif
   rmConfig->Id = ESP.getEfuseMac();
-  rmLoger->Printf("ID:%lx", rmConfig->Id).Info();
+  Log->Printf("ID:%lx", rmConfig->Id).Info();
   // esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
 }
 

@@ -1,5 +1,5 @@
 #include "RmClient.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
@@ -46,7 +46,7 @@ RmClient::RmClient()
 
 void RmClient::Begin()
 {
-    rmLoger->Debug(F("RmClient::Begin()"));
+    Log->Debug(F("RmClient::Begin()"));
     rmPinsDriver->Begin();
     rmProtocol->Begin();
     rmVehicle->Begin();
@@ -55,7 +55,7 @@ void RmClient::Begin()
 void RmClient::startWiFi(String ssid, String password)
 {
 #if PROTOCOL == 1
-    rmLoger->append(F("Connecting to WiFi network: ")).append(ssid).Info();
+    Log->Append(F("Connecting to WiFi network: ")).Append(ssid).Info();
     WiFi.mode(WIFI_STA);
 
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
@@ -64,14 +64,14 @@ void RmClient::startWiFi(String ssid, String password)
                     {
                         case SYSTEM_EVENT_STA_GOT_IP:
                         {
-                            rmLoger->Info(F("WiFi connected"));
-                            rmLoger->append(F("IP address: ").append(WiFi.localIP().toString()).Info());
+                            Log->Info(F("WiFi connected"));
+                            Log->Append(F("IP address: ").Append(WiFi.localIP().toString()).Info());
                             Begin();
                             break;
                         }
                         case SYSTEM_EVENT_STA_DISCONNECTED:
                         {
-                            rmLoger->append(F("WiFi connection error: ")).append(info.wifi_sta_disconnected.reason).Error();
+                            Log->Append(F("WiFi connection error: ")).Append(info.wifi_sta_disconnected.reason).Error();
                             if (isConnected)
                             {
                                 rmProtocol->Reconnect();
@@ -85,7 +85,7 @@ void RmClient::startWiFi(String ssid, String password)
 
 void RmClient::stateReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    rmLoger->Debug(F("RmClient::stateReceived"));
+    Log->Debug(F("RmClient::stateReceived"));
     CommandState *state = (CommandState *)event_data;
     rmVehicle->ApplyState(*state);
 }

@@ -2,7 +2,7 @@
 #include "RmProtocol.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 #if PROTOCOL == 1
 #include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
@@ -18,7 +18,7 @@
 void RmServer::startWiFi(String ssid, String password)
 {
 #if PROTOCOL == 1
-    rmLoger->append(F("Server. Connecting to WiFi network: ")).append(ssid).Info();
+    Log->Append(F("Server. Connecting to WiFi network: ")).Append(ssid).Info();
     WiFi.mode(WIFI_STA);
 
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
@@ -27,13 +27,13 @@ void RmServer::startWiFi(String ssid, String password)
                     {
                         case SYSTEM_EVENT_STA_GOT_IP:
                         {
-                            rmLoger->append(F("WiFi connected. IP address:")),append(WiFi.localIP().toString()).Info();
+                            Log->Append(F("WiFi connected. IP address:")),append(WiFi.localIP().toString()).Info();
                             Begin();
                             break;
                         }
                         case SYSTEM_EVENT_STA_DISCONNECTED:
                         {
-                            rmLoger->append(F("WiFi connection error:")).append(info.wifi_sta_disconnected.reason).Error();
+                            Log->Append(F("WiFi connection error:")).Append(info.wifi_sta_disconnected.reason).Error();
                             if (alreadyConnected)
                             {
                                 rmProtocol->Reconnect();
@@ -47,7 +47,7 @@ void RmServer::startWiFi(String ssid, String password)
 
 RmServer::RmServer()
 {
-    rmLoger->Debug(F("SERVER"));
+    Log->Debug(F("SERVER"));
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
 
@@ -92,7 +92,7 @@ void RmServer::SendCommand(String command)
 
 void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    rmLoger->Debug("responseEventHandler");
+    Log->Debug("responseEventHandler");
 }
 
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
@@ -100,7 +100,7 @@ void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32
     CommandState *commandState = (CommandState *)event_data;
     String stateString;
     stateString = RmCommands::StateAsString(*commandState);
-    rmLoger->append(F("State Ready: ")).append(stateString).Info();
+    Log->Append(F("State Ready: ")).Append(stateString).Info();
     rmServer->SendCommand(stateString);
 }
 

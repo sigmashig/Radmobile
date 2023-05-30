@@ -1,6 +1,6 @@
 #include "RmProtocolMqtt.hpp"
 #include <esp_event.h>
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 #include "RmCommands.hpp"
 #include "RmConfiguration.hpp"
 
@@ -17,7 +17,7 @@ void RmProtocolMqtt::Begin()
 
     mqttClient.onDisconnect([this](AsyncMqttClientDisconnectReason reason)
                             { 
-                                rmLoger->append("Disconnected from MQTT. Reason=").append((uint)reason).Error(); 
+                                Log->Append("Disconnected from MQTT. Reason=").Append((uint)reason).Error(); 
                                 connectToMqtt(); });
     mqttClient.onMessage(messageReceived);
     mqttClient.onConnect(_onConnect);
@@ -42,13 +42,13 @@ bool RmProtocolMqtt::SendCommand(String command)
 
 void RmProtocolMqtt::Reconnect()
 {
-    rmLoger->Warn("Mqtt Reconnect");
+    Log->Warn("Mqtt Reconnect");
     connectToMqtt();
 }
 
 bool RmProtocolMqtt::_onConnect(bool sessionPresent)
 {
-    rmLoger->Info(F("Connected to MQTT."));
+    Log->Info(F("Connected to MQTT."));
     mqttClient.subscribe(topic.c_str(), 0);
     return true;
 }
@@ -65,11 +65,11 @@ void RmProtocolMqtt::messageReceived(char *topic, char *payload,
     if (len > 0)
     {
         payload[len] = '\0';
-        rmLoger->append(F("[")).append(topic).append(F("]:")).append(payload).Debug();
+        Log->Append(F("[")).Append(topic).Append(F("]:")).Append(payload).Debug();
         rmProtocol->ReceivedState(String(payload));
     }
     else
     {
-        rmLoger->Error(F("MQTT:Empty message received!"));
+        Log->Error(F("MQTT:Empty message received!"));
     }
 }

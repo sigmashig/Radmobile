@@ -10,6 +10,10 @@
 		{
 			"name": "TestPS2",
 			"path": "../TestPS2"
+		},
+		{
+			"name": "SigmaUtils",
+			"path": "../SigmaUtils"
 		}
 	],
 	"settings": {

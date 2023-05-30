@@ -1,5 +1,5 @@
 #include "RmRcPS2.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
 #include <esp_event.h>
 #include "RmTypes.hpp"
@@ -27,7 +27,7 @@ void RmRcPS2::loopEventHandler(void *arg, esp_event_base_t event_base, int32_t e
     }
     else
     {
-        rmLoger->Error(F("PS2 joystick is not connected"));
+        Log->Error(F("PS2 joystick is not connected"));
     }
 }
 
@@ -94,7 +94,9 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
                 cmdPkg.command = CMD_RIGHT;
                 cmdPkg.value = res;
                 CmdToServer(cmdPkg);
-            } else {
+            }
+            else
+            {
                 cmdPkg.command = CMD_RIGHT;
                 cmdPkg.value = 0;
                 CmdToServer(cmdPkg);
@@ -146,7 +148,8 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
     }
     case PS2ModeStick::PS2_PAD:
     {
-        if ((psData.buttons & PSXBTN_UP) != (lastData.buttons & PSXBTN_UP)){
+        if ((psData.buttons & PSXBTN_UP) != (lastData.buttons & PSXBTN_UP))
+        {
             if (psData.buttons & PSXBTN_UP)
             {
                 cmdPkg.command = CMD_FORWARD;

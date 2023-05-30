@@ -1,5 +1,5 @@
 #include "RmVehicleV2.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
 #include "RmEngineYellow.hpp"
 
@@ -34,17 +34,23 @@ void RmVehicleV2::Begin()
     rearRight->Begin();
     relay1->Begin();
     relay2->Begin();
-    }
+}
 void RmVehicleV2::buttons(ButtonsSet buttons)
 {
-    if(buttons.button.b1) {
+    if (buttons.button.b1)
+    {
         relay1->On();
-    } else {
+    }
+    else
+    {
         relay1->Off();
     }
-    if(buttons.button.b2) {
+    if (buttons.button.b2)
+    {
         relay2->On();
-    } else {
+    }
+    else
+    {
         relay2->Off();
     }
 }
@@ -52,24 +58,24 @@ void RmVehicleV2::buttons(ButtonsSet buttons)
 VehicleStatus RmVehicleV2::ApplyState(CommandState &state)
 {
     VehicleStatus status = VEHICLE_OK;
-    rmLoger->Debug(F("RmVehicleV2::RunCmd"));
+    Log->Debug(F("RmVehicleV2::RunCmd"));
     if (!isStarted)
     {
         if (state.straight == DIRECTION_START)
         {
-            rmLoger->Info(F("Vehicle V2 started"));
+            Log->Info(F("Vehicle V2 started"));
             isStarted = true;
             return VEHICLE_OK;
         }
         else
         { // skip command
-            rmLoger->Warn(F("Vehicle V2 DO NOT started"));
+            Log->Warn(F("Vehicle V2 DO NOT started"));
             return VEHICLE_NOT_STARTED;
         }
     }
     if (state.straight == DIRECTION_STOP)
     {
-        rmLoger->Info(F("Vehicle V2 stoped"));
+        Log->Info(F("Vehicle V2 stoped"));
         isStarted = false;
         return VEHICLE_OK;
     }
@@ -80,7 +86,7 @@ VehicleStatus RmVehicleV2::ApplyState(CommandState &state)
 
 void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn)
 {
-    rmLoger->Printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn).Debug();
+    Log->Printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn).Debug();
     if (dirStraight != DIRECTION_FORWARD && dirStraight != DIRECTION_BACKWARD)
     {
         dirStraight = DIRECTION_FORWARD;
@@ -134,11 +140,10 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
         powerRR = -powerRR;
         directionRR = (directionRR == DIRECTION_FORWARD) ? DIRECTION_BACKWARD : DIRECTION_FORWARD;
     }
-    rmLoger->Printf("RmVehicleV2::power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
-    rmLoger->Printf("RmVehicleV2::dir: %d, %d, %d, %d\n", directionFL, directionFR, directionRL, directionRR).Debug();
+    Log->Printf("RmVehicleV2::power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+    Log->Printf("RmVehicleV2::dir: %d, %d, %d, %d\n", directionFL, directionFR, directionRL, directionRR).Debug();
     frontLeft->Run(directionFL, ACTION_RUN, powerFL);
     frontRight->Run(directionFR, ACTION_RUN, powerFR);
     rearLeft->Run(directionRL, ACTION_RUN, powerRL);
     rearRight->Run(directionRR, ACTION_RUN, powerRR);
 }
-

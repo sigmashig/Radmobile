@@ -1,5 +1,5 @@
 #include "RmCommands.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 
 String RmCommands::CommandToString(RmCommandPkg command)
 {
@@ -125,7 +125,7 @@ CommandState RmCommands::StringToState(String stateString)
             }
             else
             {
-                rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 2-3 not digits");
+                Log->Append("StateString: ").Append(stateString).Append(" is not valid.").Error("ERROR 2-3 not digits");
                 state.isValid = false;
             }
             if (state.isValid)
@@ -159,7 +159,7 @@ CommandState RmCommands::StringToState(String stateString)
                     }
                     else
                     {
-                        rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 5 unknown turn");
+                        Log->Append("StateString: ").Append(stateString).Append(" is not valid.").Error("ERROR 5 unknown turn");
                         state.isValid = false;
                     }
                     if (state.isValid)
@@ -171,7 +171,7 @@ CommandState RmCommands::StringToState(String stateString)
                         }
                         else
                         {
-                            rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 6-7 not digits");
+                            Log->Append("StateString: ").Append(stateString).Append(" is not valid.").Error("ERROR 6-7 not digits");
                             state.isValid = false;
                         }
                         if (state.isValid)
@@ -193,7 +193,7 @@ CommandState RmCommands::StringToState(String stateString)
                             }
                             else
                             {
-                                rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 8 is not #");
+                                Log->Append("StateString: ").Append(stateString).Append(" is not valid.").Error("ERROR 8 is not #");
                                 state.isValid = false;
                             }
                         }
@@ -201,7 +201,7 @@ CommandState RmCommands::StringToState(String stateString)
                 }
                 else
                 {
-                    rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 4 is not #");
+                    Log->Append("StateString: ").Append(stateString).Append(" is not valid.").Error("ERROR 4 is not #");
                     state.isValid = false;
                 }
             }
@@ -209,7 +209,7 @@ CommandState RmCommands::StringToState(String stateString)
     }
     else
     {
-        rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 0-last not ()");
+        Log->Append("StateString: ").Append(stateString).Append(" is not valid.").Error("ERROR 0-last not ()");
         state.isValid = false;
     }
     return state;

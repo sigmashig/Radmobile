@@ -1,5 +1,5 @@
 #include "RmProtocolLora.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
@@ -32,7 +32,7 @@ RmProtocolLora::RmProtocolLora()
         if (isChannelFree) {
             if (pkgForTransmit != "")
             {
-                rmLoger->append(F("Lora timer. Queued package:")).append(pkgForTransmit).Debug();
+                Log->Append(F("Lora timer. Queued package:")).Append(pkgForTransmit).Debug();
                 radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
                 pkgForTransmit = "";
                 isChannelFree = false;
@@ -40,7 +40,7 @@ RmProtocolLora::RmProtocolLora()
             {
                 if (lastPkg != "") 
                 {
-                    rmLoger->append(F("Lora timer. Resend last package:")).append(lastPkg).Debug();
+                    Log->Append(F("Lora timer. Resend last package:")).Append(lastPkg).Debug();
                     radio->startTransmit(lastPkg.c_str(), lastPkg.length());
                     isChannelFree = false;
                 }
@@ -59,11 +59,11 @@ void RmProtocolLora::Begin()
     int state = radio->begin();
     if (state == RADIOLIB_ERR_NONE)
     {
-        rmLoger->Info(F("LORA is initiated successfully!"));
+        Log->Info(F("LORA is initiated successfully!"));
     }
     else
     {
-        rmLoger->append(F("LORA initialization failed, code ")).append(state).Error();
+        Log->Append(F("LORA initialization failed, code ")).Append(state).Error();
     }
     radio->setDio0Action(loraISR, RISING);
     radio->startReceive();
@@ -75,7 +75,7 @@ void RmProtocolLora::Reconnect()
 
 void RmProtocolLora::ReceivedState(String state)
 {
-    rmLoger->append(F("LORA ReceivedCommand: ")).append(state).Debug();
+    Log->Append(F("LORA ReceivedCommand: ")).Append(state).Debug();
     CommandState st = RmCommands::StringToState(state);
     if (st.isValid)
     {
@@ -83,7 +83,7 @@ void RmProtocolLora::ReceivedState(String state)
     }
     else
     {
-        rmLoger->Error(F("Invalid command!"));
+        Log->Error(F("Invalid command!"));
     }
 }
 
@@ -94,19 +94,20 @@ bool RmProtocolLora::SendCommand(String command)
     lastPkg = pkgForTransmit;
     if (isChannelFree)
     {
-        rmLoger->append("Sending first:").append(pkgForTransmit).Debug();
+        Log->Append("Sending first:").Append(pkgForTransmit).Debug();
         isChannelFree = false;
         int state = radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
 
         if (state != RADIOLIB_ERR_NONE)
         {
-            rmLoger->append(F("LORA transmission failed, code ")).append(state).Error();
+            Log->Append(F("LORA transmission failed, code ")).Append(state).Error();
             return false;
         }
     }
     else
     {
-        rmLoger->append("Queued:").append(pkgForTransmit).Debug();}
+        Log->Append("Queued:").Append(pkgForTransmit).Debug();
+    }
     return true;
 }
 
@@ -117,10 +118,10 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
     { // received a packet
         String str;
         radio->readData(str);
-        rmLoger->append("Received: ").append(str).Debug();
+        Log->Append("Received: ").Append(str).Debug();
         if (str[0] != rmSession->GetSessionId())
         {
-            rmLoger->Info(F("Received for other device, ignoring."));
+            Log->Info(F("Received for other device, ignoring."));
             return;
         }
         rmProtocol->ReceivedState(str.substring(1));
@@ -130,15 +131,15 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
         radio->finishTransmit();
         xTimerReset(sendTimer, 0);
         pkgForTransmit = "";
-        rmLoger->Debug(F("Transfer completed."));
+        Log->Debug(F("Transfer completed."));
     }
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_VALID_HEADER)
     {
-        rmLoger->Debug(F("Valid header."));
+        Log->Debug(F("Valid header."));
     }
     if (pkgForTransmit.length() > 0)
     {
-        rmLoger->Debug(F("Sending queued..."));
+        Log->Debug(F("Sending queued..."));
         isChannelFree = false;
         radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
     }

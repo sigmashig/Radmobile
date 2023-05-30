@@ -1,5 +1,5 @@
 #include "RmPinsDriver.hpp"
-#include "RmLoger.hpp"
+#include "SigmaLoger.hpp"
 
 RmPinsDriver::RmPinsDriver(PcfSettings *pcfSettings, int numbPcf)
 {
@@ -83,7 +83,7 @@ void RmPinsDriver::Write(PinDefinition pinDefinition, uint value)
     {
         if (pinDefinition.pinConfig.pinType == PIN_PWM)
         {
-            rmLoger->append("PWM: ").append(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin).append(" ").append(normValue).Debug();
+            Log->Append("PWM: ").Append(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin).Append(" ").Append(normValue).Debug();
             // I have no idea why the AttachPin is needed here, but without it the PWM does not work
             ledcAttachPin(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, pinDefinition.pinConfig.pwmSettings.channel);
             ledcWrite(pinDefinition.pinConfig.pwmSettings.channel, normValue);
