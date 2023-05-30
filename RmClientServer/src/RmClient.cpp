@@ -55,8 +55,6 @@ void RmClient::Begin()
 void RmClient::startWiFi(String ssid, String password)
 {
 #if PROTOCOL == 1
-    Log->Append(F("Connecting to WiFi network: ")).Append(ssid).Info();
-    WiFi.mode(WIFI_STA);
 
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
                  { 
@@ -66,7 +64,7 @@ void RmClient::startWiFi(String ssid, String password)
                         {
                             Log->Info(F("WiFi connected"));
                             Log->Append(F("IP address: ").Append(WiFi.localIP().toString()).Info());
-                            Begin();
+                            //Begin();
                             break;
                         }
                         case SYSTEM_EVENT_STA_DISCONNECTED:
@@ -79,7 +77,20 @@ void RmClient::startWiFi(String ssid, String password)
                         }
                         break;
                     } });
-    WiFi.begin(ssid.c_str(), password.c_str());
+    if (WiFi.isConnected())
+    {
+        Log->Info(F("WiFi already connected"));
+        Begin();
+        return;
+    }
+    else
+    {
+        Log->Info(F("WiFi not connected"));
+
+        Log->Append(F("Connecting to WiFi network: ")).Append(ssid).Info();
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(ssid.c_str(), password.c_str());
+    }
 #endif
 }
 

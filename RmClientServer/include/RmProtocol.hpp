@@ -20,6 +20,9 @@ public:
     virtual void Reconnect() = 0;
     virtual void ReceivedState(String state) = 0;
     virtual bool SendCommand(String command) = 0;
+    virtual bool IsReady() { return isReady; };
+    protected:
+        bool isReady = false;
 };
 
 extern RmProtocol *rmProtocol;

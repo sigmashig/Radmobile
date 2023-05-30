@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <esp_event.h>
-#include <esp_wifi.h>
+#include <WiFi.h>
 #include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
+#include "RmProtocolMqtt.hpp"
 
 #include <RadioLib.h>
 
@@ -21,6 +22,20 @@ ESP_EVENT_DECLARE_BASE(RMRC_EVENT);
 ESP_EVENT_DECLARE_BASE(RMPINS_DRIVER_EVENT);
 ESP_EVENT_DECLARE_BASE(RMVEHICLE_EVENT);
 #endif
+
+RmProtocolMqtt *logProtocol = NULL;
+void log_publisher(SigmaLogLevel level, const char *msg)
+{
+  Serial.println(msg);
+  if (level > SigmaLogLevel::SIGMALOG_INTERNAL && logProtocol != NULL && logProtocol->IsReady())
+  {
+    logProtocol->PublishLog(level, msg);
+  }
+  else
+  {
+    //  Serial.println("NOT PUBLISHED");
+  }
+}
 
 static void totalEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
@@ -46,17 +61,46 @@ static void totalEventHandler(void *arg, esp_event_base_t event_base, int32_t ev
 #endif
   else
   {
-    Log->Append("MAIN event_base:").Append(event_base).Debug();
+    Log->Append(F("MAIN event_base:")).Append(event_base).Debug();
   }
+}
+
+void startWiFi(String ssid, String password)
+{
+  Log->Append(F("Connecting to WiFi network: ")).Append(ssid).Info();
+  WiFi.mode(WIFI_STA);
+
+  WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info)
+               { 
+                    switch (event)
+                    {
+                        case SYSTEM_EVENT_STA_GOT_IP:
+                        {
+                            Log->Info(F("WiFi connected(MAIN)"));
+                            Log->Append(F("IP address: ")).Append(WiFi.localIP().toString()).Info();
+                            logProtocol->Begin();
+                            break;
+                        }
+                        case SYSTEM_EVENT_STA_DISCONNECTED:
+                        {
+                            Log->Append(F("WiFi connection error: ")).Append(info.wifi_sta_disconnected.reason).Error();
+                            logProtocol->Reconnect();
+                        }
+                        break;
+                    } });
+  WiFi.begin(ssid.c_str(), password.c_str());
 }
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("--------------------");
-  Log = new SigmaLoger(512);
-  esp_event_loop_create_default();
   rmConfig = new RmConfiguration();
+  Log = new SigmaLoger(512, log_publisher);
+  rmProtocolMqtt = new RmProtocolMqtt();
+  logProtocol = rmProtocolMqtt;
+  startWiFi(WIFI_SSID, WIFI_PWD);
+  esp_event_loop_create_default();
 #if MODE == 1
   rmServer = new RmServer();
 #elif MODE == 2
@@ -69,6 +113,7 @@ void setup()
 
 void loop()
 {
+
   if (!isReady)
   {
 #if MODE == 1

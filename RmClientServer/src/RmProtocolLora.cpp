@@ -32,7 +32,7 @@ RmProtocolLora::RmProtocolLora()
         if (isChannelFree) {
             if (pkgForTransmit != "")
             {
-                Log->Append(F("Lora timer. Queued package:")).Append(pkgForTransmit).Debug();
+                //Log->Append(F("Lora timer. Queued package:")).Append(pkgForTransmit).Debug();
                 radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
                 pkgForTransmit = "";
                 isChannelFree = false;
@@ -40,7 +40,7 @@ RmProtocolLora::RmProtocolLora()
             {
                 if (lastPkg != "") 
                 {
-                    Log->Append(F("Lora timer. Resend last package:")).Append(lastPkg).Debug();
+                    //Log->Append(F("Lora timer. Resend last package:")).Append(lastPkg).Debug();
                     radio->startTransmit(lastPkg.c_str(), lastPkg.length());
                     isChannelFree = false;
                 }

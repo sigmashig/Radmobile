@@ -24,7 +24,7 @@ class RmConfiguration
 {
 public:
     // Application configuration
-    uint64_t Id = 0;
+    uint64_t Id = ESP.getEfuseMac();
     // Hardware configuration
     // SERVER
     //  Joystick PS2
