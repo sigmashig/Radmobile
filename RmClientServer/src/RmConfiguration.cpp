@@ -10,7 +10,6 @@ ulong RmConfiguration::lastLoop;
 void RmConfiguration::Loop()
 {
     esp_err_t err = esp_event_post(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, &loopCounter, sizeof(loopCounter), 1000 / portTICK_PERIOD_MS);
-    //Serial.printf("RmConfiguration::Loop() %d\n", err);
     if (millis() - lastLoop >= 1000)
     {
         esp_event_post(RMCONFIG_EVENT, RMCONFIG_EVENT_1_SECOND, &loop1SecCounter, sizeof(loop1SecCounter), 1000 / portTICK_PERIOD_MS);

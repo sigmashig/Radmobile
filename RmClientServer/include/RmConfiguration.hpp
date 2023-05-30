@@ -23,6 +23,8 @@ typedef enum
 class RmConfiguration
 {
 public:
+    // Application configuration
+    uint64_t Id = 0;
     // Hardware configuration
     // SERVER
     //  Joystick PS2

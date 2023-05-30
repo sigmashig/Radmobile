@@ -1,4 +1,5 @@
 #include "RmPinsDriver.hpp"
+#include "RmLoger.hpp"
 
 RmPinsDriver::RmPinsDriver(PcfSettings *pcfSettings, int numbPcf)
 {
@@ -40,9 +41,7 @@ void RmPinsDriver::RegisterPin(PinDefinition pinDefinition)
             ledcSetup(pinDefinition.pinConfig.pwmSettings.channel,
                       pinDefinition.pinConfig.pwmSettings.frequency,
                       pinDefinition.pinConfig.pwmSettings.resolution);
-            Serial.printf("Setup ledc channel=%d, freq=%d res=%d\n", pinDefinition.pinConfig.pwmSettings.channel, pinDefinition.pinConfig.pwmSettings.frequency, pinDefinition.pinConfig.pwmSettings.resolution);
             ledcAttachPin(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, pinDefinition.pinConfig.pwmSettings.channel);
-            Serial.printf("Register pin %d as PWM channel %d\n", pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, pinDefinition.pinConfig.pwmSettings.channel);
         }
     }
 }
@@ -74,9 +73,7 @@ uint RmPinsDriver::normalizeValue(uint value, PinDefinition pinDefinition)
 
 void RmPinsDriver::Write(PinDefinition pinDefinition, uint value)
 {
-    // Serial.printf("Write: %d\n", value);
     uint normValue = normalizeValue(value, pinDefinition);
-    // Serial.printf("Normalized: %d\n", normValue);
     if (pinDefinition.pinDriver == PINDRV_PCF)
     { // PCF driver can process just HIGH or LOW
         pcfs[pinDefinition.pinConfig.pinAddress.PIN_I2C.controllerId]
@@ -86,20 +83,17 @@ void RmPinsDriver::Write(PinDefinition pinDefinition, uint value)
     {
         if (pinDefinition.pinConfig.pinType == PIN_PWM)
         {
-            Serial.printf("PWM ch=%d, value=%d\n", pinDefinition.pinConfig.pwmSettings.channel, normValue);
+            rmLoger->append("PWM: ").append(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin).append(" ").append(normValue).Debug();
             // I have no idea why the AttachPin is needed here, but without it the PWM does not work
             ledcAttachPin(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, pinDefinition.pinConfig.pwmSettings.channel);
-
             ledcWrite(pinDefinition.pinConfig.pwmSettings.channel, normValue);
         }
         else if (pinDefinition.pinConfig.pinType == PIN_DIGITAL)
         {
-            Serial.printf("Digital pin=%d, value=%d\n", pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, normValue);
             digitalWrite(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, normValue);
         }
         else
         {
-            Serial.printf("Analog pin=%d, value=%d\n", pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, normValue);
             analogWrite(pinDefinition.pinConfig.pinAddress.PIN_GPIO.pin, normValue);
         }
     }

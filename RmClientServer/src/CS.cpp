@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <esp_event.h>
 #include <esp_wifi.h>
+#include <RmLoger.hpp>
 #include "RmConfiguration.hpp"
 
 #include <RadioLib.h>
@@ -23,29 +24,29 @@ ESP_EVENT_DECLARE_BASE(RMVEHICLE_EVENT);
 
 static void totalEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-  //Serial.printf("MAIN loopEventHandler:%d\n", event_id);
+  // Serial.printf("MAIN loopEventHandler:%d\n", event_id);
   if (event_base == RMPROTOCOL_EVENT)
   {
-    Serial.println("MAIN RMPROTOCOL_EVENT");
+    rmLoger->Debug("MAIN RMPROTOCOL_EVENT");
   }
- #if MODE==1 
+#if MODE == 1
   else if (event_base == RMRC_EVENT)
   {
-    Serial.println("MAIN RMRC_EVENT");
+    rmLoger->Debug("MAIN RMRC_EVENT");
   }
-#elif MODE==2
+#elif MODE == 2
   else if (event_base == RMPINS_DRIVER_EVENT)
   {
-    Serial.println("MAIN RM_PINS_DRIVER_EVENT");
+    rmLoger->Debug("MAIN RM_PINS_DRIVER_EVENT");
   }
   else if (event_base == RMVEHICLE_EVENT)
   {
-    Serial.println("MAIN RMVEHICLE_EVENT");
+    rmLoger->Debug("MAIN RMVEHICLE_EVENT");
   }
-  #endif
+#endif
   else
   {
-    //Serial.printf("MAIN event_base:%d\n", event_base);
+    rmLoger->append("MAIN event_base:").append(event_base).Debug();
   }
 }
 
@@ -53,6 +54,7 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("--------------------");
+  rmLoger = new RmLoger(512, NULL);
   esp_event_loop_create_default();
   rmConfig = new RmConfiguration();
 #if MODE == 1
@@ -60,11 +62,9 @@ void setup()
 #elif MODE == 2
   rmClient = new RmClient();
 #endif
-  byte mac[6];
-  esp_wifi_get_mac(WIFI_IF_STA, mac);
-  Serial.printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-  Serial.printf("Efuse:%u\n",ESP.getEfuseMac());
-  //esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
+  rmConfig->Id = ESP.getEfuseMac();
+  rmLoger->Printf("ID:%lx", rmConfig->Id).Info();
+  // esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
 }
 
 void loop()
@@ -79,7 +79,6 @@ void loop()
   }
   if (isReady)
   {
-    // Serial.println("MAIN loop");
     rmConfig->Loop();
   }
   vTaskDelay(50 / portTICK_PERIOD_MS);

@@ -1,4 +1,5 @@
 #include "RmCommands.hpp"
+#include "RmLoger.hpp"
 
 String RmCommands::CommandToString(RmCommandPkg command)
 {
@@ -92,7 +93,6 @@ CommandState RmCommands::StringToState(String stateString)
     {
         if (stateString[1] == cmdTxt[CMD_START])
         {
-            Serial.println("String2State: START");
             state.straight = DIRECTION_START;
             state.isValid = true;
         }
@@ -125,7 +125,7 @@ CommandState RmCommands::StringToState(String stateString)
             }
             else
             {
-                Serial.println("String2State: ERROR 2-3 not digits");
+                rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 2-3 not digits");
                 state.isValid = false;
             }
             if (state.isValid)
@@ -159,7 +159,7 @@ CommandState RmCommands::StringToState(String stateString)
                     }
                     else
                     {
-                        Serial.println("String2State: ERROR 5 unknown turn");
+                        rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 5 unknown turn");
                         state.isValid = false;
                     }
                     if (state.isValid)
@@ -171,7 +171,7 @@ CommandState RmCommands::StringToState(String stateString)
                         }
                         else
                         {
-                            Serial.println("String2State: ERROR 6-7 not digits");
+                            rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 6-7 not digits");
                             state.isValid = false;
                         }
                         if (state.isValid)
@@ -185,7 +185,6 @@ CommandState RmCommands::StringToState(String stateString)
                                     {
                                         if (stateString[i] == cmdTxt[CMD_BUTTON1 + j])
                                         {
-                                            Serial.printf("String2State: Button %d\n", j);
                                             state.buttons.buttonPacked |= (1 << j);
                                         }
                                     }
@@ -194,7 +193,7 @@ CommandState RmCommands::StringToState(String stateString)
                             }
                             else
                             {
-                                Serial.println("String2State: ERROR 8 not #");
+                                rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 8 is not #");
                                 state.isValid = false;
                             }
                         }
@@ -202,7 +201,7 @@ CommandState RmCommands::StringToState(String stateString)
                 }
                 else
                 {
-                    Serial.println("String2State: ERROR 4 not #");
+                    rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 4 is not #");
                     state.isValid = false;
                 }
             }
@@ -210,11 +209,9 @@ CommandState RmCommands::StringToState(String stateString)
     }
     else
     {
-        Serial.println("String2State: ERROR 0-last not ()");
+        rmLoger->append("StateString: ").append(stateString).append(" is not valid.").Error("ERROR 0-last not ()");
         state.isValid = false;
     }
-    Serial.printf("Point 6: %d\n", state.straight);
-
     return state;
 }
 

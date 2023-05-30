@@ -1,4 +1,5 @@
 #include "RmRemoteControl.hpp"
+#include "RmLoger.hpp"
 #include "RmCommands.hpp"
 
 ESP_EVENT_DEFINE_BASE(RMRC_EVENT);
@@ -15,7 +16,7 @@ RmRemoteControl::RmRemoteControl()
 
 void RmRemoteControl::CmdToServer(RmCommandPkg command)
 {
-    Serial.printf("RmRemoteControl::ReceivedCommand - %s\n", RmCommands::CommandToString(command).c_str());
+    rmLoger->append("RmRemoteControl::Received command: ").append(RmCommands::CommandToString(command)).Debug();
     CommandState oldState;
     memcpy(&oldState, &CurrentState, sizeof(oldState));
     CurrentState.isValid = false;
@@ -110,11 +111,8 @@ void RmRemoteControl::CmdToServer(RmCommandPkg command)
     }
     if (memcmp(&oldState, &CurrentState, sizeof(CurrentState)) != 0)
     {
-        Serial.println("RmRemoteControl::CmdToServer - state changed");
         esp_event_post(RMRC_EVENT, RMRC_NEWSTATE, &CurrentState, sizeof(CurrentState), portMAX_DELAY);
-    } else {
-        Serial.println("RmRemoteControl::CmdToServer - state not changed");
-    }
+    } 
 }
 
 //---------------------------------------------------------------------------------------------

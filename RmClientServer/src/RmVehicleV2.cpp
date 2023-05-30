@@ -1,4 +1,5 @@
 #include "RmVehicleV2.hpp"
+#include "RmLoger.hpp"
 #include "RmConfiguration.hpp"
 #include "RmEngineYellow.hpp"
 
@@ -27,36 +28,13 @@ RmVehicleV2::RmVehicleV2()
 
 void RmVehicleV2::Begin()
 {
-    Serial.println("RmVehicleV2::Begin()");
     frontLeft->Begin();
     frontRight->Begin();
     rearLeft->Begin();
     rearRight->Begin();
     relay1->Begin();
     relay2->Begin();
-    Serial.println("RmVehicleV2::Begin() - Done");
-}
-/*
-void RmVehicleV2::turn(RmCommandPkg cmd)
-{
-    direction = ENGINE_FORWARD;
-    power = cmd.value;
-    if (cmd.command == CMD_LEFT)
-    {
-        frontLeft->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-        frontRight->Run(direction, ACTION_RUN, power);
-        rearLeft->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-        rearRight->Run(direction, ACTION_RUN, power);
     }
-    else if (cmd.command == CMD_RIGHT)
-    {
-        frontLeft->Run(direction, ACTION_RUN, power);
-        frontRight->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-        rearLeft->Run(direction, ACTION_RUN, power);
-        rearRight->Run(ENGINE_NODIRECTION, ACTION_STOP, 0);
-    }
-}
-*/
 void RmVehicleV2::buttons(ButtonsSet buttons)
 {
     if(buttons.button.b1) {
@@ -74,24 +52,24 @@ void RmVehicleV2::buttons(ButtonsSet buttons)
 VehicleStatus RmVehicleV2::ApplyState(CommandState &state)
 {
     VehicleStatus status = VEHICLE_OK;
-    Serial.println("RmVehicleV2::RunCmd");
+    rmLoger->Debug(F("RmVehicleV2::RunCmd"));
     if (!isStarted)
     {
         if (state.straight == DIRECTION_START)
         {
-            Serial.println("RmVehicleV2::RunCmd - Start");
+            rmLoger->Info(F("Vehicle V2 started"));
             isStarted = true;
             return VEHICLE_OK;
         }
         else
         { // skip command
-            Serial.println("RmVehicleV2::RunCmd - Not started");
+            rmLoger->Warn(F("Vehicle V2 DO NOT started"));
             return VEHICLE_NOT_STARTED;
         }
     }
     if (state.straight == DIRECTION_STOP)
     {
-        Serial.println("RmVehicleV2::RunCmd - Stop");
+        rmLoger->Info(F("Vehicle V2 stoped"));
         isStarted = false;
         return VEHICLE_OK;
     }
@@ -102,7 +80,7 @@ VehicleStatus RmVehicleV2::ApplyState(CommandState &state)
 
 void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn)
 {
-    Serial.printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn);
+    rmLoger->Printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn).Debug();
     if (dirStraight != DIRECTION_FORWARD && dirStraight != DIRECTION_BACKWARD)
     {
         dirStraight = DIRECTION_FORWARD;
@@ -156,8 +134,8 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
         powerRR = -powerRR;
         directionRR = (directionRR == DIRECTION_FORWARD) ? DIRECTION_BACKWARD : DIRECTION_FORWARD;
     }
-    Serial.printf("RmVehicleV2::power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR);
-    Serial.printf("RmVehicleV2::dir: %d, %d, %d, %d\n", directionFL, directionFR, directionRL, directionRR);
+    rmLoger->Printf("RmVehicleV2::power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+    rmLoger->Printf("RmVehicleV2::dir: %d, %d, %d, %d\n", directionFL, directionFR, directionRL, directionRR).Debug();
     frontLeft->Run(directionFL, ACTION_RUN, powerFL);
     frontRight->Run(directionFR, ACTION_RUN, powerFR);
     rearLeft->Run(directionRL, ACTION_RUN, powerRL);

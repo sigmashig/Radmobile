@@ -1,4 +1,5 @@
 #include "RmProtocolLora.hpp"
+#include "RmLoger.hpp"
 #include "RmConfiguration.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
@@ -31,15 +32,15 @@ RmProtocolLora::RmProtocolLora()
         if (isChannelFree) {
             if (pkgForTransmit != "")
             {
-                Serial.println("RmProtocolLora::sendTimer: PACKAGE" + pkgForTransmit);
+                rmLoger->append(F("Lora timer. Queued package:")).append(pkgForTransmit).Debug();
                 radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
                 pkgForTransmit = "";
                 isChannelFree = false;
             } else 
             {
                 if (lastPkg != "") 
-                {    
-                    Serial.println("RmProtocolLora::sendTimer: LAST" + pkgForTransmit);
+                {
+                    rmLoger->append(F("Lora timer. Resend last package:")).append(lastPkg).Debug();
                     radio->startTransmit(lastPkg.c_str(), lastPkg.length());
                     isChannelFree = false;
                 }
@@ -58,12 +59,11 @@ void RmProtocolLora::Begin()
     int state = radio->begin();
     if (state == RADIOLIB_ERR_NONE)
     {
-        Serial.println(F("LORA is initiated successfully!"));
+        rmLoger->Info(F("LORA is initiated successfully!"));
     }
     else
     {
-        Serial.print(F("LORA initialization failed, code "));
-        Serial.println(state);
+        rmLoger->append(F("LORA initialization failed, code ")).append(state).Error();
     }
     radio->setDio0Action(loraISR, RISING);
     radio->startReceive();
@@ -75,18 +75,15 @@ void RmProtocolLora::Reconnect()
 
 void RmProtocolLora::ReceivedState(String state)
 {
-    Serial.println("RmProtocolLora::ReceivedCommand: " + state);
-    Serial.println(state);
+    rmLoger->append(F("LORA ReceivedCommand: ")).append(state).Debug();
     CommandState st = RmCommands::StringToState(state);
     if (st.isValid)
     {
-        Serial.println("Valid command!");
-        Serial.printf("State to processing: %d, %d, %d, %d, 0x%04x\n", st.straight, st.powerStraight, st.turn, st.powerTurn, st.buttons.buttonPacked);
         esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &st, sizeof(st), portMAX_DELAY);
     }
     else
     {
-        Serial.println("Invalid command!");
+        rmLoger->Error(F("Invalid command!"));
     }
 }
 
@@ -97,37 +94,33 @@ bool RmProtocolLora::SendCommand(String command)
     lastPkg = pkgForTransmit;
     if (isChannelFree)
     {
-        Serial.printf("Sending MAIN: %s(%u)\n", pkgForTransmit.c_str(), pkgForTransmit.length());
+        rmLoger->append("Sending first:").append(pkgForTransmit).Debug();
         isChannelFree = false;
         int state = radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
 
         if (state != RADIOLIB_ERR_NONE)
         {
-            Serial.print(F("LORA transmission failed, code "));
-            Serial.println(state);
+            rmLoger->append(F("LORA transmission failed, code ")).append(state).Error();
             return false;
         }
     }
     else
     {
-        Serial.printf("Queued: %s(%u)\n", pkgForTransmit.c_str(), pkgForTransmit.length());
-    }
+        rmLoger->append("Queued:").append(pkgForTransmit).Debug();}
     return true;
 }
 
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    // Serial.println("RmProtocolLora::packageReceived()");
     uint status = radio->getIRQFlags();
-    Serial.printf("Something happened, status: %u\n", status);
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
     { // received a packet
         String str;
-        RmProtocolLora::radio->readData(str);
-        Serial.printf("Received: %s(%u)\n", str.c_str(), str.length());
+        radio->readData(str);
+        rmLoger->append("Received: ").append(str).Debug();
         if (str[0] != rmSession->GetSessionId())
         {
-            Serial.printf("Received for other device, ignoring.");
+            rmLoger->Info(F("Received for other device, ignoring."));
             return;
         }
         rmProtocol->ReceivedState(str.substring(1));
@@ -137,16 +130,15 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
         radio->finishTransmit();
         xTimerReset(sendTimer, 0);
         pkgForTransmit = "";
-        Serial.println("Transfer completed.");
-        // radio->startReceive();
+        rmLoger->Debug(F("Transfer completed."));
     }
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_VALID_HEADER)
     {
-        Serial.println("Valid header.");
+        rmLoger->Debug(F("Valid header."));
     }
     if (pkgForTransmit.length() > 0)
     {
-        Serial.println("Sending...");
+        rmLoger->Debug(F("Sending queued..."));
         isChannelFree = false;
         radio->startTransmit(pkgForTransmit.c_str(), pkgForTransmit.length());
     }

@@ -1,4 +1,5 @@
 #include "RmRcPS2.hpp"
+#include "RmLoger.hpp"
 #include "RmConfiguration.hpp"
 #include <esp_event.h>
 #include "RmTypes.hpp"
@@ -13,7 +14,6 @@ RmRcPS2::RmRcPS2()
 
 void RmRcPS2::Begin()
 {
-    Serial.println("RmRcPS2::Begin");
     psx.read(lastData);
     esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, loopEventHandler, NULL);
 }
@@ -21,15 +21,13 @@ void RmRcPS2::Begin()
 void RmRcPS2::loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     PSX::PSXDATA psData;
-    // Serial.println("RmRcPS2::loopEventHandler");
     if (PS2->psx.read(psData) == PSXERROR_SUCCESS)
     {
-        // Serial.println("PS2 joystick is connected");
         PS2->cmdProcessing(psData);
     }
     else
     {
-        Serial.println("PS2 joystick is not connected");
+        rmLoger->Error(F("PS2 joystick is not connected"));
     }
 }
 
@@ -52,7 +50,6 @@ int RmRcPS2::stickToDirection(byte x)
 void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
 {
     RmCommandPkg cmdPkg;
-    // Serial.println("RmRcPS2::cmdProcessing");
     if (memcmp(&lastData, &psData, sizeof(PSX::PSXDATA)) == 0)
     {
         return;
@@ -235,14 +232,12 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
     }
     if ((psData.buttons & PSXBTN_L1) != (lastData.buttons & PSXBTN_L1))
     {
-        Serial.println("L1");
         cmdPkg.command = CMD_BUTTON5;
         cmdPkg.value = psData.buttons & PSXBTN_L1 ? MAX_COMMAND_VALUE : 0;
         CmdToServer(cmdPkg);
     }
     if ((psData.buttons & PSXBTN_L2) != (lastData.buttons & PSXBTN_L2))
     {
-        Serial.println("L2");
         cmdPkg.command = CMD_BUTTON6;
         cmdPkg.value = psData.buttons & PSXBTN_L2 ? MAX_COMMAND_VALUE : 0;
         CmdToServer(cmdPkg);

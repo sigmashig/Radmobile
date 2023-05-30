@@ -2,7 +2,7 @@
 #include "RmProtocol.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
-
+#include "RmLoger.hpp"
 #if PROTOCOL == 1
 #include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
@@ -18,7 +18,7 @@
 void RmServer::startWiFi(String ssid, String password)
 {
 #if PROTOCOL == 1
-    Serial.printf(F("Connecting to WiFi network: %s(%s)\n"), ssid.c_str(), password.c_str());
+    rmLoger->append(F("Server. Connecting to WiFi network: ")).append(ssid).Info();
     WiFi.mode(WIFI_STA);
 
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
@@ -27,14 +27,13 @@ void RmServer::startWiFi(String ssid, String password)
                     {
                         case SYSTEM_EVENT_STA_GOT_IP:
                         {
-                            Serial.println("WiFi connected");
-                            Serial.printf(F("IP address: %s\n"), WiFi.localIP().toString().c_str());
+                            rmLoger->append(F("WiFi connected. IP address:")),append(WiFi.localIP().toString()).Info();
                             Begin();
                             break;
                         }
                         case SYSTEM_EVENT_STA_DISCONNECTED:
                         {
-                            Serial.printf(F("WiFi connection error: %d\n"), info.wifi_sta_disconnected.reason);
+                            rmLoger->append(F("WiFi connection error:")).append(info.wifi_sta_disconnected.reason).Error();
                             if (alreadyConnected)
                             {
                                 rmProtocol->Reconnect();
@@ -48,19 +47,17 @@ void RmServer::startWiFi(String ssid, String password)
 
 RmServer::RmServer()
 {
-    Serial.println("RmServer::RmServer()");
+    rmLoger->Debug(F("SERVER"));
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
 
     rmSession = new RmSession();
-    Serial.println("Point 1");
 #if RC == 1
     remoteControl = new RmRcEmulator();
 #elif RC == 2
     PS2 = new RmRcPS2();
     remoteControl = PS2;
 #endif
-    Serial.println("Point 2");
 
 #if PROTOCOL == 1
     isBeginRequired = false;
@@ -71,7 +68,6 @@ RmServer::RmServer()
     rmProtocol = new RmProtocolLora();
     isBeginRequired = true;
 #endif
-    Serial.println("RmServer::RmServer() end");
     if (isBeginRequired)
     {
         Begin();
@@ -81,7 +77,6 @@ RmServer::RmServer()
 void RmServer::Begin()
 {
     alreadyConnected = true;
-    Serial.println("RmServer::Begin()");
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, responseEventHandler, NULL, NULL);
     esp_event_handler_instance_register(RMRC_EVENT, RMRC_NEWSTATE, commandEventHandler, NULL, NULL);
 
@@ -97,7 +92,7 @@ void RmServer::SendCommand(String command)
 
 void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    Serial.println("responseEventHandler");
+    rmLoger->Debug("responseEventHandler");
 }
 
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
@@ -105,9 +100,8 @@ void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32
     CommandState *commandState = (CommandState *)event_data;
     String stateString;
     stateString = RmCommands::StateAsString(*commandState);
-    Serial.println("State Ready: " + stateString);
+    rmLoger->append(F("State Ready: ")).append(stateString).Info();
     rmServer->SendCommand(stateString);
-    // rmProtocol->Send("Hello from WS Server");
 }
 
 //--------------------------------
