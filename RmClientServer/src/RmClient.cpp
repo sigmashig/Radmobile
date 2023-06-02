@@ -5,11 +5,11 @@
 #include "RmSession.hpp"
 #include "RmProtocol.hpp"
 #include "RmPID.hpp"
+#include "RmTelemetry.hpp"
 
 #if PROTOCOL == 1
 #include <WiFi.h>
 #include "RmProtocolMqtt.hpp"
-#include "RmPID.hpp"
 #elif PROTOCOL == 2
 #include "RmProtocolLora.hpp"
 #endif
@@ -41,6 +41,8 @@ RmClient::RmClient()
     rmVehicle = new RmVehicleV2();
 #endif
     rmPID = new RmPID(rmConfig->limitPitch, rmConfig->limitRoll, rmConfig->limitYaw, rmConfig->straightPeriod, rmConfig->checkPeriod);
+    rmTelemetry = new RmTelemetry();
+
     if (isBeginRequired)
     {
         Begin();
@@ -53,6 +55,7 @@ void RmClient::Begin()
     rmPinsDriver->Begin();
     rmProtocol->Begin();
     rmVehicle->Begin();
+    rmTelemetry->Begin();
 }
 
 void RmClient::startWiFi(String ssid, String password)

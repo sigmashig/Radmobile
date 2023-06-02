@@ -4,6 +4,7 @@
 #include "RmConfiguration.hpp"
 
 ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
+TinyGPSPlus RmGPS::gps;
 
 RmGPS::RmGPS(int minDistance) : minDistance(minDistance)
 {
