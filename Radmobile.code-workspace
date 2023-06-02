@@ -18,6 +18,10 @@
 		{
 			"name": "WemosGyro",
 			"path": "../../Documents/PlatformIO/Projects/WemosGyro"
+		},
+		{
+			"name": "TestGPS",
+			"path": "../../Documents/PlatformIO/Projects/TestGPS"
 		}
 	],
 	"settings": {

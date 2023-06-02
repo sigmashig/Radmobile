@@ -63,7 +63,9 @@ public:
     // Initial calibration values
     MPUSettings mpuSettings = {
         .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};
-
+    // GPS Settings
+    byte gpsRx = 12;
+    byte gpsTx = 15;
     // ------Vehicle configuration---------
     const uint pwmFreq = 5000;
     const uint pwmResolution = 7;

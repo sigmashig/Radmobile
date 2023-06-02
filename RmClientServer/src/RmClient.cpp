@@ -25,6 +25,7 @@ RmClient::RmClient()
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
     rmSession = new RmSession();
+
     rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
 #if PROTOCOL == 1
     isBeginRequired = false;

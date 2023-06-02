@@ -256,6 +256,15 @@ typedef enum
     RMEVENT_PID_CORRECTION_ROLL,
     RMEVENT_PID_CORRECTION_PITCH,
     RMEVENT_PID_CORRECTION_LEFT,
-    RMEVENT_PID_CORRECTION_RIGHT
+    RMEVENT_PID_CORRECTION_RIGHT,
+    RMEVENT_GPS_POSITION
 
 } RmProtocolEvent;
+
+typedef struct
+{
+    double latitude;
+    double longitude;
+    double altitude;
+    double speed;
+} GpsPosition;
