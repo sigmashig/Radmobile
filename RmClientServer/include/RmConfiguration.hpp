@@ -53,6 +53,17 @@ public:
 
 #define NUMB_OF_CLIENT_PCF 1
     PcfSettings clientPcfs[NUMB_OF_CLIENT_PCF] = {{.id = 0, .address = 0x24, .irqPin = 34}};
+
+    // ---- PID configuration --------
+    double limitYaw = 10;
+    double limitPitch = 30;
+    double limitRoll = 30;
+    int checkPeriod = 2000; //ms - 2 seconds
+    // Initial calibration values
+    MPUSettings mpuSettings = {
+        .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};
+
+    // ------Vehicle configuration---------
     const uint pwmFreq = 5000;
     const uint pwmResolution = 7;
 #if VEHICLE == 0

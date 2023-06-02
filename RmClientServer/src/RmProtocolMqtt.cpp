@@ -62,7 +62,7 @@ RmProtocolMqtt::RmProtocolMqtt()
 
 void RmProtocolMqtt::PublishLog(uint level, String payload)
 {
-    mqttClient.publish(topicName(1, level).c_str(), 0, false, payload.c_str());
+    mqttClient.publish(topicName(2, level).c_str(), 0, false, payload.c_str());
 }
 
 bool RmProtocolMqtt::_onConnect(bool sessionPresent)
@@ -108,6 +108,10 @@ String RmProtocolMqtt::topicName(int mode, uint level)
             return topic + "/All";
         }
         return topic;
+    }
+    else if (mode == 2)
+    { // State
+        return rootTopic + "/Logs/RM_" + String(rmConfig->Id, HEX) + "/All";
     }
     return "";
 }

@@ -4,9 +4,12 @@
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
 #include "RmProtocol.hpp"
+#include "RmPID.hpp"
+
 #if PROTOCOL == 1
 #include <WiFi.h>
 #include "RmProtocolMqtt.hpp"
+#include "RmPID.hpp"
 #elif PROTOCOL == 2
 #include "RmProtocolLora.hpp"
 #endif
@@ -38,6 +41,7 @@ RmClient::RmClient()
 #elif VEHICLE == 2
     rmVehicle = new RmVehicleV2();
 #endif
+    rmPID = new RmPID(rmConfig->limitYaw, rmConfig->limitPitch, rmConfig->limitRoll, rmConfig->checkPeriod);
     if (isBeginRequired)
     {
         Begin();
@@ -98,6 +102,7 @@ void RmClient::stateReceived(void *arg, esp_event_base_t event_base, int32_t eve
 {
     Log->Debug(F("RmClient::stateReceived"));
     CommandState *state = (CommandState *)event_data;
+
     rmVehicle->ApplyState(*state);
 }
 

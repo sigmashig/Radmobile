@@ -235,3 +235,27 @@ typedef struct
     int powerTurn;
     ButtonsSet buttons;
 } CommandState;
+
+typedef struct
+{
+    int accX;
+    int accY;
+    int accZ;
+    int gyrX;
+    int gyrY;
+    int gyrZ;
+    byte address;
+    byte irqPin;
+} MPUSettings;
+
+typedef enum
+{
+    RMEVENT_NONE,
+    RMEVENT_STATE_RECEIVED,
+    RMEVENT_LORA_SOMETHING_HAPPENS,
+    RMEVENT_PID_CORRECTION_ROLL,
+    RMEVENT_PID_CORRECTION_PITCH,
+    RMEVENT_PID_CORRECTION_LEFT,
+    RMEVENT_PID_CORRECTION_RIGHT
+
+} RmProtocolEvent;

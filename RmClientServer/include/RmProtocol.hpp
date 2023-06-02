@@ -5,12 +5,6 @@
 
 ESP_EVENT_DECLARE_BASE(RMPROTOCOL_EVENT);
 
-typedef enum
-{
-    RMEVENT_NONE,
-    RMEVENT_STATE_RECEIVED,
-    RMEVENT_LORA_SOMETHING_HAPPENS
-} RmProtocolEvent;
 
 class RmProtocol
 {
@@ -21,8 +15,9 @@ public:
     virtual void ReceivedState(String state) = 0;
     virtual bool SendCommand(String command) = 0;
     virtual bool IsReady() { return isReady; };
-    protected:
-        bool isReady = false;
+
+protected:
+    bool isReady = false;
 };
 
 extern RmProtocol *rmProtocol;
