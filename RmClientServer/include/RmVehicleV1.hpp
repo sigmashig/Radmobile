@@ -10,6 +10,7 @@ public:
     RmVehicleV1();
     void Begin();
     VehicleStatus ApplyState(CommandState& state);
+    VehicleStatus ApplyCorrection(Direction direction, int power){return VEHICLE_OK;};
 
 private:
     bool isStarted = false;

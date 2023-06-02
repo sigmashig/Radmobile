@@ -84,6 +84,34 @@ VehicleStatus RmVehicleV2::ApplyState(CommandState &state)
     return status;
 }
 
+VehicleStatus RmVehicleV2::ApplyCorrection(Direction direction, int power)
+{
+    Log->Printf("RmVehicleV2::ApplyCorrection: %d, %d\n", direction, power).Debug();
+    double turnPower = 0;
+    double straightPower = powerFL;
+    Direction dirStraight = directionFL;
+
+    if (power < 200)
+    {
+        turnPower = 30;
+    }
+    else if (power < 300)
+    {
+        turnPower = 50;
+    }
+    else if (power < 400)
+    {
+        turnPower = 70;
+    }
+    else
+    {
+        turnPower = 100;
+    }
+    go(dirStraight, straightPower, direction, turnPower);
+
+    return VEHICLE_OK;
+}
+
 void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn)
 {
     Log->Printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn).Debug();

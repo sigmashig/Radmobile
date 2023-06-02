@@ -26,8 +26,6 @@ RmClient::RmClient()
     rmCommands = new RmCommands();
     rmSession = new RmSession();
     rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
-    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED,
-                                        stateReceived, NULL, NULL);
 #if PROTOCOL == 1
     isBeginRequired = false;
     rmProtocol = new RmProtocolMqtt();
@@ -41,7 +39,7 @@ RmClient::RmClient()
 #elif VEHICLE == 2
     rmVehicle = new RmVehicleV2();
 #endif
-    rmPID = new RmPID(rmConfig->limitYaw, rmConfig->limitPitch, rmConfig->limitRoll, rmConfig->checkPeriod);
+    rmPID = new RmPID(rmConfig->limitPitch, rmConfig->limitRoll, rmConfig->limitYaw, rmConfig->straightPeriod, rmConfig->checkPeriod);
     if (isBeginRequired)
     {
         Begin();
@@ -96,14 +94,6 @@ void RmClient::startWiFi(String ssid, String password)
         WiFi.begin(ssid.c_str(), password.c_str());
     }
 #endif
-}
-
-void RmClient::stateReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
-{
-    Log->Debug(F("RmClient::stateReceived"));
-    CommandState *state = (CommandState *)event_data;
-
-    rmVehicle->ApplyState(*state);
 }
 
 //--------------------------------

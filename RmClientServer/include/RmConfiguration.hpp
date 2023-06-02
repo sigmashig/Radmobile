@@ -58,7 +58,8 @@ public:
     double limitYaw = 10;
     double limitPitch = 30;
     double limitRoll = 30;
-    int checkPeriod = 2000; //ms - 2 seconds
+    int straightPeriod = 2000; //ms - 2 seconds. Time before decide that vehicle is straight
+    int checkPeriod = 200;     //ms - 200 ms. Time between checks corretions
     // Initial calibration values
     MPUSettings mpuSettings = {
         .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};

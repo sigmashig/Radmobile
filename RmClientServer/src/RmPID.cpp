@@ -9,7 +9,7 @@
 
 ESP_EVENT_DECLARE_BASE(RMPROTOCOL_EVENT);
 
-void RmPID::cmdEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void RmPID::stateHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     Log->Debug(F("RmPID::stateReceived"));
     CommandState *state = (CommandState *)event_data;
@@ -41,6 +41,7 @@ void RmPID::cmdEventHandler(void *arg, esp_event_base_t event_base, int32_t even
                     // straight moving
                     if (!rmPID->isWorkingCircle)
                     {
+                        xTimerChangePeriod(rmPID->timer, pdMS_TO_TICKS(rmPID->checkPeriod), 0);
                         xTimerStart(rmPID->timer, 0);
                     }
                 }
@@ -93,13 +94,18 @@ void RmPID::pidTimer(TimerHandle_t xTimer)
         // first call after turn
         rmPID->lastYaw = rmPID->angles.yaw;
         rmPID->isWorkingCircle = true;
+        xTimerChangePeriod(rmPID->timer, pdMS_TO_TICKS(rmPID->checkPeriod), 0);
+        xTimerStart(rmPID->timer, 0);
     }
     else
     { // check yaw
         double d = rmPID->angles.yaw - rmPID->lastYaw;
+        
         if (abs(d) >= rmPID->yaw)
         {
             int intensive = (abs(d) / rmPID->yaw) * 100;
+            Log->Printf(F("RmPID::pidTimer: d=%f, intensive=%d\n"), d, intensive);
+            Log->Printf(F("RmPID::pidTimer: yaw=%f, abs(d)=%f\n"), rmPID->yaw, abs(d));
             // turn detected
             if (d > 0)
             {
@@ -110,12 +116,14 @@ void RmPID::pidTimer(TimerHandle_t xTimer)
                 esp_event_post(RMPROTOCOL_EVENT, RMEVENT_PID_CORRECTION_RIGHT, &intensive, sizeof(intensive), 0);
             }
         }
+        xTimerStart(rmPID->timer, 0);
     }
 }
 
-RmPID::RmPID(double pitch, double roll, double yaw, int checkPeriod)
-    : pitch(pitch), roll(roll), yaw(yaw), checkPeriod(checkPeriod)
+RmPID::RmPID(double pitch, double roll, double yaw, int straightPeriod, int checkPeriod)
+    : pitch(pitch), roll(roll), yaw(yaw), straightPeriod(straightPeriod), checkPeriod(checkPeriod)
 {
+    Log->Debug(F("RmPID::RmPID"));
     isStarted = false;
     isWorkingCircle = false;
     timer = xTimerCreateStatic("PIDTimer", pdMS_TO_TICKS(checkPeriod), pdTRUE, this, pidTimer, &timerBuffer);
@@ -167,6 +175,7 @@ RmPID::RmPID(double pitch, double roll, double yaw, int checkPeriod)
         Log->Append(F("DMP Initialization failed (code=")).Append(devStatus).Append(F(")")).Error();
         isMPUavailable = false;
     }
+    esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, stateHandler, NULL, NULL);
 }
 
 RmPID *rmPID = NULL;

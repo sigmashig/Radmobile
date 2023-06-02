@@ -22,15 +22,18 @@ public:
     RmVehicle();
     virtual void Begin() = 0;
     virtual VehicleStatus ApplyState(CommandState &state) = 0;
+    virtual VehicleStatus ApplyCorrection(Direction direction, int power) = 0;
     bool IsReady() { return isReady; };
+ 
+protected : bool isReady = false;
+    // int directionPower = 0;
+    // int turnPower = 0;
+    //  int power = 0;
+    // Direction direction = DIRECTION_NODIRECTION;
+    // Direction turn = DIRECTION_NODIRECTION;
 
-protected:
-    bool isReady = false;
-    //int directionPower = 0;
-    //int turnPower = 0;
-    // int power = 0;
-    //Direction direction = DIRECTION_NODIRECTION;
-    //Direction turn = DIRECTION_NODIRECTION;
+private:
+    static void stateReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 };
 
 extern RmVehicle *rmVehicle;
