@@ -115,6 +115,11 @@ VehicleStatus RmVehicleV2::ApplyCorrection(Direction direction, int power)
 void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn)
 {
     Log->Printf("RmVehicleV2::go: %d, %d, %d, %d\n", dirStraight, powerStraight, dirTurn, powerTurn).Debug();
+    int prevPowerFL = powerFL;
+    int prevPowerFR = powerFR;
+    int prevPowerRL = powerRL;
+    int prevPowerRR = powerRR;
+
     if (dirStraight != DIRECTION_FORWARD && dirStraight != DIRECTION_BACKWARD)
     {
         dirStraight = DIRECTION_FORWARD;
@@ -167,6 +172,22 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
     {
         powerRR = -powerRR;
         directionRR = (directionRR == DIRECTION_FORWARD) ? DIRECTION_BACKWARD : DIRECTION_FORWARD;
+    }
+    if (powerFL - prevPowerFL > rmConfig->Vehicle.limitSlowRun)
+    {
+        powerFL = prevPowerFL + rmConfig->Vehicle.limitSlowRun;
+    }
+    if (powerFR - prevPowerFR > rmConfig->Vehicle.limitSlowRun)
+    {
+        powerFR = prevPowerFR + rmConfig->Vehicle.limitSlowRun;
+    }
+    if (powerRL - prevPowerRL > rmConfig->Vehicle.limitSlowRun)
+    {
+        powerRL = prevPowerRL + rmConfig->Vehicle.limitSlowRun;
+    }
+    if (powerRR - prevPowerRR > rmConfig->Vehicle.limitSlowRun)
+    {
+        powerRR = prevPowerRR + rmConfig->Vehicle.limitSlowRun;
     }
     Log->Printf("RmVehicleV2::power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
     Log->Printf("RmVehicleV2::dir: %d, %d, %d, %d\n", directionFL, directionFR, directionRL, directionRR).Debug();

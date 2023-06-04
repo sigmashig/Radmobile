@@ -115,6 +115,7 @@ typedef struct
 } RelayConfig;
 typedef struct
 {
+    uint limitSlowRun;
     EngineConfig frontLeft;
     EngineConfig frontRight;
     EngineConfig rearLeft;

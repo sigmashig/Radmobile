@@ -90,6 +90,7 @@ public:
 #elif VEHICLE == 2
 #define ENGINE_MIN_VALUE 60
     VehicleConfig Vehicle = {
+        .limitSlowRun = 20,
         .frontLeft = {
             .controllerType = EngineControllerType::L298N,
             .connection = {
