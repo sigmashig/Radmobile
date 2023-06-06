@@ -6,6 +6,7 @@
 #include "RmProtocol.hpp"
 #include "RmPID.hpp"
 #include "RmTelemetry.hpp"
+#include "RmGPS.hpp"
 
 #if PROTOCOL == 1
 #include <WiFi.h>
@@ -41,6 +42,7 @@ RmClient::RmClient()
     rmVehicle = new RmVehicleV2();
 #endif
     rmPID = new RmPID(rmConfig->limitPitch, rmConfig->limitRoll, rmConfig->limitYaw, rmConfig->straightPeriod, rmConfig->checkPeriod);
+    rmGPS = new RmGPS(10);
     rmTelemetry = new RmTelemetry();
 
     if (isBeginRequired)

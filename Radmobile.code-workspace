@@ -14,14 +14,6 @@
 		{
 			"name": "SigmaUtils",
 			"path": "../SigmaUtils"
-		},
-		{
-			"name": "WemosGyro",
-			"path": "../../Documents/PlatformIO/Projects/WemosGyro"
-		},
-		{
-			"name": "TestGPS",
-			"path": "../../Documents/PlatformIO/Projects/TestGPS"
 		}
 	],
 	"settings": {
@@ -32,7 +24,9 @@
 			"memory_resource": "cpp",
 			"numeric": "cpp",
 			"limits": "cpp",
-			"calibratelib_cpp": "cpp"
+			"calibratelib_cpp": "cpp",
+			"condition_variable": "cpp",
+			"mutex": "cpp"
 		}
 	}
 }

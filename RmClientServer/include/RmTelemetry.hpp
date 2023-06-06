@@ -8,5 +8,10 @@ class RmTelemetry
     public:
         RmTelemetry();
         void Begin();
+        void SendAll();
+
+    private:
+        static String pkgGPS(GpsPosition position);
+        static void rmEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 };
 extern RmTelemetry *rmTelemetry;

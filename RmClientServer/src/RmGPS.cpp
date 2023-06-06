@@ -4,6 +4,8 @@
 #include "RmConfiguration.hpp"
 
 ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
+ESP_EVENT_DECLARE_BASE(RMPROTOCOL_EVENT);
+
 TinyGPSPlus RmGPS::gps;
 
 RmGPS::RmGPS(int minDistance) : minDistance(minDistance)
@@ -51,7 +53,7 @@ void RmGPS::configEventHandler(void *arg, esp_event_base_t event_base, int32_t e
                     rmGPS->lastPosition.altitude = gps.altitude.meters();
                     rmGPS->lastPosition.speed = gps.speed.kmph();
                     Log->Debug("We have got a new GPS position");
-                    esp_event_post(RMCONFIG_EVENT, RMEVENT_GPS_POSITION, &(rmGPS->lastPosition), sizeof(rmGPS->lastPosition), pdMS_TO_TICKS(1000));
+                    esp_event_post(RMPROTOCOL_EVENT, RMEVENT_GPS_POSITION, &(rmGPS->lastPosition), sizeof(rmGPS->lastPosition), pdMS_TO_TICKS(1000));
                 }
             }
         }
