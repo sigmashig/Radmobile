@@ -106,8 +106,8 @@ void setup()
 #elif MODE == 2
   rmClient = new RmClient();
 #endif
-  rmConfig->Id = ESP.getEfuseMac();
-  Log->Printf("ID:%lx", rmConfig->Id).Info();
+  rmConfig->BoardId = ESP.getEfuseMac();
+  Log->Printf("ID:%lx", rmConfig->BoardId).Info();
   // esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
 }
 

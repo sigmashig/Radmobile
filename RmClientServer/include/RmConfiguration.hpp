@@ -9,9 +9,14 @@ class RmConfiguration
 {
 public:
     // Application configuration
-    uint64_t Id = ESP.getEfuseMac();
+    uint64_t BoardId = ESP.getEfuseMac();
+    IdConfig CommunicationId = {.id = 0, .key = {0}};
     // Hardware configuration
+
+    // ---------------------------------------------------------------------
     // SERVER
+    // Exchange Protocol configuration
+    
     //  Joystick PS2
     PS2Config ps2Config{
         .pinData = 15,
@@ -43,8 +48,8 @@ public:
     double limitYaw = 10;
     double limitPitch = 30;
     double limitRoll = 30;
-    int straightPeriod = 2000; //ms - 2 seconds. Time before decide that vehicle is straight
-    int checkPeriod = 200;     //ms - 200 ms. Time between checks corretions
+    int straightPeriod = 2000; // ms - 2 seconds. Time before decide that vehicle is straight
+    int checkPeriod = 200;     // ms - 200 ms. Time between checks corretions
     // Initial calibration values
     MPUSettings mpuSettings = {
         .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};

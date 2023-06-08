@@ -14,7 +14,6 @@ void RmProtocolMqtt::Begin()
     connectToMqtt();
 }
 
-
 bool RmProtocolMqtt::SendPkg(String command)
 {
     uint res = mqttClient.publish(topicName(0).c_str(), 0, false, command.c_str());
@@ -38,7 +37,7 @@ RmProtocolMqtt::RmProtocolMqtt()
                      } });
     mqttClient.setServer(MQTT_URL, MQTT_PORT);
     Log->Append("MQTT_URL=").Append(MQTT_URL).Append(":").Append(MQTT_PORT).Debug();
-    String clientId = "RM_" + String(rmConfig->Id, HEX);
+    String clientId = "RM_" + String(rmConfig->BoardId, HEX);
     Log->Append("clientId=").Append(clientId).Debug();
     mqttClient.setClientId(clientId.c_str());
     mqttClient.setCleanSession(true);
@@ -65,7 +64,6 @@ void RmProtocolMqtt::PublishLog(uint level, String payload)
     mqttClient.publish(topicName(2, level).c_str(), 0, false, payload.c_str());
 }
 
-
 bool RmProtocolMqtt::_onConnect(bool sessionPresent)
 {
     rmProtocolMqtt->isReady = true;
@@ -87,7 +85,7 @@ String RmProtocolMqtt::topicName(int mode, uint level)
     }
     else if (mode == 1)
     { // Log
-        String topic = rootTopic + "/Logs/RM_" + String(rmConfig->Id, HEX);
+        String topic = rootTopic + "/Logs/RM_" + String(rmConfig->BoardId, HEX);
 
         switch ((SigmaLogLevel)level)
         {
@@ -112,7 +110,7 @@ String RmProtocolMqtt::topicName(int mode, uint level)
     }
     else if (mode == 2)
     { // State
-        return rootTopic + "/Logs/RM_" + String(rmConfig->Id, HEX) + "/All";
+        return rootTopic + "/Logs/RM_" + String(rmConfig->BoardId, HEX) + "/All";
     }
     return "";
 }
