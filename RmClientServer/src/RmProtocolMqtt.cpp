@@ -4,6 +4,7 @@
 #include "SigmaLoger.hpp"
 #include "RmCommands.hpp"
 #include "RmConfiguration.hpp"
+#include "RmPackageValidator.hpp"
 
 String RmProtocolMqtt::rootTopic = "RadMobile";
 AsyncMqttClient RmProtocolMqtt::mqttClient;
@@ -13,17 +14,8 @@ void RmProtocolMqtt::Begin()
     connectToMqtt();
 }
 
-void RmProtocolMqtt::ReceivedState(String stateString)
-{
-    CommandState state;
-    state = RmCommands::StringToState(stateString);
-    if (state.isValid)
-    {
-        esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &state, sizeof(state), portMAX_DELAY);
-    }
-}
 
-bool RmProtocolMqtt::SendCommand(String command)
+bool RmProtocolMqtt::SendPkg(String command)
 {
     uint res = mqttClient.publish(topicName(0).c_str(), 0, false, command.c_str());
     return res != 0;
@@ -60,10 +52,19 @@ RmProtocolMqtt::RmProtocolMqtt()
     mqttClient.onConnect(_onConnect);
 }
 
+RmProtocolMqtt::~RmProtocolMqtt()
+{
+    if (mqttClient.connected())
+    {
+        mqttClient.disconnect();
+    }
+}
+
 void RmProtocolMqtt::PublishLog(uint level, String payload)
 {
     mqttClient.publish(topicName(2, level).c_str(), 0, false, payload.c_str());
 }
+
 
 bool RmProtocolMqtt::_onConnect(bool sessionPresent)
 {
@@ -124,7 +125,7 @@ void RmProtocolMqtt::messageReceived(char *topic, char *payload,
     {
         payload[len] = '\0';
         Log->Append(F("[")).Append(topic).Append(F("]:")).Append(payload).Debug();
-        rmProtocolMqtt->ReceivedState(String(payload));
+        RmPackageValidator::Validate(payload);
     }
     else
     {

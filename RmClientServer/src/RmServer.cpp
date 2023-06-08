@@ -87,7 +87,7 @@ void RmServer::Begin()
 
 void RmServer::SendCommand(String command)
 {
-    rmProtocol->SendCommand(command);
+    rmProtocol->SendPkg(command);
 }
 
 void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)

@@ -15,15 +15,6 @@ void RmTelemetry::Begin()
 {
 }
 
-String RmTelemetry::pkgGPS(GpsPosition position)
-{
-    Log->Printf("SENDING GPS position: %f, %f, %f, %f", position.latitude, position.longitude, position.altitude, position.speed);
-    char buffer[30];
-    sprintf(buffer, "{G#%lu#%lu#%u#%u}", position.latitude * 1000000, position.longitude * 1000000, position.altitude * 1000, position.speed * 10);
-    String s = String(buffer);
-    return s;
-}
-
 void RmTelemetry::rmEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
 
@@ -31,7 +22,7 @@ void RmTelemetry::rmEventHandler(void *arg, esp_event_base_t event_base, int32_t
     {
     case RMEVENT_GPS_POSITION:
     {
-        rmProtocol->SendCommand(pkgGPS(*(GpsPosition *)event_data));
+        rmProtocol->SendPkg(RmGPS::GpsAsString(*(GpsPosition *)event_data));
     }
     break;
     }
@@ -39,6 +30,6 @@ void RmTelemetry::rmEventHandler(void *arg, esp_event_base_t event_base, int32_t
 
 void RmTelemetry::SendAll()
 {
-    rmProtocol->SendCommand(pkgGPS(rmGPS->GetPosition()));
+    rmProtocol->SendPkg(RmGPS::GpsAsString(rmGPS->GetPosition()));
 }
 RmTelemetry *rmTelemetry;

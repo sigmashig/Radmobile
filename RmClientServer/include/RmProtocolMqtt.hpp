@@ -8,11 +8,12 @@ class RmProtocolMqtt : public RmProtocol
 {
 public:
     void Begin();
-    void ReceivedState(String command);
-    bool SendCommand(String command);
+    //void ReceivedPkg(String command);
+    bool SendPkg(String command);
     void Reconnect();
     RmProtocolMqtt();
     void PublishLog(uint level, String payload);
+    ~RmProtocolMqtt();
 
 private:
     static AsyncMqttClient mqttClient;

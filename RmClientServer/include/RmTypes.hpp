@@ -203,7 +203,7 @@ typedef struct
     int value;
 } RmCommandPkg;
 
-typedef union
+typedef union _ButtonsSet
 {
     struct
     {
@@ -225,16 +225,20 @@ typedef union
         unsigned b16 : 1;
     } button;
     uint16_t buttonPacked;
+    _ButtonsSet()
+    {
+        buttonPacked = 0;
+    }
 } ButtonsSet;
 
 typedef struct
 {
     bool isValid = true;
-    Direction straight;
-    int powerStraight;
-    Direction turn;
-    int powerTurn;
-    ButtonsSet buttons;
+    Direction straight = DIRECTION_NODIRECTION;
+    int powerStraight = 0;
+    Direction turn = DIRECTION_NODIRECTION;
+    int powerTurn = 0;
+    ButtonsSet buttons = {};
 } CommandState;
 
 typedef struct
@@ -252,7 +256,10 @@ typedef struct
 typedef enum
 {
     RMEVENT_NONE,
+    RMEVENT_INVALID_PACKET_RECEIVED,
     RMEVENT_STATE_RECEIVED,
+    RMEVENT_ID_RECEIVED,
+    RMEVENT_GPS_RECEIVED,
     RMEVENT_LORA_SOMETHING_HAPPENS,
     RMEVENT_PID_CORRECTION_ROLL,
     RMEVENT_PID_CORRECTION_PITCH,
@@ -261,11 +268,57 @@ typedef enum
     RMEVENT_GPS_POSITION
 
 } RmProtocolEvent;
+typedef enum
+{
+    RMCONFIG_EVENT_LOOP,
+    RMCONFIG_EVENT_1_SECOND,
+    RMCONFIG_EVENT_3_SECONDS,
+    RMCONFIG_EVENT_5_SECONDS,
+    RMCONFIG_EVENT_10_SECONDS,
+    RMCONFIG_EVENT_30_SECONDS,
+    RMCONFIG_EVENT_1_MINUTE,
+    RMCONFIG_EVENT_3_MINUTES,
+    RMCONFIG_EVENT_5_MINUTES,
+    RMCONFIG_EVENT_10_MINUTES,
+    RMCONFIG_EVENT_30_MINUTES
+} RmConfigEvent;
 
 typedef struct
 {
+    bool isValid;
     double latitude;
     double longitude;
     double altitude;
     double speed;
 } GpsPosition;
+
+#define KEY_LENGTH 16
+typedef struct
+{
+    bool isValid;
+    char id;
+    byte key[KEY_LENGTH];
+} IdConfig;
+
+typedef enum
+{
+    PKG_INVALID,
+    PKG_STATE,
+    PKG_ID,
+    PKG_GPS,
+} PackageType;
+
+typedef struct
+{
+    PackageType pkgType;
+    union _content
+    {
+        CommandState state;
+        IdConfig id;
+        GpsPosition gps;
+        _content()
+        {
+            state = {};
+        }
+    } content;
+} RmPackage;

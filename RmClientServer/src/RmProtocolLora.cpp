@@ -3,6 +3,7 @@
 #include "RmConfiguration.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
+#include "RmPackageValidator.hpp"
 
 LORA *RmProtocolLora::radio;
 bool RmProtocolLora::isChannelFree = true;
@@ -69,11 +70,21 @@ void RmProtocolLora::Begin()
     radio->startReceive();
 }
 
+RmProtocolLora::~RmProtocolLora()
+{
+    if (radio != NULL)
+    {
+        delete radio;
+    }
+    esp_event_handler_unregister(RMPROTOCOL_EVENT, RMEVENT_LORA_SOMETHING_HAPPENS, packageReceived);
+    xTimerDelete(sendTimer, portMAX_DELAY);
+}
+
 void RmProtocolLora::Reconnect()
 {
 }
-
-void RmProtocolLora::ReceivedState(String state)
+/*
+void RmProtocolLora::ReceivedPkg(String state)
 {
     Log->Append(F("LORA ReceivedCommand: ")).Append(state).Debug();
     CommandState st = RmCommands::StringToState(state);
@@ -86,8 +97,8 @@ void RmProtocolLora::ReceivedState(String state)
         Log->Error(F("Invalid command!"));
     }
 }
-
-bool RmProtocolLora::SendCommand(String command)
+*/
+bool RmProtocolLora::SendPkg(String command)
 {
     pkgForTransmit = String(rmSession->GetSessionId());
     pkgForTransmit += command;
@@ -111,6 +122,7 @@ bool RmProtocolLora::SendCommand(String command)
     return true;
 }
 
+
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     uint status = radio->getIRQFlags();
@@ -124,7 +136,7 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
             Log->Info(F("Received for other device, ignoring."));
             return;
         }
-        rmProtocol->ReceivedState(str.substring(1));
+        RmPackageValidator::Validate(str.substring(1));
     }
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_TX_DONE)
     { // transfer completed
@@ -149,3 +161,7 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
         isChannelFree = true;
     }
 }
+
+//---------------------------------------------------
+
+RmProtocolLora *rmProtocolLora = NULL;

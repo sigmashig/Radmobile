@@ -9,9 +9,9 @@ public:
     RmProtocolLora();
     void Begin();
     void Reconnect();
-    void ReceivedState(String state);
-    bool SendCommand(String command);
-
+    //void ReceivedPkg(String state);
+    bool SendPkg(String command);
+    ~RmProtocolLora();
 private:
     static void packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     static LORA *radio;
@@ -22,3 +22,5 @@ private:
     static StaticTimer_t sendTimerBuffer;
     static String lastPkg;
 };
+
+extern RmProtocolLora *rmProtocolLora;

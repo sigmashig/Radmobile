@@ -11,6 +11,8 @@ public:
     RmGPS(int minDistance = 10);
     GpsPosition GetPosition();
     bool IsGpsAvailable() { return isGpsAvailable; }
+    static String GpsAsString(GpsPosition position);
+    static GpsPosition StringAsGps(String gpsString);
 private:
     static TinyGPSPlus gps;
     int minDistance;

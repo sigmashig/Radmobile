@@ -29,6 +29,72 @@ GpsPosition RmGPS::GetPosition()
     return currentPosition;
 }
 
+String RmGPS::GpsAsString(GpsPosition position)
+{
+    if (position.isValid)
+    {
+        char buffer[30];
+        sprintf(buffer, "(G#%lu#%lu#%u#%u)", position.latitude * 1000000, position.longitude * 1000000, position.altitude * 1000, position.speed * 10);
+        String s = String(buffer);
+        return s;
+    }
+    else
+    {
+        return "";
+    }
+}
+
+GpsPosition RmGPS::StringAsGps(String gpsString)
+{
+    GpsPosition position = {false, 0, 0, 0, 0};
+    if (gpsString.length() > 0)
+    {
+        if (gpsString[0] == '(' && gpsString[gpsString.length() - 1] == ')' && gpsString.indexOf("G#") == 1)
+        {
+
+            String s = gpsString.substring(3);
+            int index = s.indexOf("#");
+            if (index == -1)
+            {
+                position.isValid = false;
+                return position;
+            }
+            String p = s.substring(0, index);
+            position.latitude = p.toFloat() / 1000000;
+            s = s.substring(index + 1);
+            index = s.indexOf("#");
+            if (index == -1)
+            {
+                position.isValid = false;
+                return position;
+            }
+            p = s.substring(0, index);
+            position.longitude = p.toFloat() / 1000000;
+            s = s.substring(index + 1);
+            index = s.indexOf("#");
+            if (index == -1)
+            {
+                position.isValid = false;
+                return position;
+            }
+            p = s.substring(0, index);
+            position.altitude = p.toFloat() / 1000;
+            s = s.substring(index + 1);
+            index = s.indexOf(")");
+            if (index == -1)
+            {
+                position.isValid = false;
+                return position;
+            }
+            p = s.substring(0, index);
+            position.speed = p.toFloat() / 10;
+
+            position.isValid = true;
+        }
+    }
+    return position;
+}
+
 void RmGPS::configEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
 
