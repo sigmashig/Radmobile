@@ -1,5 +1,6 @@
 #include "RmClient.hpp"
 #include "SigmaLoger.hpp"
+#include "SigmaIO.hpp"
 #include "RmConfiguration.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
@@ -23,7 +24,14 @@
 
 RmClient::RmClient()
 {
+
     // TODO: session should be transferred from server to client
+    sigmaIO = new SigmaIO(true);
+    I2CParams i2cParms = {.address = I2C_ADDRESS, .pWire = NULL, .sda = 0, .scl = 0};
+
+    sigmaIO->RegisterPinDriver(SIGMAIO_PCF8575, &(i2cParms), I2C_BEGIN, I2C_END);
+    sigmaIO->Begin();
+
     rmCommands = new RmCommands();
     rmSession = new RmSession();
 
@@ -49,6 +57,7 @@ RmClient::RmClient()
     {
         Begin();
     }
+
 }
 
 void RmClient::Begin()

@@ -5,19 +5,40 @@
 #include "RmTypes.hpp"
 
 ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
+
+#define CHARSET_BEGIN 0x20
+#define CHARSET_END 0x7E
+
 class RmConfiguration
 {
 public:
     // Application configuration
     uint64_t BoardId = ESP.getEfuseMac();
     IdConfig CommunicationId = {.id = 0, .key = {0}};
-// Hardware configuration
-
-// ---------------------------------------------------------------------
-// SERVER
+#if MODE == 1 // Server
 #define I2C_ADDRESS 0x27
 #define I2C_BEGIN 50
 #define I2C_END 65
+
+    UARTConfig xchngConfig = {
+        .baudrate = 115200,
+        .rx = 17,
+        .tx = 16};
+
+#elif MODE == 2 // Client
+#define I2C_ADDRESS 0x24
+#define I2C_BEGIN 50
+#define I2C_END 65
+    UARTConfig xchngConfig = {
+        .baudrate = 115200,
+        .rx = 4, // crossed vs Server
+        .tx = 35};
+
+#endif
+    // Hardware configuration
+
+    // ---------------------------------------------------------------------
+    // SERVER
     // Exchange Protocol configuration
 
     //  Joystick PS2
@@ -58,9 +79,13 @@ public:
     MPUSettings mpuSettings = {
         .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};
     // GPS Settings
-    byte gpsRx = 12;
-    byte gpsTx = 15;
-    // ------Vehicle configuration---------
+    UARTConfig gpsConfig = {
+        .baudrate = 9600,
+        .rx = 12,
+        .tx = 15};
+    // byte gpsRx = 12;
+    // byte gpsTx = 15;
+    //  ------Vehicle configuration---------
     const uint pwmFreq = 5000;
     const uint pwmResolution = 7;
 #if VEHICLE == 0
@@ -96,6 +121,7 @@ public:
         .rearLeft = {.controllerType = EngineControllerType::L298N, .connection = {.controllerL298N = {.in1 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xE}}}}, .in2 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xF}}}}, .en = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 0, .minvalue = ENGINE_MIN_VALUE}, .pinAddress = {.PIN_GPIO = {.pin = 2}}}}}}},
         .rearRight = {.controllerType = EngineControllerType::L298N, .connection = {.controllerL298N = {.in1 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xC}}}}, .in2 = {.pinDriver = PINDRV_PCF, .pinConfig = {.pinType = PIN_DIGITAL, .pinAddress = {.PIN_I2C = {.controllerId = 0, .port = 0xD}}}}, .en = {.pinDriver = PINDRV_GPIO, .pinConfig = {.pinType = PIN_PWM, .pwmSettings = {.frequency = pwmFreq, .resolution = pwmResolution, .channel = 0, .minvalue = ENGINE_MIN_VALUE}, .pinAddress = {.PIN_GPIO = {.pin = 13}}}}}}}};
 #endif
+
     // Functionality
     RmConfiguration();
     void Loop();

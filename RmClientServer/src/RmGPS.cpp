@@ -10,7 +10,7 @@ TinyGPSPlus RmGPS::gps;
 
 RmGPS::RmGPS(int minDistance) : minDistance(minDistance)
 {
-    Serial1.begin(9600, SERIAL_8N1, rmConfig->gpsRx, rmConfig->gpsTx);
+    Serial1.begin(rmConfig->gpsConfig.baudrate, SERIAL_8N1, rmConfig->gpsConfig.rx, rmConfig->gpsConfig.tx);
     gps = TinyGPSPlus();
     lastPosition = {0, 0};
     esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_1_SECOND, configEventHandler, this);

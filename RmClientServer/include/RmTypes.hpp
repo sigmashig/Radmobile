@@ -44,6 +44,12 @@ typedef struct
     PinConfig pinConfig;
 } PinDefinition;
 
+typedef struct
+{
+    uint32_t baudrate;
+    uint rx;
+    uint tx;
+} UARTConfig;
 typedef enum
 {
     PS2_2x2, // left stick: Forward/Backward, Right stick: Left/Right

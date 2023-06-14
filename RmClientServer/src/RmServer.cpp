@@ -49,6 +49,7 @@ void RmServer::startWiFi(String ssid, String password)
 
 RmServer::RmServer()
 {
+
     Log->Debug(F("SERVER"));
     // Init confguration
     sigmaIO = new SigmaIO(true);
@@ -80,11 +81,12 @@ RmServer::RmServer()
     {
         Begin();
     }
+
 }
 
 void RmServer::Begin()
 {
-    
+
     alreadyConnected = true;
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, responseEventHandler, NULL, NULL);
     esp_event_handler_instance_register(RMRC_EVENT, RMRC_NEWSTATE, commandEventHandler, NULL, NULL);

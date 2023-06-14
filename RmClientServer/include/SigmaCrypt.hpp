@@ -7,7 +7,6 @@ public:
     SigmaCrypt(const byte *key, int keyLength);
     void Encrypt(char *cipherOutput, const char *clearInput);
     void Decrypt(char *clearOutput, const char *cipherInput);
-    
 
 private:
     byte *key;
