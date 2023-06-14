@@ -14,6 +14,7 @@ public:
     //virtual void ReceivedPkg(String state) = 0;
     virtual bool SendPkg(String command) = 0;
     virtual bool IsReady() { return isReady; };
+    virtual int IsReadAvailable() { return 0; };
     //virtual ~RmProtocol() = 0;
 
 protected:

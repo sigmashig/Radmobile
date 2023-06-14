@@ -10,6 +10,7 @@ public:
     void Reconnect();
     bool SendPkg(String command);
     bool IsReady() { return isReady; };
+    int IsReadAvailable() { return uart->available(); };
     ~RmProtocolUart();
 
 private:

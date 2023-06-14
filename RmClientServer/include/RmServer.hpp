@@ -16,6 +16,7 @@ private:
     bool isReady = false;
     bool isBeginRequired = false;
     void startWiFi(String ssid, String password);
+    void startExchange();
     static void commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     // void ReceivedCommand(String command);
     static void responseEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);

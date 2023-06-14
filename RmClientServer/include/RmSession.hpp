@@ -1,14 +1,18 @@
 #pragma once
 #include <Arduino.h>
+#include "RmTypes.hpp"
 
 class RmSession
 {
 public:
-    char GetSessionId() { return sessionId; };
+    IdConfig GetSessionId() { return sessionId; };
+    void SetSessionId(IdConfig sessionId);
     RmSession();
 
 private:
-    char sessionId;
+    IdConfig sessionId;
+    bool GetSessionIdFromEEPROM();
+    void SetSessionIdToEEPROM();
 };
 
 extern RmSession *rmSession;

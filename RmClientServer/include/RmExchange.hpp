@@ -9,10 +9,19 @@ public:
     RmExchange();
     void Begin();
     IdConfig GenerateId();
-    bool SendId(IdConfig idConfig);
-    IdConfig ReceiveId(String pkg);
+    bool SendId();
+    bool SendAck(bool result);
+    bool ReceiveCmd(String pkg);
+    bool SendEnd();
     ~RmExchange();
+    bool IsReadAvailable() { return xchngProtocol->IsReadAvailable(); }
+    const ulong ExchangeDuration = 5 * 60 * 1000; // 5 minutes
+    bool IsIdReceived = false;
+    bool IsAckReceived = false;
+    bool IsAckGood = false;
+    bool IsEndReceived = false;
 
 private:
     RmProtocol *xchngProtocol;
+    IdConfig idConfig;
 };

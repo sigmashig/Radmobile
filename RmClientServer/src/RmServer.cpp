@@ -16,6 +16,7 @@
 #elif RC == 2
 #include "RmRcPS2.hpp"
 #endif
+#include "RmExchange.hpp"
 
 void RmServer::startWiFi(String ssid, String password)
 {
@@ -45,6 +46,52 @@ void RmServer::startWiFi(String ssid, String password)
                     } });
     WiFi.begin(ssid.c_str(), password.c_str());
 #endif
+}
+
+void RmServer::startExchange()
+{
+    ulong lastOp = millis();
+    Log->Debug(F("RmServer::startExchange()"));
+    RmExchange rmExchange;
+    rmExchange.Begin();
+    IdConfig idConfig = rmExchange.GenerateId();
+    while (millis() - lastOp < rmExchange.ExchangeDuration)
+    {
+        Log->Append(F("RmServer::startExchange().")).Append(F("SendId")).Debug();
+        if (rmExchange.SendId())
+        {
+            // lastOp = millis();
+            while (millis() - lastOp < rmExchange.ExchangeDuration && rmExchange.IsReadAvailable() == 0)
+            {
+                delay(100);
+            }
+            if (rmExchange.IsReadAvailable() > 0)
+            {
+                Log->Append(F("RmServer::startExchange().")).Append(F("ReceiveAck")).Debug();
+
+                if (rmExchange.IsAckReceived)
+                {
+                    Log->Append(F("RmServer::startExchange().")).Append(F("AckReceived")).Debug();
+                    if (rmExchange.IsAckGood)
+                    {
+                        Log->Append(F("RmServer::startExchange().")).Append(F("AckGood")).Debug();
+                        break;
+                    }
+                    else
+                    {
+                        Log->Append(F("RmServer::startExchange().")).Append(F("AckBad")).Debug();
+                        // continue; // repeat send id
+                    }
+                }
+            }
+        }
+    }
+    if (rmExchange.IsAckGood)
+    {
+        Log->Append(F("RmServer::startExchange().")).Append(F("SendEnd")).Debug();
+        rmExchange.SendEnd();
+        rmSession->SetSessionId(idConfig);
+    }
 }
 
 RmServer::RmServer()
@@ -81,12 +128,10 @@ RmServer::RmServer()
     {
         Begin();
     }
-
 }
 
 void RmServer::Begin()
 {
-
     alreadyConnected = true;
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, responseEventHandler, NULL, NULL);
     esp_event_handler_instance_register(RMRC_EVENT, RMRC_NEWSTATE, commandEventHandler, NULL, NULL);
