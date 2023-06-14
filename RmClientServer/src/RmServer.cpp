@@ -1,4 +1,6 @@
 #include "RMServer.hpp"
+#include <SigmaIO.hpp>
+#include "RmConfiguration.hpp"
 #include "RmProtocol.hpp"
 #include "RmCommands.hpp"
 #include "RmSession.hpp"
@@ -48,6 +50,12 @@ void RmServer::startWiFi(String ssid, String password)
 RmServer::RmServer()
 {
     Log->Debug(F("SERVER"));
+    // Init confguration
+    sigmaIO = new SigmaIO(true);
+    I2CParams i2cParms = {.address = I2C_ADDRESS, .pWire = NULL, .sda = 0, .scl = 0};
+
+    sigmaIO->RegisterPinDriver(SIGMAIO_PCF8575, &(i2cParms), I2C_BEGIN, I2C_END);
+    sigmaIO->Begin();
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
 
@@ -76,6 +84,7 @@ RmServer::RmServer()
 
 void RmServer::Begin()
 {
+    
     alreadyConnected = true;
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, responseEventHandler, NULL, NULL);
     esp_event_handler_instance_register(RMRC_EVENT, RMRC_NEWSTATE, commandEventHandler, NULL, NULL);

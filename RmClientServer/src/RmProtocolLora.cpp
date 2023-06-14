@@ -83,21 +83,6 @@ RmProtocolLora::~RmProtocolLora()
 void RmProtocolLora::Reconnect()
 {
 }
-/*
-void RmProtocolLora::ReceivedPkg(String state)
-{
-    Log->Append(F("LORA ReceivedCommand: ")).Append(state).Debug();
-    CommandState st = RmCommands::StringToState(state);
-    if (st.isValid)
-    {
-        esp_event_post(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, &st, sizeof(st), portMAX_DELAY);
-    }
-    else
-    {
-        Log->Error(F("Invalid command!"));
-    }
-}
-*/
 bool RmProtocolLora::SendPkg(String command)
 {
     pkgForTransmit = String(rmSession->GetSessionId());
@@ -121,7 +106,6 @@ bool RmProtocolLora::SendPkg(String command)
     }
     return true;
 }
-
 
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {

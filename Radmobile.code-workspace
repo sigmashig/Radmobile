@@ -14,6 +14,18 @@
 		{
 			"name": "SigmaUtils",
 			"path": "../SigmaUtils"
+		},
+		{
+			"name": "SigmaIO",
+			"path": "../SigmaIO"
+		},
+		{
+			"name": "TestISR",
+			"path": "../../Documents/PlatformIO/Projects/TestISR"
+		},
+		{
+			"name": "ArduinoPSX",
+			"path": "../ArduinoPSX"
 		}
 	],
 	"settings": {
@@ -26,7 +38,13 @@
 			"limits": "cpp",
 			"calibratelib_cpp": "cpp",
 			"condition_variable": "cpp",
-			"mutex": "cpp"
+			"mutex": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp"
 		}
 	}
 }

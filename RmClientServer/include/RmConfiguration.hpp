@@ -11,18 +11,22 @@ public:
     // Application configuration
     uint64_t BoardId = ESP.getEfuseMac();
     IdConfig CommunicationId = {.id = 0, .key = {0}};
-    // Hardware configuration
+// Hardware configuration
 
-    // ---------------------------------------------------------------------
-    // SERVER
+// ---------------------------------------------------------------------
+// SERVER
+#define I2C_ADDRESS 0x27
+#define I2C_BEGIN 50
+#define I2C_END 65
     // Exchange Protocol configuration
-    
+
     //  Joystick PS2
+
     PS2Config ps2Config{
         .pinData = 15,
-        .pinCmd = 16,
-        .pinAtt = 4,
-        .pinClock = 2,
+        .pinCmd = (0 + I2C_BEGIN),
+        .pinAtt = (2 + I2C_BEGIN),
+        .pinClock = (1 + I2C_BEGIN),
         .modeStick = PS2ModeStick::PS2_2x2};
     LoraConfig srvLoraConfig = {
         .type = LORA_SX1278,
