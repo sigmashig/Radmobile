@@ -110,6 +110,7 @@ bool RmProtocolLora::SendPkg(String command)
 void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     uint status = radio->getIRQFlags();
+    Log->Printf("Lora IRQ status: 0x%X\n", status);
     if (status & RADIOLIB_SX127X_CLEAR_IRQ_FLAG_RX_DONE)
     { // received a packet
         String str;

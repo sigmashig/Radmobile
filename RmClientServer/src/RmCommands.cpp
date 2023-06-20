@@ -241,6 +241,9 @@ RmCommands::RmCommands()
     cmdTxt[CMD_BUTTON14] = 'n';
     cmdTxt[CMD_BUTTON15] = 'o';
     cmdTxt[CMD_BUTTON16] = 'p';
+    cmdTxt[CMD_SPECIAL1] = 'q';
+    cmdTxt[CMD_SPECIAL2] = 'r';
+    cmdTxt[CMD_SPECIAL3] = 's';
     cmdTxt[CMD_NOCOMMAND] = '0';
 }
 /*

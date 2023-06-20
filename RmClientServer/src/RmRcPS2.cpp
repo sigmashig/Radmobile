@@ -10,15 +10,10 @@ RmRcPS2::RmRcPS2()
     psx.setupPins(rmConfig->ps2Config.pinData, rmConfig->ps2Config.pinCmd,
                   rmConfig->ps2Config.pinAtt, rmConfig->ps2Config.pinClock, 10);
     psx.config(PSXMODE_ANALOG);
+    timer = xTimerCreateStatic("PS2Timer", pdMS_TO_TICKS(100), pdTRUE, this, timerCallback, &timerPS2);
 }
 
-void RmRcPS2::Begin()
-{
-    psx.read(lastData);
-    esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, loopEventHandler, NULL);
-}
-
-void RmRcPS2::loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void RmRcPS2::timerCallback(TimerHandle_t xTimer)
 {
     PSX::PSXDATA psData;
     if (PS2->psx.read(psData) == PSXERROR_SUCCESS)
@@ -30,6 +25,12 @@ void RmRcPS2::loopEventHandler(void *arg, esp_event_base_t event_base, int32_t e
         Log->Error(F("PS2 joystick is not connected"));
     }
 }
+
+void RmRcPS2::Begin()
+{
+    psx.read(lastData);
+    xTimerStart(timer, 0);
+ }
 
 int RmRcPS2::stickToDirection(byte x)
 {
@@ -54,6 +55,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
     {
         return;
     }
+    Log->Debug("PS2 Start");
     switch (rmConfig->ps2Config.modeStick)
     {
     case PS2ModeStick::PS2_2x2:
@@ -233,6 +235,18 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
             CmdToServer(cmdPkg);
         }
     }
+    // -------------------------- Buttons --------------------------
+    // Special command
+    uint specialMask = (PSXBTN_TRIANGLE | PSXBTN_CIRCLE | PSXBTN_ACT_LEFT);
+
+    if (((psData.buttons & specialMask) == specialMask) && ((lastData.buttons & specialMask) != specialMask))
+    {
+        Log->Debug("Special command");
+        cmdPkg.command = CMD_SPECIAL1;
+        cmdPkg.value = psData.buttons & PSXBTN_SELECT & PSXBTN_CIRCLE & PSXBTN_ACT_LEFT ? MAX_COMMAND_VALUE : 0;
+        CmdToServer(cmdPkg);
+    }
+
     if ((psData.buttons & PSXBTN_L1) != (lastData.buttons & PSXBTN_L1))
     {
         cmdPkg.command = CMD_BUTTON5;
@@ -306,6 +320,7 @@ void RmRcPS2::cmdProcessing(PSX::PSXDATA psData)
         CmdToServer(cmdPkg);
     }
     memcpy(&lastData, &psData, sizeof(psData));
+    Log->Debug("PS2 Finsihed");
 }
 
 RmRcPS2 *PS2;

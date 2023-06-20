@@ -42,21 +42,21 @@ static void totalEventHandler(void *arg, esp_event_base_t event_base, int32_t ev
   // Serial.printf("MAIN loopEventHandler:%d\n", event_id);
   if (event_base == RMPROTOCOL_EVENT)
   {
-    Log->Debug("MAIN RMPROTOCOL_EVENT");
+    Log->Printf("MAIN RMPROTOCOL_EVENT:%d\n", event_id).Debug();
   }
 #if MODE == 1
   else if (event_base == RMRC_EVENT)
   {
-    Log->Debug("MAIN RMRC_EVENT");
+    Log->Printf("MAIN RMRC_EVENT:%d\n", event_id).Debug();
   }
 #elif MODE == 2
   else if (event_base == RMPINS_DRIVER_EVENT)
   {
-    Log->Debug("MAIN RM_PINS_DRIVER_EVENT");
+    Log->Printf("MAIN RM_PINS_DRIVER_EVENT:%d\n", event_id).Debug();
   }
   else if (event_base == RMVEHICLE_EVENT)
   {
-    Log->Debug("MAIN RMVEHICLE_EVENT");
+    Log->Printf("MAIN RMVEHICLE_EVENT:%d\n", event_id).Debug();
   }
 #endif
   else
@@ -108,12 +108,12 @@ void setup()
 #endif
   rmConfig->BoardId = ESP.getEfuseMac();
   Log->Printf("ID:%lx", rmConfig->BoardId).Info();
-  // esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
+  esp_event_handler_register(ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, totalEventHandler, NULL);
 }
 
 void loop()
 {
-
+/*
   if (!isReady)
   {
 #if MODE == 1
@@ -127,4 +127,5 @@ void loop()
     rmConfig->Loop();
   }
   vTaskDelay(50 / portTICK_PERIOD_MS);
+  */
 }

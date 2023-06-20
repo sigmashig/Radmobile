@@ -26,7 +26,10 @@ private:
     PSX::PSXDATA lastData;
     //bool isFirst = true;
 
-    static void loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    StaticTimer_t timerPS2;
+    TimerHandle_t timer;
+    static void timerCallback(TimerHandle_t xTimer);
+    //    static void loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     int stickToDirection(byte x);
     void cmdProcessing(PSX::PSXDATA psData);
 };

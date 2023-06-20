@@ -18,7 +18,7 @@ void RmRemoteControl::CmdToServer(RmCommandPkg command)
 {
     Log->Append("RmRemoteControl::Received command: ").Append(RmCommands::CommandToString(command)).Debug();
     CommandState oldState;
-    memcpy(&oldState, &CurrentState, sizeof(oldState));
+    memcpy(&oldState, &CurrentState, sizeof(CommandState));
     CurrentState.isValid = false;
     switch (command.command)
     {
@@ -108,10 +108,25 @@ void RmRemoteControl::CmdToServer(RmCommandPkg command)
         }
     }
     break;
+    case CMD_SPECIAL1:
+    case CMD_SPECIAL2:
+    case CMD_SPECIAL3:
+    {
+        Log->Append("RmRemoteControl::Received special command: ").Debug();
+        CurrentState.isValid = false;
+        CurrentState.buttons.buttonPacked = 0x0000;
+        CurrentState.special = command.command - CMD_SPECIAL1 + 1;
+        break;
+    }
     }
     if (memcmp(&oldState, &CurrentState, sizeof(CurrentState)) != 0)
     {
-        esp_event_post(RMRC_EVENT, RMRC_NEWSTATE, &CurrentState, sizeof(CurrentState), portMAX_DELAY);
+        Log->Append("RmRemoteControl::New state: ").Append(RmCommands::StateAsString(CurrentState)).Debug();
+        auto err = esp_event_post(RMRC_EVENT, RMRC_NEWSTATE, &CurrentState, sizeof(CurrentState), portMAX_DELAY);
+        if (err!=ESP_OK)
+        {
+            Log->Append("RmRemoteControl::Error posting event: ").Append(err).Error();
+        }
     }
 }
 

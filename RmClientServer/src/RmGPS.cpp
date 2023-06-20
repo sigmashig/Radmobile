@@ -13,7 +13,9 @@ RmGPS::RmGPS(int minDistance) : minDistance(minDistance)
     Serial1.begin(rmConfig->gpsConfig.baudrate, SERIAL_8N1, rmConfig->gpsConfig.rx, rmConfig->gpsConfig.tx);
     gps = TinyGPSPlus();
     lastPosition = {0, 0};
-    esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_1_SECOND, configEventHandler, this);
+    TimerHandle_t timer =  xTimerCreateStatic("gpsTimer", pdMS_TO_TICKS(1000), pdTRUE, this, gpsTimerCallback, &gpsTimer);
+    xTimerStart(timer, 0);
+//    esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_1_SECOND, configEventHandler, this);
 }
 
 GpsPosition RmGPS::GetPosition()
@@ -95,9 +97,8 @@ GpsPosition RmGPS::StringAsGps(String gpsString)
     return position;
 }
 
-void RmGPS::configEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void RmGPS::gpsTimerCallback(TimerHandle_t xTimer)
 {
-
     static int cnt = 0;
     cnt++;
     if (cnt == 6 && !rmGPS->isGpsAvailable)

@@ -200,6 +200,9 @@ typedef enum
     CMD_BUTTON14,
     CMD_BUTTON15,
     CMD_BUTTON16,
+    CMD_SPECIAL1,
+    CMD_SPECIAL2,
+    CMD_SPECIAL3,
     CMD_NOCOMMAND
 } RmCommandType;
 
@@ -240,6 +243,7 @@ typedef union _ButtonsSet
 typedef struct
 {
     bool isValid = true;
+    byte special = 0;
     Direction straight = DIRECTION_NODIRECTION;
     int powerStraight = 0;
     Direction turn = DIRECTION_NODIRECTION;
@@ -274,6 +278,7 @@ typedef enum
     RMEVENT_GPS_POSITION
 
 } RmProtocolEvent;
+/*
 typedef enum
 {
     RMCONFIG_EVENT_LOOP,
@@ -288,7 +293,7 @@ typedef enum
     RMCONFIG_EVENT_10_MINUTES,
     RMCONFIG_EVENT_30_MINUTES
 } RmConfigEvent;
-
+*/
 typedef struct
 {
     bool isValid;

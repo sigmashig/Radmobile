@@ -8,14 +8,16 @@ RmRcEmulator::RmRcEmulator()
 
 void RmRcEmulator::Begin()
 {
-    esp_event_handler_instance_register(RMCONFIG_EVENT, RMCONFIG_EVENT_3_SECONDS, loopEventHandle, NULL, NULL);
-}
-
-void RmRcEmulator::loopEventHandle(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
-{
-    long c = random(0, CMD_NOCOMMAND);
-    RmCommandPkg command;
-    command.command = (RmCommandType)c;
-    command.value = random(0, MAX_COMMAND_VALUE);
-    remoteControl->CmdToServer(command);
+    TimerHandle_t timer = xTimerCreateStatic(
+        "loopTimer", pdMS_TO_TICKS(3000), pdTRUE, NULL,
+        [](TimerHandle_t xTimer)
+        {
+            long c = random(0, CMD_NOCOMMAND);
+            RmCommandPkg command;
+            command.command = (RmCommandType)c;
+            command.value = random(0, MAX_COMMAND_VALUE);
+            remoteControl->CmdToServer(command);
+        },
+        &loopTimerBuffer);
+    xTimerStart(timer, 0);
 }

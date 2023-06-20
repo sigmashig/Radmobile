@@ -153,11 +153,24 @@ void RmServer::responseEventHandler(void *arg, esp_event_base_t event_base, int3
 
 void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
+    Log->Debug("commandEventHandler");
     CommandState *commandState = (CommandState *)event_data;
-    String stateString;
-    stateString = RmCommands::StateAsString(*commandState);
-    Log->Append(F("State Ready: ")).Append(stateString).Info();
-    rmServer->SendCommand(stateString);
+    if (commandState->special != 0)
+    {
+        Log->Append(F("Special command: ")).Append(commandState->special).Info();
+        if (commandState->special == 1)
+        {
+            rmServer->startExchange();
+        }
+        return;
+    }
+    else
+    {
+        String stateString;
+        stateString = RmCommands::StateAsString(*commandState);
+        Log->Append(F("State Ready: ")).Append(stateString).Info();
+        rmServer->SendCommand(stateString);
+    }
 }
 
 //--------------------------------

@@ -8,6 +8,5 @@ public:
     void Begin();
 
 private:
-    static void loopTask(void *params);
-    static void loopEventHandle(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    StaticTimer_t loopTimerBuffer;
 };

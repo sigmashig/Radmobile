@@ -13,11 +13,14 @@ public:
     bool IsGpsAvailable() { return isGpsAvailable; }
     static String GpsAsString(GpsPosition position);
     static GpsPosition StringAsGps(String gpsString);
+
 private:
     static TinyGPSPlus gps;
     int minDistance;
     GpsPosition lastPosition;
     bool isGpsAvailable = false;
-    static void configEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    StaticTimer_t gpsTimer;
+//    static void configEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    static void gpsTimerCallback(TimerHandle_t xTimer);
 };
 extern RmGPS *rmGPS;

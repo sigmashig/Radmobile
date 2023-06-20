@@ -4,7 +4,6 @@
 #include "RmPinsDriver.hpp"
 #include "RmTypes.hpp"
 
-ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
 
 #define CHARSET_BEGIN 0x20
 #define CHARSET_END 0x7E
@@ -124,13 +123,9 @@ public:
 
     // Functionality
     RmConfiguration();
-    void Loop();
     void Begin();
 
 private:
-    static ulong loopCounter;
-    static ulong loop1SecCounter;
-    static ulong lastLoop;
 };
 
 extern RmConfiguration *rmConfig;

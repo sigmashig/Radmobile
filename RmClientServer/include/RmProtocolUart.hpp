@@ -16,7 +16,9 @@ public:
 private:
     HardwareSerial *uart;
     bool isReady = false;
-    static void loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    TimerHandle_t timer;
+    StaticTimer_t uartTimer;
+    static void uartTimerCallback(TimerHandle_t xTimer);
 };
 
 extern RmProtocolUart *rmProtocolUart;

@@ -3,17 +3,18 @@
 #include "RmTypes.hpp"
 #include "RmPackageValidator.hpp"
 
-ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
+//ESP_EVENT_DECLARE_BASE(RMCONFIG_EVENT);
 ESP_EVENT_DECLARE_BASE(RMPROTOCOL_EVENT);
 
 RmProtocolUart::RmProtocolUart(HardwareSerial *uart) : RmProtocol(), uart(uart)
 {
-    esp_event_handler_register(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, &RmProtocolUart::loopEventHandler, NULL);
+    timer = xTimerCreateStatic("uartTimer", pdMS_TO_TICKS(1000), pdTRUE, this, uartTimerCallback, &uartTimer);
 }
 
 void RmProtocolUart::Begin()
 {
     isReady = true;
+    xTimerStart(timer, 0);
 }
 
 void RmProtocolUart::Reconnect()
@@ -32,7 +33,7 @@ bool RmProtocolUart::SendPkg(String pkg)
     return false;
 }
 
-void RmProtocolUart::loopEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void RmProtocolUart::uartTimerCallback(TimerHandle_t xTimer)
 {
     if (rmProtocolUart->uart->available())
     {
@@ -46,7 +47,8 @@ void RmProtocolUart::loopEventHandler(void *arg, esp_event_base_t event_base, in
 
 RmProtocolUart::~RmProtocolUart()
 {
-    esp_event_handler_unregister(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, &RmProtocolUart::loopEventHandler);
+    xTimerStop(&uartTimer, 0);
+    //esp_event_handler_unregister(RMCONFIG_EVENT, RMCONFIG_EVENT_LOOP, &RmProtocolUart::loopEventHandler);
 }
 
 //--------------------------------------------------------------------------------
