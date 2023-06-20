@@ -1,6 +1,8 @@
 #include "RmPinsDriver.hpp"
 #include "SigmaLoger.hpp"
 
+ESP_EVENT_DEFINE_BASE(RMPINS_DRIVER_EVENT);
+
 RmPinsDriver::RmPinsDriver(PcfSettings *pcfSettings, int numbPcf)
 {
     this->numbPcfs = numbPcf;

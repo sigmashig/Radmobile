@@ -22,10 +22,6 @@
 		{
 			"name": "TestISR",
 			"path": "../../Documents/PlatformIO/Projects/TestISR"
-		},
-		{
-			"name": "ArduinoPSX",
-			"path": "../ArduinoPSX"
 		}
 	],
 	"settings": {

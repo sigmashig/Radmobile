@@ -2,6 +2,7 @@
 #include "SigmaLoger.hpp"
 
 ESP_EVENT_DECLARE_BASE(RMPROTOCOL_EVENT);
+ESP_EVENT_DEFINE_BASE(RMVEHICLE_EVENT);
 
 RmVehicle::RmVehicle()
 {
