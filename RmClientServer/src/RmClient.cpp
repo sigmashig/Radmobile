@@ -8,48 +8,75 @@
 #include "RmPID.hpp"
 #include "RmTelemetry.hpp"
 #include "RmGPS.hpp"
+#if LOGER == 1
+#include "RmProtocolMqtt.hpp"
+#endif
 
+//#if WIFI==1
+//#include <WiFi.h>
+//#endif
 #if PROTOCOL == 1
-#include <WiFi.h>
 #include "RmProtocolMqtt.hpp"
 #elif PROTOCOL == 2
 #include "RmProtocolLora.hpp"
 #endif
 #include "RmVehicle.hpp"
 #if VEHICLE == 1
-#include "RmVehicleV1.hpp"
+#include "RmVehicleV2.hpp"
 #elif VEHICLE == 2
 #include "RmVehicleV2.hpp"
 #endif
 
+//RmProtocol *RmClient::logProtocol = NULL;
+
 RmClient::RmClient()
 {
+    Log = new SigmaLoger(512, log_publisher);
+
+    Log->Debug(F("CLIENT"));
+    // Init confguration
+    rmConfig = new RmConfiguration();
+    rmConfig->BoardId = ESP.getEfuseMac();
+    // Log->Printf("ID:%lx", rmConfig->BoardId).Info();
+
+#if LOGER == 1
+    rmProtocolMqtt = new RmProtocolMqtt();
+    rmProtocol = rmProtocolMqtt;
+    logProtocol = rmProtocolMqtt;
+#endif
 
     // TODO: session should be transferred from server to client
     sigmaIO = new SigmaIO(true);
-    I2CParams i2cParms = {.address = I2C_ADDRESS, .pWire = NULL, .sda = 0, .scl = 0};
-
-    sigmaIO->RegisterPinDriver(SIGMAIO_PCF8575, &(i2cParms), I2C_BEGIN, I2C_END);
+    for (int i = 0; i < NUMBER_PORT_EXPANDERS; i++)
+    {
+        sigmaIO->RegisterPinDriver(rmConfig->portExpanders[i].drvCode, rmConfig->portExpanders[i].params,
+                                   rmConfig->portExpanders[i].beg, rmConfig->portExpanders[i].end);
+    }
     sigmaIO->Begin();
 
     rmCommands = new RmCommands();
     rmSession = new RmSession();
+//#if WIFI == 1
+//    WiFi.mode(WIFI_STA);
+//    startWiFi(WIFI_SSID, WIFI_PWD);
+//#endif
 
-    rmPinsDriver = new RmPinsDriver(rmConfig->clientPcfs, NUMB_OF_CLIENT_PCF);
 #if PROTOCOL == 1
     isBeginRequired = false;
     rmProtocol = new RmProtocolMqtt();
-    startWiFi(WIFI_SSID, WIFI_PWD);
+//    startWiFi(WIFI_SSID, WIFI_PWD);
 #elif PROTOCOL == 2
     rmProtocol = new RmProtocolLora();
     isBeginRequired = true;
 #endif
 #if VEHICLE == 1
-    rmVehicle = new RmVehicleV1();
+// It seems, like no diffrence between V1 and V2. The V1 is obsolete
+    rmVehicle = new RmVehicleV2();
 #elif VEHICLE == 2
     rmVehicle = new RmVehicleV2();
 #endif
-    rmPID = new RmPID(rmConfig->limitPitch, rmConfig->limitRoll, rmConfig->limitYaw, rmConfig->straightPeriod, rmConfig->checkPeriod);
+    rmPID = new RmPID(rmConfig->pidSettings.limitPitch, rmConfig->pidSettings.limitRoll, rmConfig->pidSettings.limitYaw,
+                      rmConfig->pidSettings.straightPeriod, rmConfig->pidSettings.checkPeriod);
     rmGPS = new RmGPS(10);
     rmTelemetry = new RmTelemetry();
 
@@ -57,22 +84,18 @@ RmClient::RmClient()
     {
         Begin();
     }
-
 }
 
 void RmClient::Begin()
 {
     Log->Debug(F("RmClient::Begin()"));
-    rmPinsDriver->Begin();
     rmProtocol->Begin();
     rmVehicle->Begin();
     rmTelemetry->Begin();
 }
-
+/*
 void RmClient::startWiFi(String ssid, String password)
 {
-#if PROTOCOL == 1
-
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
                  { 
                     switch (event)
@@ -80,7 +103,7 @@ void RmClient::startWiFi(String ssid, String password)
                         case SYSTEM_EVENT_STA_GOT_IP:
                         {
                             Log->Info(F("WiFi connected"));
-                            Log->Append(F("IP address: ").Append(WiFi.localIP().toString()).Info());
+                            Log->Append("IP address: ").Append(WiFi.localIP().toString()).Info();
                             //Begin();
                             break;
                         }
@@ -108,7 +131,16 @@ void RmClient::startWiFi(String ssid, String password)
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
     }
-#endif
+}
+*/
+void RmClient::log_publisher(SigmaLogLevel level, const char *msg)
+{
+    Serial.println(msg);
+
+    if (level > SigmaLogLevel::SIGMALOG_INTERNAL && rmClient->logProtocol != NULL && rmClient->logProtocol->IsReady())
+    {
+        rmClient->logProtocol->PublishLog(level, msg);
+    }
 }
 
 //--------------------------------

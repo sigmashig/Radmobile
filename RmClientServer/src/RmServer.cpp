@@ -6,7 +6,6 @@
 #include "RmSession.hpp"
 #include "SigmaLoger.hpp"
 #if PROTOCOL == 1
-#include "WiFi.h"
 #include "RmProtocolMqtt.hpp"
 #elif PROTOCOL == 2
 #include "RmProtocolLora.hpp"
@@ -17,20 +16,25 @@
 #include "RmRcPS2.hpp"
 #endif
 #include "RmExchange.hpp"
+#if LOGER == 1
+#include "RmProtocolMqtt.hpp"
+#endif
 
+//RmProtocol *RmServer::logProtocol = NULL;
+/*
 void RmServer::startWiFi(String ssid, String password)
 {
-#if PROTOCOL == 1
+#if LOGER == 1
     Log->Append(F("Server. Connecting to WiFi network: ")).Append(ssid).Info();
-    WiFi.mode(WIFI_STA);
 
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
-                 { 
+                 {
+                    Log->Append(F("Server. WiFi event: ")).Append(event).Debug();
                     switch (event)
                     {
                         case SYSTEM_EVENT_STA_GOT_IP:
                         {
-                            Log->Append(F("WiFi connected. IP address:")),append(WiFi.localIP().toString()).Info();
+                            Log->Append(F("WiFi connected. IP address:")).Append(WiFi.localIP().toString()).Info();
                             Begin();
                             break;
                         }
@@ -44,10 +48,14 @@ void RmServer::startWiFi(String ssid, String password)
                         }
                         break;
                     } });
+    Log->Debug("Point 9");
+    WiFi.mode(WIFI_STA);
+    Log->Debug("Point 10");
     WiFi.begin(ssid.c_str(), password.c_str());
-#endif
+    Log->Debug("Point 11");
+    #endif
 }
-
+*/
 void RmServer::startExchange()
 {
     ulong lastOp = millis();
@@ -96,17 +104,29 @@ void RmServer::startExchange()
 
 RmServer::RmServer()
 {
+    Log = new SigmaLoger(512, log_publisher);
 
     Log->Debug(F("SERVER"));
     // Init confguration
-    sigmaIO = new SigmaIO(true);
-    I2CParams i2cParms = {.address = I2C_ADDRESS, .pWire = NULL, .sda = 0, .scl = 0};
+    rmConfig = new RmConfiguration();
+    rmConfig->BoardId = ESP.getEfuseMac();
+    // Log->Printf("ID:%lx", rmConfig->BoardId).Info();
 
-    sigmaIO->RegisterPinDriver(SIGMAIO_PCF8575, &(i2cParms), I2C_BEGIN, I2C_END);
+#if LOGER == 1
+    rmProtocolMqtt = new RmProtocolMqtt();
+    rmProtocol = rmProtocolMqtt;
+    logProtocol = rmProtocolMqtt;
+#endif
+
+    sigmaIO = new SigmaIO(true);
+    for (int i = 0; i < NUMBER_PORT_EXPANDERS; i++)
+    {
+        sigmaIO->RegisterPinDriver(rmConfig->portExpanders[i].drvCode, rmConfig->portExpanders[i].params,
+                                   rmConfig->portExpanders[i].beg, rmConfig->portExpanders[i].end);
+    }
     sigmaIO->Begin();
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
-
     rmSession = new RmSession();
 #if RC == 1
     remoteControl = new RmRcEmulator();
@@ -114,17 +134,15 @@ RmServer::RmServer()
     PS2 = new RmRcPS2();
     remoteControl = PS2;
 #endif
-
 #if PROTOCOL == 1
-    isBeginRequired = false;
+    // isBeginRequired = false;
     rmProtocol = new RmProtocolMqtt();
-    WiFi.mode(WIFI_STA);
-    startWiFi(WIFI_SSID, WIFI_PWD);
 #elif PROTOCOL == 2
     rmProtocol = new RmProtocolLora();
-    isBeginRequired = true;
+    // isBeginRequired = true;
 #endif
-    if (isBeginRequired)
+
+    // if (isBeginRequired)
     {
         Begin();
     }
@@ -170,6 +188,15 @@ void RmServer::commandEventHandler(void *arg, esp_event_base_t event_base, int32
         stateString = RmCommands::StateAsString(*commandState);
         Log->Append(F("State Ready: ")).Append(stateString).Info();
         rmServer->SendCommand(stateString);
+    }
+}
+void RmServer::log_publisher(SigmaLogLevel level, const char *msg)
+{
+    Serial.println(msg);
+
+    if (level > SigmaLogLevel::SIGMALOG_INTERNAL && rmServer->logProtocol != NULL && rmServer->logProtocol->IsReady())
+    {
+        rmServer->logProtocol->PublishLog(level, msg);
     }
 }
 

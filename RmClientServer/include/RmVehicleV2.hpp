@@ -29,8 +29,8 @@ private:
     int powerRL = 0;
     int powerRR = 0;
 
-    RmRelay *relay1;
-    RmRelay *relay2;
+    //RmRelay *relay1;
+    //RmRelay *relay2;
 
     //void turn(RmCommandPkg cmd);
     void go(Direction dirStraight, int powerStraight, Direction dirTurn, int powerTurn);

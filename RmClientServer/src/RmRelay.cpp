@@ -1,13 +1,12 @@
 #include "RmRelay.hpp"
-#include "RmPinsDriver.hpp"
+#include <SigmaIO.hpp>
 
 RmRelay::RmRelay(RelayConfig config)
 {
     this->config = config;
 
-    rmPinsDriver->RegisterPin(config.pin);
-    rmPinsDriver->SetPinMode(config.pin, RmPinsDriver::PinMode::PIN_OUTPUT);
-
+    sigmaIO->PinMode(config.pin, OUTPUT);
+    
     timer = xTimerCreateStatic(
         "RmRelayTimer",
         pdMS_TO_TICKS(1000),
@@ -29,7 +28,7 @@ void RmRelay::Begin()
 
 void RmRelay::On()
 {
-    rmPinsDriver->Write(config.pin, config.onLevel);
+    sigmaIO->DigitalWrite(config.pin, config.onLevel);
     isOn = true;
     if (config.type == RELAY_TRIGGER)
     {
@@ -39,6 +38,6 @@ void RmRelay::On()
 
 void RmRelay::Off()
 {
-    rmPinsDriver->Write(config.pin, !config.onLevel);
+    sigmaIO->DigitalWrite(config.pin, !config.onLevel);
     isOn = false;
 }

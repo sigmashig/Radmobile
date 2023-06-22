@@ -30,6 +30,7 @@ RmProtocolMqtt::RmProtocolMqtt()
 {
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
                  { 
+                    
                      Log->Append("WiFi event:(MQTT) ").Append((uint)event).Debug();
                      if ((uint)event == (uint)SYSTEM_EVENT_STA_GOT_IP)
                      {

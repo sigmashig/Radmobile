@@ -2,22 +2,17 @@
 #include "RmTypes.hpp"
 #include "RmClient.hpp"
 #include <esp_event.h>
+#include <SigmaIO.hpp>
 
 RmEngineJY01::RmEngineJY01(EngineConfig config) : RmEngine(config)
 {
-    rmPinsDriver->RegisterPin(config.connection.controllerJY01.vr);
-    rmPinsDriver->SetPinMode(config.connection.controllerJY01.vr, RmPinsDriver::PinMode::PIN_OUTPUT);
-
-    rmPinsDriver->RegisterPin(config.connection.controllerJY01.brake);
-    rmPinsDriver->SetPinMode(config.connection.controllerJY01.brake, RmPinsDriver::PinMode::PIN_OUTPUT);
-
-    rmPinsDriver->RegisterPin(config.connection.controllerJY01.zf);
-    rmPinsDriver->SetPinMode(config.connection.controllerJY01.zf, RmPinsDriver::PinMode::PIN_OUTPUT);
-
-    rmPinsDriver->RegisterPin(config.connection.controllerJY01.signal);
-    rmPinsDriver->SetPinMode(config.connection.controllerJY01.signal, RmPinsDriver::PinMode::PIN_INPUT);
-
-    // esp_event_handler_register(RM_PINS_DRIVER_EVENT, RM_PINS_DRIVER_ISR, pcfEventHandler, NULL);
+    sigmaIO->PinMode(config.connection.controllerQS909.vr, OUTPUT);
+    sigmaIO->PinMode(config.connection.controllerQS909.zf, OUTPUT);
+    sigmaIO->PinMode(config.connection.controllerQS909.enable, OUTPUT);
+    sigmaIO->PinMode(config.connection.controllerQS909.signal, INPUT);
+    sigmaIO->RegisterPwmPin(config.connection.controllerQS909.enable, 5000, 7, config.minPower, config.maxPower);
+    power = 0;
+    direction = Direction::DIRECTION_NODIRECTION;
 }
 
 void RmEngineJY01::Begin()
@@ -27,31 +22,33 @@ void RmEngineJY01::Begin()
 
 void RmEngineJY01::Run(Direction direction, EngineAction action, int power)
 {
+    if ((direction != DIRECTION_FORWARD && direction != DIRECTION_BACKWARD) || action != ACTION_RUN)
+    {
+        action = EngineAction::ACTION_STOP;
+    }
+    this->power = power;
     if (action == EngineAction::ACTION_STOP)
     {
-        rmPinsDriver->Write(config.connection.controllerJY01.vr, 0);
-        rmPinsDriver->Write(config.connection.controllerJY01.brake, 1);
+        this->power = 0;
+        direction = Direction::DIRECTION_NODIRECTION;
+        sigmaIO->SetPwm(config.connection.controllerQS909.vr, 0);
+        sigmaIO->DigitalWrite(config.connection.controllerQS909.enable, 0);
         return;
     }
     else
     {
         if (direction == Direction::DIRECTION_FORWARD)
         {
-            rmPinsDriver->Write(config.connection.controllerJY01.zf, 1);
+            sigmaIO->DigitalWrite(config.connection.controllerQS909.zf, 1);
         }
         else
         {
-            rmPinsDriver->Write(config.connection.controllerJY01.zf, 0);
+            sigmaIO->DigitalWrite(config.connection.controllerQS909.zf, 0);
         }
         if (action == EngineAction::ACTION_RUN)
         {
-            rmPinsDriver->Write(config.connection.controllerJY01.brake, 0);
-            rmPinsDriver->Write(config.connection.controllerJY01.vr, power);
-        }
-        else
-        {
-            rmPinsDriver->Write(config.connection.controllerJY01.vr, 0);
-            rmPinsDriver->Write(config.connection.controllerJY01.brake, 1);
+            sigmaIO->SetPwm(config.connection.controllerQS909.vr, power);
+            sigmaIO->DigitalWrite(config.connection.controllerQS909.enable, 1);
         }
     }
 }
@@ -60,6 +57,8 @@ void RmEngineJY01::GetSpeed()
 { // For Future use
 }
 
+/*
 void RmEngineJY01::pcfEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 { // For Future use
 }
+*/

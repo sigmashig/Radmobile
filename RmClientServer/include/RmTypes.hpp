@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
+#include <SigmaIO.hpp>
 
+/*
 typedef enum
 {
     PINDRV_NO,
@@ -43,7 +45,7 @@ typedef struct
     PinDriver pinDriver;
     PinConfig pinConfig;
 } PinDefinition;
-
+*/
 typedef struct
 {
     uint32_t baudrate;
@@ -84,26 +86,29 @@ typedef enum
 typedef enum
 {
     JY01,
+    QS909,
     L298N
 } EngineControllerType;
 
 typedef struct
 {
+    uint minPower;
+    uint maxPower;
     EngineControllerType controllerType;
     union
     {
         struct
         {
-            PinDefinition vr;
-            PinDefinition zf;
-            PinDefinition signal;
-            PinDefinition brake;
-        } controllerJY01;
+            uint vr;
+            uint zf;
+            uint signal;
+            uint enable;
+        } controllerQS909;
         struct
         {
-            PinDefinition in1;
-            PinDefinition in2;
-            PinDefinition en;
+            uint in1;
+            uint in2;
+            uint en;
         } controllerL298N;
     } connection;
 } EngineConfig;
@@ -116,7 +121,7 @@ typedef enum
 typedef struct
 {
     RelayType type;
-    PinDefinition pin;
+    uint pin;
     bool onLevel;
 } RelayConfig;
 typedef struct
@@ -126,8 +131,7 @@ typedef struct
     EngineConfig frontRight;
     EngineConfig rearLeft;
     EngineConfig rearRight;
-    RelayConfig r1;
-    RelayConfig r2;
+    RelayConfig relays[];
 } VehicleConfig;
 
 typedef struct
@@ -333,3 +337,20 @@ typedef struct
         }
     } content;
 } RmPackage;
+
+typedef struct
+{
+    double limitYaw;
+    double limitPitch;
+    double limitRoll;
+    int straightPeriod; // ms - 2 seconds. Time before decide that vehicle is straight
+    int checkPeriod;    // ms - 200 ms. Time between checks corretions
+} PidSettings;
+
+typedef struct
+{
+    SigmaIoDriver drvCode;
+    uint beg;
+    uint end;
+    void *params;
+} PortExpander;

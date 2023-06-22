@@ -16,6 +16,7 @@ public:
     virtual bool IsReady() { return isReady; };
     virtual int IsReadAvailable() { return 0; };
     //virtual ~RmProtocol() = 0;
+    virtual void PublishLog(uint level, String payload){};
 
 protected:
     bool isReady = false;

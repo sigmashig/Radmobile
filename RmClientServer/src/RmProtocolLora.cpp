@@ -16,9 +16,9 @@ RmProtocolLora::RmProtocolLora()
 {
     LoraConfig *cfg;
 #if MODE == 1
-    cfg = &rmConfig->srvLoraConfig;
+    cfg = &rmConfig->loraConfig;
 #else
-    cfg = &rmConfig->clientLoraConfig;
+    cfg = &rmConfig->loraConfig;
 #endif
 #if LORA == SX1278
     radio = new SX1278(new Module(cfg->connection.LoraSx1278.nss,

@@ -22,8 +22,8 @@ RmVehicleV2::RmVehicleV2()
         rearRight = new RmEngineYellow(rmConfig->Vehicle.rearRight);
     }
 
-    relay1 = new RmRelay(rmConfig->Vehicle.r1);
-    relay2 = new RmRelay(rmConfig->Vehicle.r2);
+    //relay1 = new RmRelay(rmConfig->Vehicle.r1);
+    //relay2 = new RmRelay(rmConfig->Vehicle.r2);
 }
 
 void RmVehicleV2::Begin()
@@ -32,26 +32,26 @@ void RmVehicleV2::Begin()
     frontRight->Begin();
     rearLeft->Begin();
     rearRight->Begin();
-    relay1->Begin();
-    relay2->Begin();
+    //relay1->Begin();
+    //relay2->Begin();
 }
 void RmVehicleV2::buttons(ButtonsSet buttons)
 {
     if (buttons.button.b1)
     {
-        relay1->On();
+        //relay1->On();
     }
     else
     {
-        relay1->Off();
+        //relay1->Off();
     }
     if (buttons.button.b2)
     {
-        relay2->On();
+        //relay2->On();
     }
     else
     {
-        relay2->Off();
+        //relay2->Off();
     }
 }
 

@@ -5,5 +5,5 @@ RmProtocol::RmProtocol()
 }
 
 //--------------------------------
-RmProtocol *rmProtocol;
+RmProtocol *rmProtocol = NULL;
 ESP_EVENT_DEFINE_BASE(RMPROTOCOL_EVENT);
