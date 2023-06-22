@@ -3,10 +3,10 @@
 #include "RmEngine.hpp"
 #include "RmTypes.hpp"
 
-class RmEngineJY01 : public RmEngine
+class RmEngineQS909 : public RmEngine
 {
 public:
-    RmEngineJY01(EngineConfig config);
+    RmEngineQS909(EngineConfig config);
     void Begin();
     void Run(Direction direction, EngineAction action, int power);
     void GetSpeed();

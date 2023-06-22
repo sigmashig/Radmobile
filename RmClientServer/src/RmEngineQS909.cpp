@@ -1,10 +1,10 @@
-#include "RmEngineJY01.hpp"
+#include "RmEngineQS909.hpp"
 #include "RmTypes.hpp"
 #include "RmClient.hpp"
 #include <esp_event.h>
 #include <SigmaIO.hpp>
 
-RmEngineJY01::RmEngineJY01(EngineConfig config) : RmEngine(config)
+RmEngineQS909::RmEngineQS909(EngineConfig config) : RmEngine(config)
 {
     sigmaIO->PinMode(config.connection.controllerQS909.vr, OUTPUT);
     sigmaIO->PinMode(config.connection.controllerQS909.zf, OUTPUT);
@@ -15,12 +15,12 @@ RmEngineJY01::RmEngineJY01(EngineConfig config) : RmEngine(config)
     direction = Direction::DIRECTION_NODIRECTION;
 }
 
-void RmEngineJY01::Begin()
+void RmEngineQS909::Begin()
 {
     Run(Direction::DIRECTION_NODIRECTION, EngineAction::ACTION_STOP, 0);
 }
 
-void RmEngineJY01::Run(Direction direction, EngineAction action, int power)
+void RmEngineQS909::Run(Direction direction, EngineAction action, int power)
 {
     if ((direction != DIRECTION_FORWARD && direction != DIRECTION_BACKWARD) || action != ACTION_RUN)
     {
@@ -53,7 +53,7 @@ void RmEngineJY01::Run(Direction direction, EngineAction action, int power)
     }
 }
 
-void RmEngineJY01::GetSpeed()
+void RmEngineQS909::GetSpeed()
 { // For Future use
 }
 

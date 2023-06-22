@@ -67,7 +67,6 @@ public:
     PortExpander portExpanders[NUMBER_PORT_EXPANDERS] = {
         {.drvCode = SIGMAIO_GPIO, .beg = 0, .end = 40},
         {.drvCode = SIGMAIO_PCF8575, .beg = 50, .end = 65, .params = &i2cParms}};
-    
 
     // #define I2C_ADDRESS 0x24
     // #define I2C_BEGIN 50
@@ -98,8 +97,6 @@ public:
         .baudrate = 9600,
         .rx = 12,
         .tx = 15};
-    // byte gpsRx = 12;
-    // byte gpsTx = 15;
     //  ------Vehicle configuration---------
 //    const uint pwmFreq = 5000;
 //    const uint pwmResolution = 7;
@@ -108,33 +105,33 @@ public:
 #elif VEHICLE == 1
 #define ENGINE_MIN_VALUE 0
 #define ENGINE_MAX_VALUE 99
-EngineConfig engineFL = {
+    EngineConfig engineFL = {
         .minPower = ENGINE_MIN_VALUE,
         .maxPower = ENGINE_MAX_VALUE,
         .controllerType = EngineControllerType::QS909,
         .connection = {.controllerQS909 = {.vr = 35, .zf = 54, .signal = 65, .enable = 50}}};
-EngineConfig engineFR = {
-    .minPower = ENGINE_MIN_VALUE,
-    .maxPower = ENGINE_MAX_VALUE,
-    .controllerType = EngineControllerType::QS909,
-    .connection = {.controllerQS909 = {.vr = 14, .zf = 55, .signal = 65, .enable = 51}}};
-EngineConfig engineRL = {
-    .minPower = ENGINE_MIN_VALUE,
-    .maxPower = ENGINE_MAX_VALUE,
-    .controllerType = EngineControllerType::QS909,
-    .connection = {.controllerQS909 = {.vr = 13, .zf = 56, .signal = 65, .enable = 52}}};
-EngineConfig engineRR = {
-    .minPower = ENGINE_MIN_VALUE,
-    .maxPower = ENGINE_MAX_VALUE,
-    .controllerType = EngineControllerType::QS909,
-    .connection = {.controllerQS909 = {.vr = 25, .zf = 57, .signal = 65, .enable = 53}}};
+    EngineConfig engineFR = {
+        .minPower = ENGINE_MIN_VALUE,
+        .maxPower = ENGINE_MAX_VALUE,
+        .controllerType = EngineControllerType::QS909,
+        .connection = {.controllerQS909 = {.vr = 14, .zf = 55, .signal = 65, .enable = 51}}};
+    EngineConfig engineRL = {
+        .minPower = ENGINE_MIN_VALUE,
+        .maxPower = ENGINE_MAX_VALUE,
+        .controllerType = EngineControllerType::QS909,
+        .connection = {.controllerQS909 = {.vr = 13, .zf = 56, .signal = 65, .enable = 52}}};
+    EngineConfig engineRR = {
+        .minPower = ENGINE_MIN_VALUE,
+        .maxPower = ENGINE_MAX_VALUE,
+        .controllerType = EngineControllerType::QS909,
+        .connection = {.controllerQS909 = {.vr = 25, .zf = 57, .signal = 65, .enable = 53}}};
 
-VehicleConfig Vehicle = {
-    .limitSlowRun = 20,
-    .frontLeft = engineFL,
-    .frontRight = engineFR,
-    .rearLeft = engineRL,
-    .rearRight = engineRR};
+    VehicleConfig Vehicle = {
+        .limitSlowRun = 20,
+        .frontLeft = engineFL,
+        .frontRight = engineFR,
+        .rearLeft = engineRL,
+        .rearRight = engineRR};
 
 /*
     VehicleConfig VehicleXX = {
