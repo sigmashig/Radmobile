@@ -37,7 +37,7 @@ void RmVehicle::stateReceived(void *arg, esp_event_base_t event_base, int32_t ev
     }
     case RMEVENT_PID_CORRECTION_PITCH:
     case RMEVENT_PID_CORRECTION_ROLL:
-        Log->Debug(F("RmVehicle::correction PITCH/ROLL"));
+        //Log->Debug(F("RmVehicle::correction PITCH/ROLL"));
         break;
     }
 }

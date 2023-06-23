@@ -20,7 +20,7 @@ void RmEngineYellow::Begin()
     Run(Direction::DIRECTION_NODIRECTION, EngineAction::ACTION_STOP, 0);
 }
 
-void RmEngineYellow::Run(Direction direction, EngineAction action, int power)
+void RmEngineYellow::Run(Direction direction, EngineAction action, uint power)
 {
     if ((direction != DIRECTION_FORWARD && direction != DIRECTION_BACKWARD) || action != ACTION_RUN)
     {
@@ -55,8 +55,9 @@ void RmEngineYellow::Run(Direction direction, EngineAction action, int power)
     }
 }
 
-void RmEngineYellow::GetSpeed()
+uint RmEngineYellow::GetSpeed()
 { // For Future use
+    return 0;
 }
 
 // void RmEngineYellow::pcfEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)

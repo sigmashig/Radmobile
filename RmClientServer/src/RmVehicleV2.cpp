@@ -45,9 +45,7 @@ RmVehicleV2::RmVehicleV2()
 
 void RmVehicleV2::Begin()
 {
-    Log->Debug(F("RmVehicleV2::Begin"));
     frontLeft->Begin();
-    Log->Debug(F("RmVehicleV2::Begin 1"));
     frontRight->Begin();
     rearLeft->Begin();
     rearRight->Begin();
@@ -148,6 +146,7 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
     directionRL = dirStraight;
     directionRR = dirStraight;
 
+    Log->Printf("RmVehicleV2::P1 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
     if (powerTurn > 0)
     {
         if (dirTurn == DIRECTION_LEFT)
@@ -192,23 +191,33 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
         powerRR = -powerRR;
         directionRR = (directionRR == DIRECTION_FORWARD) ? DIRECTION_BACKWARD : DIRECTION_FORWARD;
     }
-    if (powerFL - prevPowerFL > rmConfig->Vehicle.limitSlowRun)
+
+    Log->Printf("RmVehicleV2::P2 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+
+    if (powerFL > prevPowerFL && powerFL - prevPowerFL > rmConfig->Vehicle.limitSlowRun)
     {
         powerFL = prevPowerFL + rmConfig->Vehicle.limitSlowRun;
     }
-    if (powerFR - prevPowerFR > rmConfig->Vehicle.limitSlowRun)
+    if (powerFR > prevPowerFR && powerFR - prevPowerFR > rmConfig->Vehicle.limitSlowRun)
     {
         powerFR = prevPowerFR + rmConfig->Vehicle.limitSlowRun;
     }
-    if (powerRL - prevPowerRL > rmConfig->Vehicle.limitSlowRun)
+    if (powerRL > prevPowerRL && powerRL - prevPowerRL > rmConfig->Vehicle.limitSlowRun)
     {
         powerRL = prevPowerRL + rmConfig->Vehicle.limitSlowRun;
     }
-    if (powerRR - prevPowerRR > rmConfig->Vehicle.limitSlowRun)
+    if (powerRR > prevPowerRR && powerRR - prevPowerRR > rmConfig->Vehicle.limitSlowRun)
     {
         powerRR = prevPowerRR + rmConfig->Vehicle.limitSlowRun;
     }
-    Log->Printf("RmVehicleV2::power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+    Log->Printf("RmVehicleV2::P3 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+
+    powerFL = min(max(powerFL, 0), 99);
+    powerFR = min(max(powerFR, 0), 99);
+    powerRL = min(max(powerRL, 0), 99);
+    powerRR = min(max(powerRR, 0), 99);
+    Log->Printf("RmVehicleV2::P4 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+
     Log->Printf("RmVehicleV2::dir: %d, %d, %d, %d\n", directionFL, directionFR, directionRL, directionRR).Debug();
     frontLeft->Run(directionFL, ACTION_RUN, powerFL);
     frontRight->Run(directionFR, ACTION_RUN, powerFR);

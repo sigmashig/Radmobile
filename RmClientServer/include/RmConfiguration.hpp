@@ -87,11 +87,18 @@ public:
 #define NUMB_OF_CLIENT_PCF 1
     PcfSettings clientPcfs[NUMB_OF_CLIENT_PCF] = {{.id = 0, .address = 0x24, .irqPin = 34}};
 
-    PidSettings pidSettings = {.limitYaw = 10, .limitPitch = 10, .limitRoll = 10, .straightPeriod = 2000, .checkPeriod = 200};
+    PidSettings pidSettings = {.limitYaw = 10, .limitPitch = 10, .limitRoll = 10, .straightPeriod = 2000, .checkPeriod = 2000};
 
     // Initial calibration values
     MPUSettings mpuSettings = {
-        .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};
+        //      .accX = -775, .accY = -28, .accZ = 1095, .gyrX = 145, .gyrY = -42, .gyrZ = -7, .address = 0x68};
+        .accX = -1430,
+        .accY = 259,
+        .accZ = 491,
+        .gyrX = 334,
+        .gyrY = 10,
+        .gyrZ = -26,
+        .address = 0x68};
     // GPS Settings
     UARTConfig gpsConfig = {
         .baudrate = 9600,
@@ -104,12 +111,12 @@ public:
     VehicleConfig Vehicle;
 #elif VEHICLE == 1
 #define ENGINE_MIN_VALUE 0
-#define ENGINE_MAX_VALUE 99
+#define ENGINE_MAX_VALUE 0xffff
     EngineConfig engineFL = {
         .minPower = ENGINE_MIN_VALUE,
         .maxPower = ENGINE_MAX_VALUE,
         .controllerType = EngineControllerType::QS909,
-        .connection = {.controllerQS909 = {.vr = 35, .zf = 54, .signal = 65, .enable = 50}}};
+        .connection = {.controllerQS909 = {.vr = 4, .zf = 54, .signal = 65, .enable = 50}}};
     EngineConfig engineFR = {
         .minPower = ENGINE_MIN_VALUE,
         .maxPower = ENGINE_MAX_VALUE,

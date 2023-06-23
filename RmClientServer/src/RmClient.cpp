@@ -12,9 +12,9 @@
 #include "RmProtocolMqtt.hpp"
 #endif
 
-//#if WIFI==1
-//#include <WiFi.h>
-//#endif
+// #if WIFI==1
+// #include <WiFi.h>
+// #endif
 #if PROTOCOL == 1
 #include "RmProtocolMqtt.hpp"
 #elif PROTOCOL == 2
@@ -27,7 +27,7 @@
 #include "RmVehicleV2.hpp"
 #endif
 
-//RmProtocol *RmClient::logProtocol = NULL;
+// RmProtocol *RmClient::logProtocol = NULL;
 
 RmClient::RmClient()
 {
@@ -56,10 +56,10 @@ RmClient::RmClient()
 
     rmCommands = new RmCommands();
     rmSession = new RmSession();
-//#if WIFI == 1
-//    WiFi.mode(WIFI_STA);
-//    startWiFi(WIFI_SSID, WIFI_PWD);
-//#endif
+    // #if WIFI == 1
+    //     WiFi.mode(WIFI_STA);
+    //     startWiFi(WIFI_SSID, WIFI_PWD);
+    // #endif
 
 #if PROTOCOL == 1
     isBeginRequired = false;
@@ -69,20 +69,18 @@ RmClient::RmClient()
     rmProtocol = new RmProtocolLora();
     isBeginRequired = true;
 #endif
-    Log->Debug("Point 10");
 #if VEHICLE == 1
-// It seems, like no diffrence between V1 and V2. The V1 is obsolete
+    // It seems, like no diffrence between V1 and V2. The V1 is obsolete
     rmVehicle = new RmVehicleV2();
 #elif VEHICLE == 2
     rmVehicle = new RmVehicleV2();
 #endif
-    Log->Debug("Point 11");
     rmPID = new RmPID(rmConfig->pidSettings.limitPitch, rmConfig->pidSettings.limitRoll, rmConfig->pidSettings.limitYaw,
                       rmConfig->pidSettings.straightPeriod, rmConfig->pidSettings.checkPeriod);
     rmGPS = new RmGPS(10);
     rmTelemetry = new RmTelemetry();
 
-    //if (isBeginRequired)
+    // if (isBeginRequired)
     {
         Begin();
     }
@@ -92,17 +90,14 @@ void RmClient::Begin()
 {
     Log->Debug(F("RmClient::Begin()"));
     rmProtocol->Begin();
-    Log->Debug("Point 12");
     rmVehicle->Begin();
-    Log->Debug("Point 13");
     rmTelemetry->Begin();
-    Log->Debug("Point 14");
 }
 /*
 void RmClient::startWiFi(String ssid, String password)
 {
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
-                 { 
+                 {
                     switch (event)
                     {
                         case SYSTEM_EVENT_STA_GOT_IP:

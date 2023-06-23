@@ -20,7 +20,7 @@
 #include "RmProtocolMqtt.hpp"
 #endif
 
-//RmProtocol *RmServer::logProtocol = NULL;
+// RmProtocol *RmServer::logProtocol = NULL;
 /*
 void RmServer::startWiFi(String ssid, String password)
 {
@@ -48,11 +48,8 @@ void RmServer::startWiFi(String ssid, String password)
                         }
                         break;
                     } });
-    Log->Debug("Point 9");
     WiFi.mode(WIFI_STA);
-    Log->Debug("Point 10");
     WiFi.begin(ssid.c_str(), password.c_str());
-    Log->Debug("Point 11");
     #endif
 }
 */
@@ -107,10 +104,8 @@ RmServer::RmServer()
     Log = new SigmaLoger(512, log_publisher);
 
     Log->Debug(F("SERVER"));
-    Log->Debug(F("Point 0.1"));
     // Init confguration
     rmConfig = new RmConfiguration();
-    Log->Debug(F("Point 0"));
     rmConfig->BoardId = ESP.getEfuseMac();
     Log->Printf("ID:%lx", rmConfig->BoardId).Info();
 
@@ -119,7 +114,6 @@ RmServer::RmServer()
     rmProtocol = rmProtocolMqtt;
     logProtocol = rmProtocolMqtt;
 #endif
-    Log->Debug(F("Point 1"));
     sigmaIO = new SigmaIO(false);
     for (int i = 0; i < NUMBER_PORT_EXPANDERS; i++)
     {
@@ -127,7 +121,6 @@ RmServer::RmServer()
                                    rmConfig->portExpanders[i].beg, rmConfig->portExpanders[i].end);
     }
     sigmaIO->Begin();
-    Log->Debug(F("Point 2"));
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
     rmSession = new RmSession();

@@ -86,7 +86,7 @@ void RmProtocolLora::Reconnect()
 }
 bool RmProtocolLora::SendPkg(String command)
 {
-    pkgForTransmit = String(rmSession->GetSessionId().id);
+    pkgForTransmit = '@'; //String(rmSession->GetSessionId().id);
     pkgForTransmit += command;
     lastPkg = pkgForTransmit;
     if (isChannelFree)
@@ -117,7 +117,8 @@ void RmProtocolLora::packageReceived(void *arg, esp_event_base_t event_base, int
         String str;
         radio->readData(str);
         Log->Append("Received: ").Append(str).Debug();
-        if (str[0] != rmSession->GetSessionId().id)
+        //if (str[0] != rmSession->GetSessionId().id)
+        if (str[0] != '@')
         {
             Log->Info(F("Received for other device, ignoring."));
             return;
