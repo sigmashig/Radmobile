@@ -85,7 +85,7 @@ public:
                            .dio1 = 33}}};
 
 #define NUMB_OF_CLIENT_PCF 1
-    PcfSettings clientPcfs[NUMB_OF_CLIENT_PCF] = {{.id = 0, .address = 0x24, .irqPin = 34}};
+    PcfSettings clientPcfs[NUMB_OF_CLIENT_PCF] = {{.id = 0, .address = 0x22, .irqPin = 34}};
 
     PidSettings pidSettings = {.limitYaw = 10, .limitPitch = 10, .limitRoll = 10, .straightPeriod = 2000, .checkPeriod = 2000};
 
