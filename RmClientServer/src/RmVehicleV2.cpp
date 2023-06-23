@@ -2,6 +2,7 @@
 #include "SigmaLoger.hpp"
 #include "RmConfiguration.hpp"
 #include "RmEngineYellow.hpp"
+#include "RmEngineQS909.hpp"
 
 RmVehicleV2::RmVehicleV2()
 {
@@ -9,49 +10,67 @@ RmVehicleV2::RmVehicleV2()
     {
         frontLeft = new RmEngineYellow(rmConfig->Vehicle.frontLeft);
     }
+    else if (rmConfig->Vehicle.frontLeft.controllerType == EngineControllerType::QS909)
+    {
+        frontLeft = new RmEngineQS909(rmConfig->Vehicle.frontLeft);
+    }
     if (rmConfig->Vehicle.frontRight.controllerType == EngineControllerType::L298N)
     {
         frontRight = new RmEngineYellow(rmConfig->Vehicle.frontRight);
+    }
+    else if (rmConfig->Vehicle.frontRight.controllerType == EngineControllerType::QS909)
+    {
+        frontRight = new RmEngineQS909(rmConfig->Vehicle.frontRight);
     }
     if (rmConfig->Vehicle.rearLeft.controllerType == EngineControllerType::L298N)
     {
         rearLeft = new RmEngineYellow(rmConfig->Vehicle.rearLeft);
     }
+    else if (rmConfig->Vehicle.rearLeft.controllerType == EngineControllerType::QS909)
+    {
+        rearLeft = new RmEngineQS909(rmConfig->Vehicle.rearLeft);
+    }
     if (rmConfig->Vehicle.rearRight.controllerType == EngineControllerType::L298N)
     {
         rearRight = new RmEngineYellow(rmConfig->Vehicle.rearRight);
     }
+    else if (rmConfig->Vehicle.rearRight.controllerType == EngineControllerType::QS909)
+    {
+        rearRight = new RmEngineQS909(rmConfig->Vehicle.rearRight);
+    }
 
-    //relay1 = new RmRelay(rmConfig->Vehicle.r1);
-    //relay2 = new RmRelay(rmConfig->Vehicle.r2);
+    // relay1 = new RmRelay(rmConfig->Vehicle.r1);
+    // relay2 = new RmRelay(rmConfig->Vehicle.r2);
 }
 
 void RmVehicleV2::Begin()
 {
+    Log->Debug(F("RmVehicleV2::Begin"));
     frontLeft->Begin();
+    Log->Debug(F("RmVehicleV2::Begin 1"));
     frontRight->Begin();
     rearLeft->Begin();
     rearRight->Begin();
-    //relay1->Begin();
-    //relay2->Begin();
+    // relay1->Begin();
+    // relay2->Begin();
 }
 void RmVehicleV2::buttons(ButtonsSet buttons)
 {
     if (buttons.button.b1)
     {
-        //relay1->On();
+        // relay1->On();
     }
     else
     {
-        //relay1->Off();
+        // relay1->Off();
     }
     if (buttons.button.b2)
     {
-        //relay2->On();
+        // relay2->On();
     }
     else
     {
-        //relay2->Off();
+        // relay2->Off();
     }
 }
 

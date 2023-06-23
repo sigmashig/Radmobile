@@ -107,24 +107,27 @@ RmServer::RmServer()
     Log = new SigmaLoger(512, log_publisher);
 
     Log->Debug(F("SERVER"));
+    Log->Debug(F("Point 0.1"));
     // Init confguration
     rmConfig = new RmConfiguration();
+    Log->Debug(F("Point 0"));
     rmConfig->BoardId = ESP.getEfuseMac();
-    // Log->Printf("ID:%lx", rmConfig->BoardId).Info();
+    Log->Printf("ID:%lx", rmConfig->BoardId).Info();
 
 #if LOGER == 1
     rmProtocolMqtt = new RmProtocolMqtt();
     rmProtocol = rmProtocolMqtt;
     logProtocol = rmProtocolMqtt;
 #endif
-
-    sigmaIO = new SigmaIO(true);
+    Log->Debug(F("Point 1"));
+    sigmaIO = new SigmaIO(false);
     for (int i = 0; i < NUMBER_PORT_EXPANDERS; i++)
     {
         sigmaIO->RegisterPinDriver(rmConfig->portExpanders[i].drvCode, rmConfig->portExpanders[i].params,
                                    rmConfig->portExpanders[i].beg, rmConfig->portExpanders[i].end);
     }
     sigmaIO->Begin();
+    Log->Debug(F("Point 2"));
     // TODO: session should be transferred from server to client
     rmCommands = new RmCommands();
     rmSession = new RmSession();
@@ -194,7 +197,7 @@ void RmServer::log_publisher(SigmaLogLevel level, const char *msg)
 {
     Serial.println(msg);
 
-    if (level > SigmaLogLevel::SIGMALOG_INTERNAL && rmServer->logProtocol != NULL && rmServer->logProtocol->IsReady())
+    if (rmServer != NULL && level > SigmaLogLevel::SIGMALOG_INTERNAL && rmServer->logProtocol != NULL && rmServer->logProtocol->IsReady())
     {
         rmServer->logProtocol->PublishLog(level, msg);
     }

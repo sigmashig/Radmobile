@@ -68,6 +68,7 @@ void RmProtocolLora::Begin()
     }
     radio->setDio0Action(loraISR, RISING);
     radio->startReceive();
+    Log->Info(F("LORA is ready to receive!"));
 }
 
 RmProtocolLora::~RmProtocolLora()

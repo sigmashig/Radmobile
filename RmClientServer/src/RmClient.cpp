@@ -37,7 +37,7 @@ RmClient::RmClient()
     // Init confguration
     rmConfig = new RmConfiguration();
     rmConfig->BoardId = ESP.getEfuseMac();
-    // Log->Printf("ID:%lx", rmConfig->BoardId).Info();
+    Log->Printf("ID:%lx", rmConfig->BoardId).Info();
 
 #if LOGER == 1
     rmProtocolMqtt = new RmProtocolMqtt();
@@ -46,7 +46,7 @@ RmClient::RmClient()
 #endif
 
     // TODO: session should be transferred from server to client
-    sigmaIO = new SigmaIO(true);
+    sigmaIO = new SigmaIO(false);
     for (int i = 0; i < NUMBER_PORT_EXPANDERS; i++)
     {
         sigmaIO->RegisterPinDriver(rmConfig->portExpanders[i].drvCode, rmConfig->portExpanders[i].params,
@@ -69,18 +69,20 @@ RmClient::RmClient()
     rmProtocol = new RmProtocolLora();
     isBeginRequired = true;
 #endif
+    Log->Debug("Point 10");
 #if VEHICLE == 1
 // It seems, like no diffrence between V1 and V2. The V1 is obsolete
     rmVehicle = new RmVehicleV2();
 #elif VEHICLE == 2
     rmVehicle = new RmVehicleV2();
 #endif
+    Log->Debug("Point 11");
     rmPID = new RmPID(rmConfig->pidSettings.limitPitch, rmConfig->pidSettings.limitRoll, rmConfig->pidSettings.limitYaw,
                       rmConfig->pidSettings.straightPeriod, rmConfig->pidSettings.checkPeriod);
     rmGPS = new RmGPS(10);
     rmTelemetry = new RmTelemetry();
 
-    if (isBeginRequired)
+    //if (isBeginRequired)
     {
         Begin();
     }
@@ -90,8 +92,11 @@ void RmClient::Begin()
 {
     Log->Debug(F("RmClient::Begin()"));
     rmProtocol->Begin();
+    Log->Debug("Point 12");
     rmVehicle->Begin();
+    Log->Debug("Point 13");
     rmTelemetry->Begin();
+    Log->Debug("Point 14");
 }
 /*
 void RmClient::startWiFi(String ssid, String password)
@@ -137,7 +142,7 @@ void RmClient::log_publisher(SigmaLogLevel level, const char *msg)
 {
     Serial.println(msg);
 
-    if (level > SigmaLogLevel::SIGMALOG_INTERNAL && rmClient->logProtocol != NULL && rmClient->logProtocol->IsReady())
+    if (rmClient != NULL && level > SigmaLogLevel::SIGMALOG_INTERNAL && rmClient->logProtocol != NULL && rmClient->logProtocol->IsReady())
     {
         rmClient->logProtocol->PublishLog(level, msg);
     }
