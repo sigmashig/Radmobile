@@ -4,13 +4,13 @@
 #include <MPU6050_6Axis_MotionApps20.h>
 #include <esp_event.h>
 
-#define PID_STRAIGHT_PERIOD 200
-#define PID_CHECK_PERIOD 200
+#define PID_STRAIGHT_PERIOD 1000
+#define PID_CHECK_PERIOD 500
 
 class RmPID
 {
 public:
-    RmPID(double pitch, double roll, double yaw, int straightPeriod = PID_STRAIGHT_PERIOD,  int checkPeriod = PID_CHECK_PERIOD);
+    RmPID(double pitch, double roll, double yaw, int straightPeriod = PID_STRAIGHT_PERIOD, int checkPeriod = PID_CHECK_PERIOD);
 
 private:
     double pitch;
@@ -19,10 +19,16 @@ private:
     int checkPeriod;
     int straightPeriod;
     bool isMPUavailable;
-    bool isStarted;       // the START command was received
-    bool isWorkingCircle; // PID is working and ready to send corrections. Will be reseted during turn
-    TimerHandle_t timer;
+    bool isStarted; // the START command was received
+    // bool isWorkingCircle; // PID is working and ready to send corrections. Will be reseted during turn
+    TimerHandle_t pidTimerHandle;
     StaticTimer_t timerBuffer;
+    enum
+    {
+        PID_STATE_IDLE,
+        PID_STATE_CHECK_PERIOD,
+        PID_STATE_STRAIGHT_PERIOD
+    } pidState;
     struct
     {
         double yaw;

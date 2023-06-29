@@ -40,7 +40,10 @@
 			"string": "cpp",
 			"unordered_map": "cpp",
 			"unordered_set": "cpp",
-			"vector": "cpp"
+			"vector": "cpp",
+			"array": "cpp",
+			"string_view": "cpp",
+			"initializer_list": "cpp"
 		}
 	}
 }

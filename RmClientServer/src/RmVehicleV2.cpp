@@ -108,21 +108,21 @@ VehicleStatus RmVehicleV2::ApplyCorrection(Direction direction, int power)
     double straightPower = powerFL;
     Direction dirStraight = directionFL;
 
-    if (power < 200)
+    if (power < 2)
     {
         turnPower = 30;
     }
-    else if (power < 300)
+    else if (power < 4)
     {
         turnPower = 50;
     }
-    else if (power < 400)
+    else if (power < 6)
     {
         turnPower = 70;
     }
     else
     {
-        turnPower = 100;
+        turnPower = 99;
     }
     go(dirStraight, straightPower, direction, turnPower);
 
@@ -146,7 +146,7 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
     directionRL = dirStraight;
     directionRR = dirStraight;
 
-    Log->Printf("RmVehicleV2::P1 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+    // Log->Printf("RmVehicleV2::P1 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
     if (powerTurn > 0)
     {
         if (dirTurn == DIRECTION_LEFT)
@@ -192,7 +192,7 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
         directionRR = (directionRR == DIRECTION_FORWARD) ? DIRECTION_BACKWARD : DIRECTION_FORWARD;
     }
 
-    Log->Printf("RmVehicleV2::P2 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+    // Log->Printf("RmVehicleV2::P2 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
 
     if (powerFL > prevPowerFL && powerFL - prevPowerFL > rmConfig->Vehicle.limitSlowRun)
     {
@@ -210,7 +210,7 @@ void RmVehicleV2::go(Direction dirStraight, int powerStraight, Direction dirTurn
     {
         powerRR = prevPowerRR + rmConfig->Vehicle.limitSlowRun;
     }
-    Log->Printf("RmVehicleV2::P3 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
+    // Log->Printf("RmVehicleV2::P3 power: %d, %d, %d, %d\n", powerFL, powerFR, powerRL, powerRR).Debug();
 
     powerFL = min(max(powerFL, 0), 99);
     powerFR = min(max(powerFR, 0), 99);

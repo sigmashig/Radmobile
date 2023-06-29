@@ -13,6 +13,7 @@ public:
     virtual uint GetSpeed() = 0;
     uint GetPower() { return power; };
     Direction GetDirection() { return direction; };
+    byte GetId() { return config.id; };
 protected:
     EngineConfig config;
     uint power;

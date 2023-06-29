@@ -22,34 +22,33 @@ void RmPID::stateHandler(void *arg, esp_event_base_t event_base, int32_t event_i
         }
     }
     else
-    {
+    { // started
         if (state->straight == DIRECTION_STOP)
         {
             rmPID->isStarted = false;
         }
         else
         {
-            if (!rmPID->isWorkingCircle)
+            if (state->powerTurn > 0 || state->powerStraight == 0)
             {
-                if (state->powerTurn > 0)
-                {
-                    xTimerStop(rmPID->timer, 0);
-                    rmPID->isWorkingCircle = false;
+                Log->Debug("RmPID: turn or pause detected. Timer Stop");
+                xTimerStop(rmPID->pidTimerHandle, 0);
+                rmPID->pidState = PID_STATE_IDLE;
+            }
+            else
+            {
+                // straight moving
+                if (rmPID->pidState == PID_STATE_IDLE)
+                { // waiting for straight stabilization
+                    rmPID->pidState = PID_STATE_STRAIGHT_PERIOD;
+                    Log->Append("RmPID: straight detected. Timer change period to Straight:").Append(rmPID->straightPeriod).Debug();
+                    xTimerChangePeriod(rmPID->pidTimerHandle, pdMS_TO_TICKS(rmPID->straightPeriod), 0);
                 }
                 else
                 {
-                    // straight moving
-                    if (!rmPID->isWorkingCircle)
-                    {
-                        xTimerChangePeriod(rmPID->timer, pdMS_TO_TICKS(rmPID->checkPeriod), 0);
-                        xTimerStart(rmPID->timer, 0);
-                    }
+                    // check/straight period - do nothing
                 }
             }
-        }
-        if (rmPID->isMPUavailable)
-        {
-            rmPID->getAngles(); // check pitch/roll
         }
     }
 }
@@ -88,24 +87,25 @@ void RmPID::getAngles()
 
 void RmPID::pidTimer(TimerHandle_t xTimer)
 {
+    Log->Append(F("RmPID::pidTimer")).Append(F(" pidState=")).Append(rmPID->pidState).Debug();
     rmPID->getAngles();
-    if (!rmPID->isWorkingCircle)
+    if (rmPID->pidState == PID_STATE_STRAIGHT_PERIOD)
     {
-        // first call after turn
+        // straight moving stabilized
         rmPID->lastYaw = rmPID->angles.yaw;
-        rmPID->isWorkingCircle = true;
-        xTimerChangePeriod(rmPID->timer, pdMS_TO_TICKS(rmPID->checkPeriod), 0);
-        xTimerStart(rmPID->timer, 0);
+        rmPID->pidState = PID_STATE_CHECK_PERIOD;
+        Log->Append("RmPID: straight stabilized. Timer change period to Check:").Append(rmPID->checkPeriod).Debug();
+        xTimerChangePeriod(xTimer, pdMS_TO_TICKS(rmPID->checkPeriod), 0);
     }
     else
-    { // check yaw
+    { // check period - check yaw
         double d = rmPID->angles.yaw - rmPID->lastYaw;
-        
+        // rmPID->lastYaw = rmPID->angles.yaw;
         if (abs(d) >= rmPID->yaw)
         {
-            int intensive = (abs(d) / rmPID->yaw) * 100;
-            Log->Printf(F("RmPID::pidTimer: d=%f, intensive=%d\n"), d, intensive);
-            Log->Printf(F("RmPID::pidTimer: yaw=%f, abs(d)=%f\n"), rmPID->yaw, abs(d));
+            int intensive = (abs(d) / rmPID->lastYaw);
+            Log->Printf(F("RmPID::pidTimer: d=%f, intensive=%d "), d, intensive);
+            Log->Printf(F(" yaw=%f, abs(d)=%f\n"), rmPID->yaw, abs(d)).Debug();
             // turn detected
             if (d > 0)
             {
@@ -116,7 +116,8 @@ void RmPID::pidTimer(TimerHandle_t xTimer)
                 esp_event_post(RMPROTOCOL_EVENT, RMEVENT_PID_CORRECTION_RIGHT, &intensive, sizeof(intensive), 0);
             }
         }
-        xTimerStart(rmPID->timer, 0);
+        Log->Debug("RmPID: idle or straight stabilized. Timer Reset");
+        xTimerReset(rmPID->pidTimerHandle, 0);
     }
 }
 
@@ -125,11 +126,20 @@ RmPID::RmPID(double pitch, double roll, double yaw, int straightPeriod, int chec
 {
     Log->Debug(F("RmPID::RmPID"));
     isStarted = false;
-    isWorkingCircle = false;
-    timer = xTimerCreateStatic("PIDTimer", pdMS_TO_TICKS(checkPeriod), pdTRUE, this, pidTimer, &timerBuffer);
-
-    Wire.begin();
-    Wire.setClock(1000000); // 1mHz I2C clock.
+    pidState = PID_STATE_IDLE;
+    pidTimerHandle = xTimerCreateStatic("PIDTimer", pdMS_TO_TICKS(checkPeriod), pdFALSE, 0, pidTimer, &timerBuffer);
+    if (pidTimerHandle == NULL)
+    {
+        Log->Error(F("RmPID::RmPID: xTimerCreateStatic failed"));
+    }
+    else
+    {
+        Log->Debug(F("RmPID::RmPID: xTimerCreateStatic success"));
+    }
+    if (xTimerStart(pidTimerHandle, 0) != pdPASS)
+    {
+        Log->Error(F("RmPID::RmPID: xTimerStart failed"));
+    }
 
     mpu = new MPU6050(rmConfig->mpuSettings.address);
 
@@ -175,8 +185,8 @@ RmPID::RmPID(double pitch, double roll, double yaw, int straightPeriod, int chec
         Log->Append(F("DMP Initialization failed (code=")).Append(devStatus).Append(F(")")).Error();
         isMPUavailable = false;
     }
+    lastYaw = 0;
     esp_event_handler_instance_register(RMPROTOCOL_EVENT, RMEVENT_STATE_RECEIVED, stateHandler, NULL, NULL);
 }
-
-
+// -------------------------------------------------
 RmPID *rmPID = NULL;

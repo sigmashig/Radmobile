@@ -92,6 +92,7 @@ typedef enum
 
 typedef struct
 {
+    byte id;
     uint minPower;
     uint maxPower;
     EngineControllerType controllerType;

@@ -16,8 +16,10 @@
 // #include <WiFi.h>
 // #endif
 #if PROTOCOL == 1
+#include <WiFi.h>
 #include "RmProtocolMqtt.hpp"
 #elif PROTOCOL == 2
+
 #include "RmProtocolLora.hpp"
 #endif
 #include "RmVehicle.hpp"
@@ -27,19 +29,21 @@
 #include "RmVehicleV2.hpp"
 #endif
 
-// RmProtocol *RmClient::logProtocol = NULL;
 
 RmClient::RmClient()
 {
-    Log = new SigmaLoger(512, log_publisher);
+    Log = new SigmaLoger(256, log_publisher);
 
     Log->Debug(F("CLIENT"));
+    Wire.begin();
+    Wire.setClock(1000000);
     // Init confguration
     rmConfig = new RmConfiguration();
     rmConfig->BoardId = ESP.getEfuseMac();
     Log->Printf("ID:%lx", rmConfig->BoardId).Info();
 
 #if LOGER == 1
+    startWiFi(WIFI_SSID, WIFI_PWD);
     rmProtocolMqtt = new RmProtocolMqtt();
     rmProtocol = rmProtocolMqtt;
     logProtocol = rmProtocolMqtt;
@@ -56,18 +60,13 @@ RmClient::RmClient()
 
     rmCommands = new RmCommands();
     rmSession = new RmSession();
-    // #if WIFI == 1
-    //     WiFi.mode(WIFI_STA);
-    //     startWiFi(WIFI_SSID, WIFI_PWD);
-    // #endif
 
 #if PROTOCOL == 1
     isBeginRequired = false;
+    startWiFi(WIFI_SSID, WIFI_PWD);
     rmProtocol = new RmProtocolMqtt();
-//    startWiFi(WIFI_SSID, WIFI_PWD);
 #elif PROTOCOL == 2
     rmProtocol = new RmProtocolLora();
-    isBeginRequired = true;
 #endif
 #if VEHICLE == 1
     // It seems, like no diffrence between V1 and V2. The V1 is obsolete
@@ -80,10 +79,7 @@ RmClient::RmClient()
     rmGPS = new RmGPS(10);
     rmTelemetry = new RmTelemetry();
 
-    // if (isBeginRequired)
-    {
-        Begin();
-    }
+    Begin();
 }
 
 void RmClient::Begin()
@@ -93,9 +89,10 @@ void RmClient::Begin()
     rmVehicle->Begin();
     rmTelemetry->Begin();
 }
-/*
+
 void RmClient::startWiFi(String ssid, String password)
 {
+#ifdef WiFi_h
     WiFi.onEvent([this](WiFiEvent_t event, WiFiEventInfo_t info)
                  {
                     switch (event)
@@ -131,8 +128,9 @@ void RmClient::startWiFi(String ssid, String password)
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
     }
+#endif
 }
-*/
+
 void RmClient::log_publisher(SigmaLogLevel level, const char *msg)
 {
     Serial.println(msg);

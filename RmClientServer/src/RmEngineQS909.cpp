@@ -28,7 +28,8 @@ void RmEngineQS909::Begin()
 void RmEngineQS909::Run(Direction direction, EngineAction action, uint power)
 {
     IOError err;
-    if ((direction != DIRECTION_FORWARD && direction != DIRECTION_BACKWARD) || action != ACTION_RUN)
+    byte vr=0, en=0, zf=0;
+    if ((direction != DIRECTION_FORWARD && direction != DIRECTION_BACKWARD) || action != ACTION_RUN || power <= config.minPower || power > config.maxPower)
     {
         action = EngineAction::ACTION_STOP;
     }
@@ -37,31 +38,34 @@ void RmEngineQS909::Run(Direction direction, EngineAction action, uint power)
     {
         this->power = 0;
         direction = Direction::DIRECTION_NODIRECTION;
-        sigmaIO->SetPwm(config.connection.controllerQS909.vr, 0);
-        sigmaIO->DigitalWrite(config.connection.controllerQS909.enable, 0);
-        return;
+        vr = 0;
+        en = 0;
+        zf = 1;
     }
     else
     {
         if (direction == Direction::DIRECTION_FORWARD)
         {
-            sigmaIO->DigitalWrite(config.connection.controllerQS909.zf, 1);
+            zf = 1;
         }
         else
         {
-            sigmaIO->DigitalWrite(config.connection.controllerQS909.zf, 0);
+            zf = 0;
         }
         if (action == EngineAction::ACTION_RUN)
         {
-            err = sigmaIO->SetPwm(config.connection.controllerQS909.vr, power);
-            if (err != IOError::SIGMAIO_SUCCESS)
-            {
-                Log->Append("RmEngineQS909::Run error=").Append((uint)err).Debug();
-            }
-
-            sigmaIO->DigitalWrite(config.connection.controllerQS909.enable, 1);
+            vr = power;
+            en = 1;
         }
     }
+    err=sigmaIO->SetPwm(config.connection.controllerQS909.vr, vr);
+    if (err != IOError::SIGMAIO_SUCCESS)
+    {
+        Log->Append("RmEngineQS909 VR write:error=").Append((uint)err).Debug();
+    }
+    sigmaIO->DigitalWrite(config.connection.controllerQS909.zf, zf);
+    sigmaIO->DigitalWrite(config.connection.controllerQS909.enable, en);
+    Log->Append("Eng:").Append(GetId()).Append("; en=").Append(en).Append("; vr=").Append(vr).Append("; zf=").Append(zf).Debug();
 }
 
 uint RmEngineQS909::GetSpeed()
